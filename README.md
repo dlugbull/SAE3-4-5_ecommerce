@@ -1,4 +1,4 @@
-# SAE3-4-5_ecomerce
+# SAE3-4-5_ecommerce
 Projet de groupe d'e-commerce langages Python, SQL, HTML, CSS<br><br>
 
 Membres :<br>
