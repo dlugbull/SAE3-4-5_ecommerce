@@ -1,6 +1,6 @@
 # SAE3-4-5_ecommerce
-Projet de groupe d'e-commerce langages Python, SQL, HTML, CSS qui a pour objectif :
-- d’acheter des articles, mais aussi
+Projet de groupe d'e-commerce qui a pour objectif :
+- d’acheter des articles,
 - rechercher des articles (filtre) qui peuvent se décliner
 - commenter/noter des articles
 - définir une(des) adresse(s) pour l’expédition
