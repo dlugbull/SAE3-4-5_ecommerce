@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS etat;
 DROP TABLE IF EXISTS utilisateur;
 
 CREATE TABLE utilisateur(
-   id_utilisateur VARCHAR(50),
+   id_utilisateur INTEGER AUTO_INCREMENT,
    login VARCHAR(50),
    email VARCHAR(50),
    nom_utilisateur VARCHAR(50),
@@ -18,13 +18,13 @@ CREATE TABLE utilisateur(
 );
 
 CREATE TABLE etat(
-   id_etat INT,
+   id_etat INT AUTO_INCREMENT,
    libelle_etat VARCHAR(50),
    PRIMARY KEY(id_etat)
 );
 
 CREATE TABLE taille(
-   id_taille INT,
+   id_taille INT AUTO_INCREMENT,
    num_taille_fr VARCHAR(50),
    taille_us VARCHAR(50),
    tour_de_main VARCHAR(50),
@@ -32,13 +32,13 @@ CREATE TABLE taille(
 );
 
 CREATE TABLE type_gant(
-   id_type_gant INT,
+   id_type_gant INT AUTO_INCREMENT,
    nom_type_gant VARCHAR(255),
    PRIMARY KEY(id_type_gant)
 );
 
 CREATE TABLE commande(
-   id_commande INT,
+   id_commande INT AUTO_INCREMENT,
    date_achat DATETIME,
    etat_id INT NOT NULL,
    utilisateur_id VARCHAR(50) NOT NULL,
@@ -48,15 +48,15 @@ CREATE TABLE commande(
 );
 
 CREATE TABLE gant(
-   id_gant INT,
+   id_gant INT AUTO_INCREMENT,
    nom_gant VARCHAR(50),
    poids INT,
    couleur VARCHAR(50),
    prix_gant DECIMAL(19,4),
    photo VARCHAR(50),
-   founisseur VARCHAR(50),
+   fournisseur VARCHAR(50),
    marque VARCHAR(50),
-   stock VARCHAR(50),
+   stock INTEGER,
    type_gant_id INT NOT NULL,
    taille_id INT NOT NULL,
    PRIMARY KEY(id_gant),
@@ -75,7 +75,7 @@ CREATE TABLE ligne_commande(
 );
 
 CREATE TABLE ligne_panier(
-   utilisateur_id VARCHAR(50),
+   utilisateur_id INTEGER,
    gant_id INT,
    quantite INT,
    date_ajout DATE,
@@ -93,9 +93,9 @@ CREATE TABLE ligne_panier(
 -- Mot de passe pour 'client1' : pbkdf2:sha256:260000$salt123client1$hash...
 -- Mot de passe pour 'client2' : pbkdf2:sha256:260000$salt123client2$hash...
 INSERT INTO utilisateur VALUES
-    ('U001', 'admin', 'admin@boutique-gants.fr', 'Administrateur', 'pbkdf2:sha256:1000000$qwwvIJXyTvBTH4R1$73dd8f46cc5953965c9befed035509d47bb89b18166d02c2ee6b0924fb18f923', 'admin'),
-    ('U002', 'client', 'client@email.com', 'Sophie Martin', 'pbkdf2:sha256:1000000$9u2VVssEqRYwvrze$b3ef9670d06f24ed3dc11a92f1cca4c7b00dd5c301d13bbedec2d6f1f0bb6eb0', 'client'),
-    ('U003', 'client2', 'client2@email.com', 'Thomas Dubois', 'pbkdf2:sha256:1000000$Eq13PRiR0mkFGUej$4df2d53f486dc29e78c65a6ea3cc7004c4343bc58cdb8c91c19d43a3f84399fe', 'client');
+    (1, 'admin', 'admin@boutique-gants.fr', 'Administrateur', 'pbkdf2:sha256:1000000$qwwvIJXyTvBTH4R1$73dd8f46cc5953965c9befed035509d47bb89b18166d02c2ee6b0924fb18f923', 'admin'),
+    (2, 'client', 'client@email.com', 'Sophie Martin', 'pbkdf2:sha256:1000000$9u2VVssEqRYwvrze$b3ef9670d06f24ed3dc11a92f1cca4c7b00dd5c301d13bbedec2d6f1f0bb6eb0', 'client'),
+    (3, 'client2', 'client2@email.com', 'Thomas Dubois', 'pbkdf2:sha256:1000000$Eq13PRiR0mkFGUej$4df2d53f486dc29e78c65a6ea3cc7004c4343bc58cdb8c91c19d43a3f84399fe', 'client');
 
 -- ÉTATS DE COMMANDE
 INSERT INTO etat VALUES
@@ -119,12 +119,12 @@ INSERT INTO taille VALUES
 INSERT INTO type_gant VALUES
     (1, 'Gants de Vélo'),
     (2, 'Gants de Sport Combat'),
-    (3, 'Gants d''Hiver'),
+    (3, 'Gants d\'Hiver'),
     (4, 'Gants de Jardinage'),
     (5, 'Gants de Ski'),
     (6, 'Gants de Protection');
 
--- GANTS (25 gants variés avec stock intégré)
+-- GANTS (30 gants variés avec stock intégré)
 INSERT INTO gant VALUES
     -- Gants de Vélo (5 modèles)
     (1, 'Specialized BG Grail', 85, 'Noir', 39.99, 'specialized_grail_noir.jpg', 'Sport 2000', 'Specialized', '45', 1, 5),
@@ -162,6 +162,20 @@ INSERT INTO gant VALUES
     -- Gants de Protection (2 modèles)
     (24, 'Mechanix Original', 130, 'Noir', 24.99, 'mechanix_orig_noir.jpg', 'Sport 2000', 'Mechanix', '70', 6, 5),
     (25, 'Mechanix M-Pact', 150, 'Rouge', 34.99, 'mechanix_mpact_rouge.jpg', 'Sport 2000', 'Mechanix', '55', 6, 6);
+
+    -- Gants de Vélo (2 modèles supplémentaires)
+    (26, 'Decathlon Triban RC500', 90, 'Noir', 19.99, 'triban_rc500_noir.jpg', 'Decathlon', 'Triban', '60', 1, 5),
+    (27, 'Fox Ranger Gel', 105, 'Gris', 34.99, 'fox_ranger_gris.jpg', 'Sport 2000', 'Fox', '42', 1, 6),
+
+    -- Gants de Sport Combat (1 modèle)
+    (28, 'Adidas Speed 50', 400, 'Bleu', 79.99, 'adidas_speed_bleu.jpg', 'Combat Sports France', 'Adidas', '30', 2, 7),
+
+    -- Gants d’Hiver (1 modèle)
+    (29, 'Quechua SH500', 150, 'Noir', 24.99, 'quechua_sh500_noir.jpg', 'Decathlon', 'Quechua', '85', 3, 5),
+
+    -- Gants de Protection (1 modèle)
+    (30, 'Milwaukee Cut Level 5', 160, 'Gris', 29.99, 'milwaukee_cut5_gris.jpg', 'Jardin & Équipement Pro', 'Milwaukee', '50', 6, 6);
+
 
 -- COMMANDES
 INSERT INTO commande VALUES

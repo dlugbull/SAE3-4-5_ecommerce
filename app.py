@@ -5,21 +5,7 @@ from flask import Flask, request, render_template, redirect, url_for, abort, fla
 from flask import Blueprint
 import pymysql.cursors
 
-import os
-from dotenv import load_dotenv
-load_dotenv()
 
-def get_db():
-    if 'db' not in g:
-        g.db =  pymysql.connect(
-            host=os.environ.get("localhost"),                # à modifier
-            user=os.environ.get("secret"),               # à modifier
-            password=os.environ.get("login"),        # à modifier
-            database=os.environ.get("bdd_login_sae"),        # à modifier
-            charset='utf8mb4',
-            cursorclass=pymysql.cursors.DictCursor
-        )
-    return g.db
 
 from controllers.auth_security import *
 from controllers.fixtures_load import *
