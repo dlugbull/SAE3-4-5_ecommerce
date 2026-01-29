@@ -163,6 +163,20 @@ INSERT INTO gant VALUES
     (24, 'Mechanix Original', 130, 'Noir', 24.99, 'mechanix_orig_noir.jpg', 'Sport 2000', 'Mechanix', '70', 6, 5),
     (25, 'Mechanix M-Pact', 150, 'Rouge', 34.99, 'mechanix_mpact_rouge.jpg', 'Sport 2000', 'Mechanix', '55', 6, 6);
 
+    -- Gants de Vélo (2 modèles supplémentaires)
+    (26, 'Decathlon Triban RC500', 90, 'Noir', 19.99, 'triban_rc500_noir.jpg', 'Decathlon', 'Triban', '60', 1, 5),
+    (27, 'Fox Ranger Gel', 105, 'Gris', 34.99, 'fox_ranger_gris.jpg', 'Sport 2000', 'Fox', '42', 1, 6),
+
+    -- Gants de Sport Combat (1 modèle)
+    (28, 'Adidas Speed 50', 400, 'Bleu', 79.99, 'adidas_speed_bleu.jpg', 'Combat Sports France', 'Adidas', '30', 2, 7),
+
+    -- Gants d’Hiver (1 modèle)
+    (29, 'Quechua SH500', 150, 'Noir', 24.99, 'quechua_sh500_noir.jpg', 'Decathlon', 'Quechua', '85', 3, 5),
+
+    -- Gants de Protection (1 modèle)
+    (30, 'Milwaukee Cut Level 5', 160, 'Gris', 29.99, 'milwaukee_cut5_gris.jpg', 'Jardin & Équipement Pro', 'Milwaukee', '50', 6, 6);
+
+
 -- COMMANDES
 INSERT INTO commande VALUES
     (1, '2025-01-10 09:30:00', 2, 'U002'),
