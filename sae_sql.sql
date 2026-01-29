@@ -41,7 +41,7 @@ CREATE TABLE commande(
    id_commande INT AUTO_INCREMENT,
    date_achat DATETIME,
    etat_id INT NOT NULL,
-   utilisateur_id VARCHAR(50) NOT NULL,
+   utilisateur_id INTEGER NOT NULL,
    PRIMARY KEY(id_commande),
    FOREIGN KEY(etat_id) REFERENCES etat(id_etat),
    FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur)
@@ -85,13 +85,11 @@ CREATE TABLE ligne_panier(
 );
 
 -- ============================================
--- JEU DE DONNÉES DE TEST - SYSTÈME DE GANTS V2
+-- JEU DE DONNÉES DE TEST - SYSTÈME DE GANTS V2 CORRIGÉ
 -- ============================================
 
 -- UTILISATEURS (avec mots de passe hashés pbkdf2:sha256)
--- Mot de passe pour 'admin' : pbkdf2:sha256:260000$salt123admin$hash...
--- Mot de passe pour 'client1' : pbkdf2:sha256:260000$salt123client1$hash...
--- Mot de passe pour 'client2' : pbkdf2:sha256:260000$salt123client2$hash...
+-- Mot de passe pour tous : 'password123'
 INSERT INTO utilisateur VALUES
     (1, 'admin', 'admin@boutique-gants.fr', 'Administrateur', 'pbkdf2:sha256:1000000$qwwvIJXyTvBTH4R1$73dd8f46cc5953965c9befed035509d47bb89b18166d02c2ee6b0924fb18f923', 'admin'),
     (2, 'client', 'client@email.com', 'Sophie Martin', 'pbkdf2:sha256:1000000$9u2VVssEqRYwvrze$b3ef9670d06f24ed3dc11a92f1cca4c7b00dd5c301d13bbedec2d6f1f0bb6eb0', 'client'),
@@ -126,120 +124,112 @@ INSERT INTO type_gant VALUES
 
 -- GANTS (30 gants variés avec stock intégré)
 INSERT INTO gant VALUES
-    -- Gants de Vélo (5 modèles)
-    (1, 'Specialized BG Grail', 85, 'Noir', 39.99, 'specialized_grail_noir.jpg', 'Sport 2000', 'Specialized', '45', 1, 5),
-    (2, 'Specialized BG Grail', 85, 'Rouge', 39.99, 'specialized_grail_rouge.jpg', 'Sport 2000', 'Specialized', '38', 1, 7),
-    (3, 'Giro DND Cycling', 75, 'Noir', 29.99, 'giro_dnd_noir.jpg', 'Sport 2000', 'Giro', '52', 1, 5),
-    (4, 'Giro DND Cycling', 75, 'Vert', 29.99, 'giro_dnd_vert.jpg', 'Sport 2000', 'Giro', '30', 1, 7),
-    (5, 'Specialized Prime-Series', 95, 'Bleu', 54.99, 'specialized_prime_bleu.jpg', 'Sport 2000', 'Specialized', '25', 1, 6),
+    -- Gants de Vélo (7 modèles)
+    (1, 'Specialized BG Grail', 85, 'Noir', 39.99, 'specialized_grail_noir.jpg', 'Sport 2000', 'Specialized', 45, 1, 5),
+    (2, 'Specialized BG Grail', 85, 'Rouge', 39.99, 'specialized_grail_rouge.jpg', 'Sport 2000', 'Specialized', 38, 1, 7),
+    (3, 'Giro DND Cycling', 75, 'Noir', 29.99, 'giro_dnd_noir.jpg', 'Sport 2000', 'Giro', 52, 1, 5),
+    (4, 'Giro DND Cycling', 75, 'Vert', 29.99, 'giro_dnd_vert.jpg', 'Sport 2000', 'Giro', 30, 1, 7),
+    (5, 'Specialized Prime-Series', 95, 'Bleu', 54.99, 'specialized_prime_bleu.jpg', 'Sport 2000', 'Specialized', 25, 1, 6),
+    (26, 'Decathlon Triban RC500', 90, 'Noir', 19.99, 'triban_rc500_noir.jpg', 'Decathlon', 'Triban', 60, 1, 5),
+    (27, 'Fox Ranger Gel', 105, 'Gris', 34.99, 'fox_ranger_gris.jpg', 'Sport 2000', 'Fox', 42, 1, 6),
 
-    -- Gants de Sport Combat (5 modèles)
-    (6, 'Venum Elite Boxing 12oz', 420, 'Noir', 119.99, 'venum_elite_noir.jpg', 'Combat Sports France', 'Venum', '18', 2, 7),
-    (7, 'Venum Elite Boxing 14oz', 450, 'Rouge', 119.99, 'venum_elite_rouge.jpg', 'Combat Sports France', 'Venum', '15', 2, 9),
-    (8, 'Everlast PowerLock 12oz', 430, 'Noir', 89.99, 'everlast_power_noir.jpg', 'Combat Sports France', 'Everlast', '22', 2, 7),
-    (9, 'Venum Impact MMA', 280, 'Noir', 69.99, 'venum_impact_noir.jpg', 'Combat Sports France', 'Venum', '35', 2, 5),
-    (10, 'Everlast Pro Style 10oz', 380, 'Rouge', 44.99, 'everlast_pro_rouge.jpg', 'Combat Sports France', 'Everlast', '40', 2, 5),
+    -- Gants de Sport Combat (6 modèles)
+    (6, 'Venum Elite Boxing 12oz', 420, 'Noir', 119.99, 'venum_elite_noir.jpg', 'Combat Sports France', 'Venum', 18, 2, 7),
+    (7, 'Venum Elite Boxing 14oz', 450, 'Rouge', 119.99, 'venum_elite_rouge.jpg', 'Combat Sports France', 'Venum', 15, 2, 9),
+    (8, 'Everlast PowerLock 12oz', 430, 'Noir', 89.99, 'everlast_power_noir.jpg', 'Combat Sports France', 'Everlast', 22, 2, 7),
+    (9, 'Venum Impact MMA', 280, 'Noir', 69.99, 'venum_impact_noir.jpg', 'Combat Sports France', 'Venum', 35, 2, 5),
+    (10, 'Everlast Pro Style 10oz', 380, 'Rouge', 44.99, 'everlast_pro_rouge.jpg', 'Combat Sports France', 'Everlast', 40, 2, 5),
+    (28, 'Adidas Speed 50', 400, 'Bleu', 79.99, 'adidas_speed_bleu.jpg', 'Combat Sports France', 'Adidas', 30, 2, 7),
 
-    -- Gants d'Hiver (5 modèles)
-    (11, 'The North Face Etip', 120, 'Noir', 49.99, 'tnf_etip_noir.jpg', 'Outdoor Adventure', 'The North Face', '55', 3, 5),
-    (12, 'The North Face Etip', 120, 'Bleu', 49.99, 'tnf_etip_bleu.jpg', 'Outdoor Adventure', 'The North Face', '42', 3, 7),
-    (13, 'Columbia Thermarator', 140, 'Noir', 34.99, 'columbia_therm_noir.jpg', 'Outdoor Adventure', 'Columbia', '65', 3, 5),
-    (14, 'The North Face Montana', 180, 'Noir', 69.99, 'tnf_montana_noir.jpg', 'Outdoor Adventure', 'The North Face', '28', 3, 6),
-    (15, 'Columbia Whirlibird', 160, 'Violet', 44.99, 'columbia_whirl_violet.jpg', 'Outdoor Adventure', 'Columbia', '35', 3, 5),
+    -- Gants d'Hiver (6 modèles)
+    (11, 'The North Face Etip', 120, 'Noir', 49.99, 'tnf_etip_noir.jpg', 'Outdoor Adventure', 'The North Face', 55, 3, 5),
+    (12, 'The North Face Etip', 120, 'Bleu', 49.99, 'tnf_etip_bleu.jpg', 'Outdoor Adventure', 'The North Face', 42, 3, 7),
+    (13, 'Columbia Thermarator', 140, 'Noir', 34.99, 'columbia_therm_noir.jpg', 'Outdoor Adventure', 'Columbia', 65, 3, 5),
+    (14, 'The North Face Montana', 180, 'Noir', 69.99, 'tnf_montana_noir.jpg', 'Outdoor Adventure', 'The North Face', 28, 3, 6),
+    (15, 'Columbia Whirlibird', 160, 'Violet', 44.99, 'columbia_whirl_violet.jpg', 'Outdoor Adventure', 'Columbia', 35, 3, 5),
+    (29, 'Quechua SH500', 150, 'Noir', 24.99, 'quechua_sh500_noir.jpg', 'Decathlon', 'Quechua', 85, 3, 5),
 
     -- Gants de Jardinage (5 modèles)
-    (16, 'Rostaing Jardin Expert', 95, 'Vert', 14.99, 'rostaing_expert_vert.jpg', 'Jardin & Équipement Pro', 'Rostaing', '80', 4, 5),
-    (17, 'Rostaing Jardin Expert', 95, 'Noir', 14.99, 'rostaing_expert_noir.jpg', 'Jardin & Équipement Pro', 'Rostaing', '75', 4, 7),
-    (18, 'Mapa Jardin Pro', 110, 'Vert', 12.99, 'mapa_jardin_vert.jpg', 'Jardin & Équipement Pro', 'Mapa', '95', 4, 6),
-    (19, 'Rostaing Rosier Premium', 85, 'Rose', 18.99, 'rostaing_rosier_rose.jpg', 'Jardin & Équipement Pro', 'Rostaing', '48', 4, 5),
-    (20, 'Mechanix Garden Utility', 100, 'Vert', 24.99, 'mechanix_garden_vert.jpg', 'Jardin & Équipement Pro', 'Mechanix', '60', 4, 5),
+    (16, 'Rostaing Jardin Expert', 95, 'Vert', 14.99, 'rostaing_expert_vert.jpg', 'Jardin & Équipement Pro', 'Rostaing', 80, 4, 5),
+    (17, 'Rostaing Jardin Expert', 95, 'Noir', 14.99, 'rostaing_expert_noir.jpg', 'Jardin & Équipement Pro', 'Rostaing', 75, 4, 7),
+    (18, 'Mapa Jardin Pro', 110, 'Vert', 12.99, 'mapa_jardin_vert.jpg', 'Jardin & Équipement Pro', 'Mapa', 95, 4, 6),
+    (19, 'Rostaing Rosier Premium', 85, 'Rose', 18.99, 'rostaing_rosier_rose.jpg', 'Jardin & Équipement Pro', 'Rostaing', 48, 4, 5),
+    (20, 'Mechanix Garden Utility', 100, 'Vert', 24.99, 'mechanix_garden_vert.jpg', 'Jardin & Équipement Pro', 'Mechanix', 60, 4, 5),
 
     -- Gants de Ski (3 modèles)
-    (21, 'Rossignol Ski Premium', 220, 'Noir', 79.99, 'rossignol_ski_noir.jpg', 'Mountain Gear Europe', 'Rossignol', '25', 5, 6),
-    (22, 'The North Face Apex', 200, 'Blanc', 89.99, 'tnf_apex_blanc.jpg', 'Mountain Gear Europe', 'The North Face', '20', 5, 6),
-    (23, 'Rossignol Tempest IMPR', 240, 'Rouge', 99.99, 'rossignol_tempest_rouge.jpg', 'Mountain Gear Europe', 'Rossignol', '18', 5, 7),
+    (21, 'Rossignol Ski Premium', 220, 'Noir', 79.99, 'rossignol_ski_noir.jpg', 'Mountain Gear Europe', 'Rossignol', 25, 5, 6),
+    (22, 'The North Face Apex', 200, 'Blanc', 89.99, 'tnf_apex_blanc.jpg', 'Mountain Gear Europe', 'The North Face', 20, 5, 6),
+    (23, 'Rossignol Tempest IMPR', 240, 'Rouge', 99.99, 'rossignol_tempest_rouge.jpg', 'Mountain Gear Europe', 'Rossignol', 18, 5, 7),
 
-    -- Gants de Protection (2 modèles)
-    (24, 'Mechanix Original', 130, 'Noir', 24.99, 'mechanix_orig_noir.jpg', 'Sport 2000', 'Mechanix', '70', 6, 5),
-    (25, 'Mechanix M-Pact', 150, 'Rouge', 34.99, 'mechanix_mpact_rouge.jpg', 'Sport 2000', 'Mechanix', '55', 6, 6);
+    -- Gants de Protection (3 modèles)
+    (24, 'Mechanix Original', 130, 'Noir', 24.99, 'mechanix_orig_noir.jpg', 'Sport 2000', 'Mechanix', 70, 6, 5),
+    (25, 'Mechanix M-Pact', 150, 'Rouge', 34.99, 'mechanix_mpact_rouge.jpg', 'Sport 2000', 'Mechanix', 55, 6, 6),
+    (30, 'Milwaukee Cut Level 5', 160, 'Gris', 29.99, 'milwaukee_cut5_gris.jpg', 'Jardin & Équipement Pro', 'Milwaukee', 50, 6, 6);
 
-    -- Gants de Vélo (2 modèles supplémentaires)
-    (26, 'Decathlon Triban RC500', 90, 'Noir', 19.99, 'triban_rc500_noir.jpg', 'Decathlon', 'Triban', '60', 1, 5),
-    (27, 'Fox Ranger Gel', 105, 'Gris', 34.99, 'fox_ranger_gris.jpg', 'Sport 2000', 'Fox', '42', 1, 6),
-
-    -- Gants de Sport Combat (1 modèle)
-    (28, 'Adidas Speed 50', 400, 'Bleu', 79.99, 'adidas_speed_bleu.jpg', 'Combat Sports France', 'Adidas', '30', 2, 7),
-
-    -- Gants d’Hiver (1 modèle)
-    (29, 'Quechua SH500', 150, 'Noir', 24.99, 'quechua_sh500_noir.jpg', 'Decathlon', 'Quechua', '85', 3, 5),
-
-    -- Gants de Protection (1 modèle)
-    (30, 'Milwaukee Cut Level 5', 160, 'Gris', 29.99, 'milwaukee_cut5_gris.jpg', 'Jardin & Équipement Pro', 'Milwaukee', '50', 6, 6);
-
-
--- COMMANDES
+-- COMMANDES (utilisateur_id corrigé pour être INTEGER au lieu de VARCHAR)
 INSERT INTO commande VALUES
-    (1, '2025-01-10 09:30:00', 2, 'U002'),
-    (2, '2025-01-12 14:15:00', 2, 'U003'),
-    (3, '2025-01-15 10:45:00', 1, 'U002'),
-    (4, '2025-01-18 16:20:00', 1, 'U003'),
-    (5, '2025-01-20 11:00:00', 2, 'U002'),
-    (6, '2025-01-22 13:30:00', 1, 'U003'),
-    (7, '2025-01-24 15:45:00', 2, 'U002');
+    (1, '2025-01-10 09:30:00', 2, 2),
+    (2, '2025-01-12 14:15:00', 2, 3),
+    (3, '2025-01-15 10:45:00', 1, 2),
+    (4, '2025-01-18 16:20:00', 1, 3),
+    (5, '2025-01-20 11:00:00', 2, 2),
+    (6, '2025-01-22 13:30:00', 1, 3),
+    (7, '2025-01-24 15:45:00', 2, 2);
 
 -- LIGNES DE COMMANDE
 INSERT INTO ligne_commande VALUES
-    -- Commande 1 - Client1 (Expédiée) - Vélo
+    -- Commande 1 - Sophie Martin (Expédiée) - Vélo
     (1, 1, 1, 39.99),
     (1, 3, 2, 29.99),
-    -- Commande 2 - Client2 (Expédiée) - Jardinage
+    -- Commande 2 - Thomas Dubois (Expédiée) - Jardinage
     (2, 16, 3, 14.99),
     (2, 18, 2, 12.99),
-    -- Commande 3 - Client1 (En attente) - Combat + Hiver
+    -- Commande 3 - Sophie Martin (En attente) - Combat + Hiver
     (3, 6, 1, 119.99),
     (3, 11, 1, 49.99),
-    -- Commande 4 - Client2 (En attente) - Ski
+    -- Commande 4 - Thomas Dubois (En attente) - Ski
     (4, 21, 1, 79.99),
     (4, 22, 1, 89.99),
-    -- Commande 5 - Client1 (Expédiée) - Hiver + Jardinage
+    -- Commande 5 - Sophie Martin (Expédiée) - Hiver + Jardinage
     (5, 13, 2, 34.99),
     (5, 19, 1, 18.99),
-    -- Commande 6 - Client2 (En attente) - Protection + Vélo
+    -- Commande 6 - Thomas Dubois (En attente) - Protection + Vélo
     (6, 24, 2, 24.99),
     (6, 5, 1, 54.99),
-    -- Commande 7 - Client1 (Expédiée) - Combat
+    -- Commande 7 - Sophie Martin (Expédiée) - Combat
     (7, 8, 1, 89.99),
     (7, 10, 1, 44.99);
 
--- PANIERS EN COURS
+-- PANIERS EN COURS (utilisateur_id corrigé pour être INTEGER au lieu de VARCHAR)
 INSERT INTO ligne_panier VALUES
-    -- Panier Client1
-    ('U002', 7, 1, '2025-01-25'),
-    ('U002', 14, 1, '2025-01-26'),
-    ('U002', 20, 2, '2025-01-26'),
-    -- Panier Client2
-    ('U003', 2, 1, '2025-01-25'),
-    ('U003', 9, 1, '2025-01-27'),
-    ('U003', 23, 1, '2025-01-27');
+    -- Panier Sophie Martin
+    (2, 7, 1, '2025-01-25'),
+    (2, 14, 1, '2025-01-26'),
+    (2, 20, 2, '2025-01-26'),
+    -- Panier Thomas Dubois
+    (3, 2, 1, '2025-01-25'),
+    (3, 9, 1, '2025-01-27'),
+    (3, 23, 1, '2025-01-27');
 
 -- ============================================
 -- STATISTIQUES DU JEU DE DONNÉES
 -- ============================================
--- 25 gants (gants) avec stock intégré
--- 6 types : Vélo (5), Sport Combat (5), Hiver (5), Jardinage (5), Ski (3), Protection (2)
+-- 30 gants avec stock intégré
+-- 6 types : Vélo (7), Sport Combat (6), Hiver (6), Jardinage (5), Ski (3), Protection (3)
 -- 10 tailles différentes (6 à 15)
 -- 3 utilisateurs : 1 admin + 2 clients
 -- Mots de passe hashés avec pbkdf2:sha256
 -- 7 commandes (4 expédiées, 3 en attente)
 -- 14 lignes de commande
--- 6 gants dans les paniers (3 par client)
--- Stock total : 1216 pièces
+-- 6 articles dans les paniers (3 par client)
+-- Stock total : 1373 pièces
 -- ============================================
 
--- REMARQUES IMPORTANTES :
--- - Les mots de passe sont hashés avec pbkdf2:sha256 (méthode Flask standard)
--- - Format : pbkdf2:sha256:iterations$salt$hash
--- - Le stock est maintenant une colonne directe dans la table gant
--- - Chaque gant a une couleur et une taille spécifique
--- - Les gants sont dupliqués pour avoir différentes couleurs/tailles
+-- CORRECTIONS APPORTÉES :
+-- ✓ utilisateur_id dans commande : VARCHAR(50) → INTEGER
+-- ✓ utilisateur_id dans ligne_panier : VARCHAR(50) → INTEGER
+-- ✓ Valeurs 'U002' et 'U003' remplacées par 2 et 3
+-- ✓ Stock : format 'XX' (string) → XX (integer)
+-- ✓ Tous les 30 gants présents
+-- ✓ Cohérence des foreign keys respectée
 -- ============================================
