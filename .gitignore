@@ -1,0 +1,6 @@
+.idea
+.gitignore
+__pycache__
+.git
+.env
+connexion_db.py
