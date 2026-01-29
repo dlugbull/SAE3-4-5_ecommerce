@@ -34,33 +34,33 @@ def fct_fixtures_load():
     # Création de la table utilisateur
     sql = '''
     CREATE TABLE utilisateur(
-        id_utilisateur INTEGER AUTO-INCREMENT,
+        id_utilisateur INTEGER AUTO_INCREMENT,
         login VARCHAR(50),
         email VARCHAR(50),
         nom_utilisateur VARCHAR(50),
         password VARCHAR(255),
         role VARCHAR(50),
         PRIMARY KEY(id_utilisateur)
-    ) DEFAULT CHARSET utf8;
+    ) DEFAULT CHARSET=utf8
     '''
     mycursor.execute(sql)
 
     # Insertion des utilisateurs
     sql = '''
     INSERT INTO utilisateur VALUES
-        ('U001', 'admin', 'admin@boutique-gants.fr', 'Administrateur', 'pbkdf2:sha256:1000000$qwwvIJXyTvBTH4R1$73dd8f46cc5953965c9befed035509d47bb89b18166d02c2ee6b0924fb18f923', 'admin'),
-        ('U002', 'client', 'client@email.com', 'Sophie Martin', 'pbkdf2:sha256:1000000$9u2VVssEqRYwvrze$b3ef9670d06f24ed3dc11a92f1cca4c7b00dd5c301d13bbedec2d6f1f0bb6eb0', 'client'),
-        ('U003', 'client2', 'client2@email.com', 'Thomas Dubois', 'pbkdf2:sha256:1000000$Eq13PRiR0mkFGUej$4df2d53f486dc29e78c65a6ea3cc7004c4343bc58cdb8c91c19d43a3f84399fe', 'client')
+        (1, 'admin', 'admin@boutique-gants.fr', 'Administrateur', 'pbkdf2:sha256:1000000$qwwvIJXyTvBTH4R1$73dd8f46cc5953965c9befed035509d47bb89b18166d02c2ee6b0924fb18f923', 'admin'),
+        (2, 'client', 'client@email.com', 'Sophie Martin', 'pbkdf2:sha256:1000000$9u2VVssEqRYwvrze$b3ef9670d06f24ed3dc11a92f1cca4c7b00dd5c301d13bbedec2d6f1f0bb6eb0', 'client'),
+        (3, 'client2', 'client2@email.com', 'Thomas Dubois', 'pbkdf2:sha256:1000000$Eq13PRiR0mkFGUej$4df2d53f486dc29e78c65a6ea3cc7004c4343bc58cdb8c91c19d43a3f84399fe', 'client')
     '''
     mycursor.execute(sql)
 
     # Création de la table etat
     sql = '''
     CREATE TABLE etat(
-        id_etat INT,
+        id_etat INT AUTO_INCREMENT,
         libelle_etat VARCHAR(50),
         PRIMARY KEY(id_etat)
-    ) DEFAULT CHARSET=utf8;
+    ) DEFAULT CHARSET=utf8
     '''
     mycursor.execute(sql)
 
@@ -75,12 +75,12 @@ def fct_fixtures_load():
     # Création de la table taille
     sql = '''
     CREATE TABLE taille(
-        id_taille INT,
+        id_taille INT AUTO_INCREMENT,
         num_taille_fr VARCHAR(50),
         taille_us VARCHAR(50),
         tour_de_main VARCHAR(50),
         PRIMARY KEY(id_taille)
-    ) DEFAULT CHARSET utf8;
+    ) DEFAULT CHARSET=utf8
     '''
     mycursor.execute(sql)
 
@@ -103,10 +103,10 @@ def fct_fixtures_load():
     # Création de la table type_gant
     sql = '''
     CREATE TABLE type_gant(
-        id_type_gant INT,
+        id_type_gant INT AUTO_INCREMENT,
         nom_type_gant VARCHAR(255),
         PRIMARY KEY(id_type_gant)
-    ) DEFAULT CHARSET utf8;
+    ) DEFAULT CHARSET=utf8
     '''
     mycursor.execute(sql)
 
@@ -115,7 +115,7 @@ def fct_fixtures_load():
     INSERT INTO type_gant VALUES
         (1, 'Gants de Vélo'),
         (2, 'Gants de Sport Combat'),
-        (3, 'Gants d\'\'Hiver'),
+        (3, 'Gants d\\'Hiver'),
         (4, 'Gants de Jardinage'),
         (5, 'Gants de Ski'),
         (6, 'Gants de Protection')
@@ -125,34 +125,34 @@ def fct_fixtures_load():
     # Création de la table commande
     sql = '''
     CREATE TABLE commande(
-        id_commande INT,
+        id_commande INT AUTO_INCREMENT,
         date_achat DATETIME,
         etat_id INT NOT NULL,
-        utilisateur_id VARCHAR(50) NOT NULL,
+        utilisateur_id INTEGER NOT NULL,
         PRIMARY KEY(id_commande),
         FOREIGN KEY(etat_id) REFERENCES etat(id_etat),
         FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur)
-    ) DEFAULT CHARSET=utf8;
+    ) DEFAULT CHARSET=utf8
     '''
     mycursor.execute(sql)
 
     # Insertion des commandes
     sql = '''
     INSERT INTO commande VALUES
-        (1, '2025-01-10 09:30:00', 2, 'U002'),
-        (2, '2025-01-12 14:15:00', 2, 'U003'),
-        (3, '2025-01-15 10:45:00', 1, 'U002'),
-        (4, '2025-01-18 16:20:00', 1, 'U003'),
-        (5, '2025-01-20 11:00:00', 2, 'U002'),
-        (6, '2025-01-22 13:30:00', 1, 'U003'),
-        (7, '2025-01-24 15:45:00', 2, 'U002')
+        (1, '2025-01-10 09:30:00', 2, 2),
+        (2, '2025-01-12 14:15:00', 2, 3),
+        (3, '2025-01-15 10:45:00', 1, 2),
+        (4, '2025-01-18 16:20:00', 1, 3),
+        (5, '2025-01-20 11:00:00', 2, 2),
+        (6, '2025-01-22 13:30:00', 1, 3),
+        (7, '2025-01-24 15:45:00', 2, 2)
     '''
     mycursor.execute(sql)
 
     # Création de la table gant
     sql = '''
     CREATE TABLE gant(
-        id_gant INT,
+        id_gant INT AUTO_INCREMENT,
         nom_gant VARCHAR(50),
         poids INT,
         couleur VARCHAR(50),
@@ -166,14 +166,14 @@ def fct_fixtures_load():
         PRIMARY KEY(id_gant),
         FOREIGN KEY(type_gant_id) REFERENCES type_gant(id_type_gant),
         FOREIGN KEY(taille_id) REFERENCES taille(id_taille)
-    ) DEFAULT CHARSET=utf8;
+    ) DEFAULT CHARSET=utf8
     '''
     mycursor.execute(sql)
 
-    # Insertion des gants
+    # Insertion des gants (30 gants)
     sql = '''
     INSERT INTO gant VALUES
-        (1, 'Specialized BG Grail', 85, 'Noir', 39.99, 'specialized_grail_noir.jpg', 'Sport 2000', 'Specialized', 4', 1, 5),
+        (1, 'Specialized BG Grail', 85, 'Noir', 39.99, 'specialized_grail_noir.jpg', 'Sport 2000', 'Specialized', 45, 1, 5),
         (2, 'Specialized BG Grail', 85, 'Rouge', 39.99, 'specialized_grail_rouge.jpg', 'Sport 2000', 'Specialized', 38, 1, 7),
         (3, 'Giro DND Cycling', 75, 'Noir', 29.99, 'giro_dnd_noir.jpg', 'Sport 2000', 'Giro', 52, 1, 5),
         (4, 'Giro DND Cycling', 75, 'Vert', 29.99, 'giro_dnd_vert.jpg', 'Sport 2000', 'Giro', 30, 1, 7),
@@ -197,7 +197,12 @@ def fct_fixtures_load():
         (22, 'The North Face Apex', 200, 'Blanc', 89.99, 'tnf_apex_blanc.jpg', 'Mountain Gear Europe', 'The North Face', 20, 5, 6),
         (23, 'Rossignol Tempest IMPR', 240, 'Rouge', 99.99, 'rossignol_tempest_rouge.jpg', 'Mountain Gear Europe', 'Rossignol', 18, 5, 7),
         (24, 'Mechanix Original', 130, 'Noir', 24.99, 'mechanix_orig_noir.jpg', 'Sport 2000', 'Mechanix', 70, 6, 5),
-        (25, 'Mechanix M-Pact', 150, 'Rouge', 34.99, 'mechanix_mpact_rouge.jpg', 'Sport 2000', 'Mechanix', 55, 6, 6)
+        (25, 'Mechanix M-Pact', 150, 'Rouge', 34.99, 'mechanix_mpact_rouge.jpg', 'Sport 2000', 'Mechanix', 55, 6, 6),
+        (26, 'Decathlon Triban RC500', 90, 'Noir', 19.99, 'triban_rc500_noir.jpg', 'Decathlon', 'Triban', 60, 1, 5),
+        (27, 'Fox Ranger Gel', 105, 'Gris', 34.99, 'fox_ranger_gris.jpg', 'Sport 2000', 'Fox', 42, 1, 6),
+        (28, 'Adidas Speed 50', 400, 'Bleu', 79.99, 'adidas_speed_bleu.jpg', 'Combat Sports France', 'Adidas', 30, 2, 7),
+        (29, 'Quechua SH500', 150, 'Noir', 24.99, 'quechua_sh500_noir.jpg', 'Decathlon', 'Quechua', 85, 3, 5),
+        (30, 'Milwaukee Cut Level 5', 160, 'Gris', 29.99, 'milwaukee_cut5_gris.jpg', 'Jardin & Équipement Pro', 'Milwaukee', 50, 6, 6)
     '''
     mycursor.execute(sql)
 
@@ -211,7 +216,7 @@ def fct_fixtures_load():
         PRIMARY KEY(commande_id, gant_id),
         FOREIGN KEY(commande_id) REFERENCES commande(id_commande),
         FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
-    ) DEFAULT CHARSET=utf8;
+    ) DEFAULT CHARSET=utf8
     '''
     mycursor.execute(sql)
 
@@ -238,26 +243,26 @@ def fct_fixtures_load():
     # Création de la table ligne_panier
     sql = '''
     CREATE TABLE ligne_panier(
-        utilisateur_id VARCHAR(50),
+        utilisateur_id INTEGER,
         gant_id INT,
         quantite INT,
         date_ajout DATE,
         PRIMARY KEY(utilisateur_id, gant_id),
         FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
         FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
-    ) DEFAULT CHARSET=utf8;
+    ) DEFAULT CHARSET=utf8
     '''
     mycursor.execute(sql)
 
     # Insertion des lignes de panier
     sql = '''
     INSERT INTO ligne_panier VALUES
-        ('U002', 7, 1, '2025-01-25'),
-        ('U002', 14, 1, '2025-01-26'),
-        ('U002', 20, 2, '2025-01-26'),
-        ('U003', 2, 1, '2025-01-25'),
-        ('U003', 9, 1, '2025-01-27'),
-        ('U003', 23, 1, '2025-01-27')
+        (2, 7, 1, '2025-01-25'),
+        (2, 14, 1, '2025-01-26'),
+        (2, 20, 2, '2025-01-26'),
+        (3, 2, 1, '2025-01-25'),
+        (3, 9, 1, '2025-01-27'),
+        (3, 23, 1, '2025-01-27')
     '''
     mycursor.execute(sql)
 
