@@ -13,56 +13,56 @@ client_panier = Blueprint('client_panier', __name__,
 def client_panier_add():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    id_article = request.form.get('id_article')
+    id_gant = request.form.get('id_gant')
     quantite = request.form.get('quantite')
     # ---------
-    #id_declinaison_article=request.form.get('id_declinaison_article',None)
-    id_declinaison_article = 1
+    #id_declinaison_gant=request.form.get('id_declinaison_gant',None)
+    id_declinaison_gant = 1
 
-# ajout dans le panier d'une déclinaison d'un article (si 1 declinaison : immédiat sinon => vu pour faire un choix
+# ajout dans le panier d'une déclinaison d'un gant (si 1 declinaison : immédiat sinon => vu pour faire un choix
     # sql = '''    '''
-    # mycursor.execute(sql, (id_article))
+    # mycursor.execute(sql, (id_gant))
     # declinaisons = mycursor.fetchall()
     # if len(declinaisons) == 1:
-    #     id_declinaison_article = declinaisons[0]['id_declinaison_article']
+    #     id_declinaison_gant = declinaisons[0]['id_declinaison_gant']
     # elif len(declinaisons) == 0:
     #     abort("pb nb de declinaison")
     # else:
     #     sql = '''   '''
-    #     mycursor.execute(sql, (id_article))
-    #     article = mycursor.fetchone()
-    #     return render_template('client/boutique/declinaison_article.html'
+    #     mycursor.execute(sql, (id_gant))
+    #     gant = mycursor.fetchone()
+    #     return render_template('client/boutique/declinaison_gant.html'
     #                                , declinaisons=declinaisons
     #                                , quantite=quantite
-    #                                , article=article)
+    #                                , gant=gant)
 
-# ajout dans le panier d'un article
+# ajout dans le panier d'un gant
 
 
-    return redirect('/client/article/show')
+    return redirect('/client/gant/show')
 
 @client_panier.route('/client/panier/delete', methods=['POST'])
 def client_panier_delete():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    id_article = request.form.get('id_article','')
+    id_gant = request.form.get('id_gant','')
     quantite = 1
 
     # ---------
-    # partie 2 : on supprime une déclinaison de l'article
-    # id_declinaison_article = request.form.get('id_declinaison_article', None)
+    # partie 2 : on supprime une déclinaison de l'gant
+    # id_declinaison_gant = request.form.get('id_declinaison_gant', None)
 
-    sql = ''' selection de la ligne du panier pour l'article et l'utilisateur connecté'''
-    article_panier=[]
+    sql = ''' selection de la ligne du panier pour l'gant et l'utilisateur connecté'''
+    gant_panier=[]
 
-    if not(article_panier is None) and article_panier['quantite'] > 1:
-        sql = ''' mise à jour de la quantité dans le panier => -1 article '''
+    if not(gant_panier is None) and gant_panier['quantite'] > 1:
+        sql = ''' mise à jour de la quantité dans le panier => -1 gant '''
     else:
         sql = ''' suppression de la ligne de panier'''
 
-    # mise à jour du stock de l'article disponible
+    # mise à jour du stock de l'gant disponible
     get_db().commit()
-    return redirect('/client/article/show')
+    return redirect('/client/gant/show')
 
 
 
@@ -75,26 +75,26 @@ def client_panier_vider():
     sql = ''' sélection des lignes de panier'''
     items_panier = []
     for item in items_panier:
-        sql = ''' suppression de la ligne de panier de l'article pour l'utilisateur connecté'''
+        sql = ''' suppression de la ligne de panier de l'gant pour l'utilisateur connecté'''
 
-        sql2=''' mise à jour du stock de l'article : stock = stock + qté de la ligne pour l'article'''
+        sql2=''' mise à jour du stock de l'gant : stock = stock + qté de la ligne pour l'gant'''
         get_db().commit()
-    return redirect('/client/article/show')
+    return redirect('/client/gant/show')
 
 
 @client_panier.route('/client/panier/delete/line', methods=['POST'])
 def client_panier_delete_line():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    #id_declinaison_article = request.form.get('id_declinaison_article')
+    #id_declinaison_gant = request.form.get('id_declinaison_gant')
 
     sql = ''' selection de ligne du panier '''
 
     sql = ''' suppression de la ligne du panier '''
-    sql2=''' mise à jour du stock de l'article : stock = stock + qté de la ligne pour l'article'''
+    sql2=''' mise à jour du stock de l'gant : stock = stock + qté de la ligne pour l'gant'''
 
     get_db().commit()
-    return redirect('/client/article/show')
+    return redirect('/client/gant/show')
 
 
 @client_panier.route('/client/panier/filtre', methods=['POST'])
@@ -105,11 +105,11 @@ def client_panier_filtre():
     filter_types = request.form.getlist('filter_types', None)
     # test des variables puis
     # mise en session des variables
-    return redirect('/client/article/show')
+    return redirect('/client/gant/show')
 
 
 @client_panier.route('/client/panier/filtre/suppr', methods=['POST'])
 def client_panier_filtre_suppr():
     # suppression  des variables en session
     print("suppr filtre")
-    return redirect('/client/article/show')
+    return redirect('/client/gant/show')

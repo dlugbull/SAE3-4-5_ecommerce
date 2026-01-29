@@ -1,12 +1,3 @@
-DROP TABLE IF EXISTS est_de_taille;
-DROP TABLE IF EXISTS ligne_panier;
-DROP TABLE IF EXISTS ligne_commande;
-DROP TABLE IF EXISTS commande;
-DROP TABLE IF EXISTS taille;
-DROP TABLE IF EXISTS gant;
-DROP TABLE IF EXISTS etat;
-DROP TABLE IF EXISTS utilisateur;
-
 CREATE TABLE utilisateur(
    id_utilisateur VARCHAR(50),
    login VARCHAR(50),
@@ -23,6 +14,30 @@ CREATE TABLE etat(
    PRIMARY KEY(id_etat)
 );
 
+CREATE TABLE taille(
+   id_taille INT,
+   num_taille_fr VARCHAR(50),
+   taille_us VARCHAR(50),
+   tour_de_main VARCHAR(50),
+   PRIMARY KEY(id_taille)
+);
+
+CREATE TABLE type_gant(
+   id_type_gant INT,
+   nom_type_gant VARCHAR(255),
+   PRIMARY KEY(id_type_gant)
+);
+
+CREATE TABLE commande(
+   id_commande INT,
+   date_achat DATETIME,
+   etat_id INT NOT NULL,
+   utilisateur_id VARCHAR(50) NOT NULL,
+   PRIMARY KEY(id_commande),
+   FOREIGN KEY(etat_id) REFERENCES etat(id_etat),
+   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur)
+);
+
 CREATE TABLE gant(
    id_gant INT,
    nom_gant VARCHAR(50),
@@ -33,51 +48,29 @@ CREATE TABLE gant(
    founisseur VARCHAR(50),
    marque VARCHAR(50),
    stock VARCHAR(50),
-   PRIMARY KEY(id_gant)
-);
-
-CREATE TABLE taille(
-   id_taille INT,
-   num_taille_fr VARCHAR(50),
-   taille_us VARCHAR(50),
-   tour_de_main VARCHAR(50),
-   PRIMARY KEY(id_taille)
-);
-
-CREATE TABLE commande(
-   id_commande INT,
-   date_achat DATETIME,
-   id_etat INT NOT NULL,
-   id_utilisateur VARCHAR(50) NOT NULL,
-   PRIMARY KEY(id_commande),
-   FOREIGN KEY(id_etat) REFERENCES etat(id_etat),
-   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur)
+   type_gant_id INT NOT NULL,
+   taille_id INT NOT NULL,
+   PRIMARY KEY(id_gant),
+   FOREIGN KEY(type_gant_id) REFERENCES type_gant(id_type_gant),
+   FOREIGN KEY(taille_id) REFERENCES taille(id_taille)
 );
 
 CREATE TABLE ligne_commande(
-   id_commande INT,
-   id_gant INT,
+   commande_id INT,
+   gant_id INT,
    quantite INT,
    prix DECIMAL(19,4),
-   PRIMARY KEY(id_commande, id_gant),
-   FOREIGN KEY(id_commande) REFERENCES commande(id_commande),
-   FOREIGN KEY(id_gant) REFERENCES gant(id_gant)
+   PRIMARY KEY(commande_id, gant_id),
+   FOREIGN KEY(commande_id) REFERENCES commande(id_commande),
+   FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
 );
 
 CREATE TABLE ligne_panier(
-   id_utilisateur VARCHAR(50),
-   id_gant INT,
+   utilisateur_id VARCHAR(50),
+   gant_id INT,
    quantite INT,
    date_ajout DATE,
-   PRIMARY KEY(id_utilisateur, id_gant),
-   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur),
-   FOREIGN KEY(id_gant) REFERENCES gant(id_gant)
-);
-
-CREATE TABLE est_de_taille(
-   id_gant INT,
-   id_taille INT,
-   PRIMARY KEY(id_gant, id_taille),
-   FOREIGN KEY(id_gant) REFERENCES gant(id_gant),
-   FOREIGN KEY(id_taille) REFERENCES taille(id_taille)
+   PRIMARY KEY(utilisateur_id, gant_id),
+   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+   FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
 );

@@ -1,0 +1,95 @@
+{#  gants_panier  : tableau de dictionnaires
+        * dictionnaire : nom quantite prix gant_id [stock]
+        *
+#}
+
+{% extends "client/layout_client.html" %}
+{% block body %}
+    <div class="container">
+        <div class="row align-self-right">
+        {% include('client/boutique/_panier.html') %}
+            <div class="col">
+              <h3>Les filtres</h3>
+              gants dont le nom est composé par :<br>
+                 {% include('client/boutique/_filtre.html') %}
+            </div>
+        </div>
+
+        <div class="bg-light p-3">
+            <h1>Les gants</h1>
+        </div>
+
+        <div class="row">
+                {% for gant in gants  %}
+                        <div class="card col-4 mt-4 p-1">
+                            <div class="card-body border-dark rounded p-1">
+                                <a href="/client/gant/details?id_gant={{ gant.id_gant }}" >
+                                <h3 class="card-title">
+                                    <span style="color: #0b2e13">{{ gant.nom }}</span><br>
+                                    {{ gant.prix }}
+                                    €
+                                </h3>
+                                     {%  if gant.image is not none %}
+                                        <img class="card-img-top rounded mx-auto d-block"  style="width:100px;height:100px"  src="{{ url_for('static', filename = 'images/')}}{{ gant.image }}"  alt="image  de {{ gant.nom }}" >
+                                    {% else %} <img class="card-img-top rounded mx-auto d-block"   style="width:100px;height:100px"   src="{{ url_for('static', filename='images/no_photo.jpeg')}}"  alt="image  de {{ gant.nom }}" >
+                                    {% endif %}
+                                    <hr>
+                                </a>
+                                <div class="row">
+{# #}                                {% if  gant.stock is defined and gant.stock != None %}
+{# #}                                    {% if gant.stock > 0 %}
+                                        <form  action="/client/panier/add"  method="post" class="col-5">
+                                            <input type="hidden" name="id_gant" value="{{ gant.id_gant }}">
+                                            <div class="input-group">
+                                            <button class="btn  btn-success"  id="button-addon1">
+                                                <i class="fas fa-shopping-cart">Ajouter</i>
+                                            </button>
+                                            <input type="number" id="input-{{ gant.id_gant }}" step="1" min="0" max="{{ gant.stock }}" class="form-control" value="1" name="quantite"  aria-describedby="button-addon1">
+                                            </div>
+                                        </form>
+{# #}                                    {% endif %}
+{# #}                                {% endif %}
+                                     <div class="col-2 align-content-end">
+                                    {% if gant.liste_envie is defined %}
+                                         {%if  gant.liste_envie== 1%}
+                                             <a href="/client/envie/add?id_gant={{ gant.id_gant }}" style="text-decoration: none">💛</a>
+                                         {% else %}
+                                             <a href="/client/envie/add?id_gant={{ gant.id_gant }}" style="text-decoration: none">🤍</a>
+                                         {% endif %}
+                                    {% endif %}
+                                     </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                            {% if gant.stock is defined and gant.stock != None %}
+                                 {% if gant.stock > 0 %}
+                                    <small class="text-muted">Stock restant : {{ gant.stock }}</small>
+                                 {% else %}
+                                    <small class="text-muted">gant  momentanément indisponible</small>
+                                 {% endif %}
+                                {% if gant.nb_declinaison is defined and gant.nb_declinaison != None %}
+                                    ({{ gant.nb_declinaison }} d.)
+                                {% endif %}
+                                <br>
+                            {% endif %}
+                            {% if gant.nb_notes is defined %}
+                                {% if gant.nb_notes > 0 %}
+                                 <a  href="/client/gant/details?id_gant={{ gant.id_gant }}" >
+                                    <span style="color: #3A7734"> note : {{  "{:,.1f}".format(gant.moy_notes) }}({{ gant.nb_notes }})</span>
+                                 </a>
+                                {% endif %}
+                            {% endif %}
+                            {% if gant.nb_avis is defined %}
+                                {% if gant.nb_avis > 0 %}
+                                 <a href="/client/gant/details?id_gant={{ gant.id_gant }}" >
+                                    <span style="color: #3A7734">({{ gant.nb_avis }} avis)</span>
+                                 </a>
+                                {% endif %}
+                            {% endif %}
+                            </div>
+                        </div>
+                {% endfor %}
+        </div>
+    </div>
+{#    {{ gants | pprint }}#}
+{% endblock %}

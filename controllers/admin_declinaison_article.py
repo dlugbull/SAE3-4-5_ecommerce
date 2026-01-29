@@ -5,21 +5,21 @@ from flask import Blueprint
 from flask import request, render_template, redirect, flash
 from connexion_db import get_db
 
-admin_declinaison_article = Blueprint('admin_declinaison_article', __name__,
+admin_declinaison_gant = Blueprint('admin_declinaison_gant', __name__,
                          template_folder='templates')
 
 
-@admin_declinaison_article.route('/admin/declinaison_article/add')
-def add_declinaison_article():
-    id_article=request.args.get('id_article')
+@admin_declinaison_gant.route('/admin/declinaison_gant/add')
+def add_declinaison_gant():
+    id_gant=request.args.get('id_gant')
     mycursor = get_db().cursor()
-    article=[]
+    gant=[]
     couleurs=None
     tailles=None
     d_taille_uniq=None
     d_couleur_uniq=None
-    return render_template('admin/article/add_declinaison_article.html'
-                           , article=article
+    return render_template('admin/gant/add_declinaison_gant.html'
+                           , gant=gant
                            , couleurs=couleurs
                            , tailles=tailles
                            , d_taille_uniq=d_taille_uniq
@@ -27,55 +27,55 @@ def add_declinaison_article():
                            )
 
 
-@admin_declinaison_article.route('/admin/declinaison_article/add', methods=['POST'])
-def valid_add_declinaison_article():
+@admin_declinaison_gant.route('/admin/declinaison_gant/add', methods=['POST'])
+def valid_add_declinaison_gant():
     mycursor = get_db().cursor()
 
-    id_article = request.form.get('id_article')
+    id_gant = request.form.get('id_gant')
     stock = request.form.get('stock')
     taille = request.form.get('taille')
     couleur = request.form.get('couleur')
     # attention au doublon
     get_db().commit()
-    return redirect('/admin/article/edit?id_article=' + id_article)
+    return redirect('/admin/gant/edit?id_gant=' + id_gant)
 
 
-@admin_declinaison_article.route('/admin/declinaison_article/edit', methods=['GET'])
-def edit_declinaison_article():
-    id_declinaison_article = request.args.get('id_declinaison_article')
+@admin_declinaison_gant.route('/admin/declinaison_gant/edit', methods=['GET'])
+def edit_declinaison_gant():
+    id_declinaison_gant = request.args.get('id_declinaison_gant')
     mycursor = get_db().cursor()
-    declinaison_article=[]
+    declinaison_gant=[]
     couleurs=None
     tailles=None
     d_taille_uniq=None
     d_couleur_uniq=None
-    return render_template('admin/article/edit_declinaison_article.html'
+    return render_template('admin/gant/edit_declinaison_gant.html'
                            , tailles=tailles
                            , couleurs=couleurs
-                           , declinaison_article=declinaison_article
+                           , declinaison_gant=declinaison_gant
                            , d_taille_uniq=d_taille_uniq
                            , d_couleur_uniq=d_couleur_uniq
                            )
 
 
-@admin_declinaison_article.route('/admin/declinaison_article/edit', methods=['POST'])
-def valid_edit_declinaison_article():
-    id_declinaison_article = request.form.get('id_declinaison_article','')
-    id_article = request.form.get('id_article','')
+@admin_declinaison_gant.route('/admin/declinaison_gant/edit', methods=['POST'])
+def valid_edit_declinaison_gant():
+    id_declinaison_gant = request.form.get('id_declinaison_gant','')
+    id_gant = request.form.get('id_gant','')
     stock = request.form.get('stock','')
     taille_id = request.form.get('id_taille','')
     couleur_id = request.form.get('id_couleur','')
     mycursor = get_db().cursor()
 
-    message = u'declinaison_article modifié , id:' + str(id_declinaison_article) + '- stock :' + str(stock) + ' - taille_id:' + str(taille_id) + ' - couleur_id:' + str(couleur_id)
+    message = u'declinaison_gant modifié , id:' + str(id_declinaison_gant) + '- stock :' + str(stock) + ' - taille_id:' + str(taille_id) + ' - couleur_id:' + str(couleur_id)
     flash(message, 'alert-success')
-    return redirect('/admin/article/edit?id_article=' + str(id_article))
+    return redirect('/admin/gant/edit?id_gant=' + str(id_gant))
 
 
-@admin_declinaison_article.route('/admin/declinaison_article/delete', methods=['GET'])
-def admin_delete_declinaison_article():
-    id_declinaison_article = request.args.get('id_declinaison_article','')
-    id_article = request.args.get('id_article','')
+@admin_declinaison_gant.route('/admin/declinaison_gant/delete', methods=['GET'])
+def admin_delete_declinaison_gant():
+    id_declinaison_gant = request.args.get('id_declinaison_gant','')
+    id_gant = request.args.get('id_gant','')
 
-    flash(u'declinaison supprimée, id_declinaison_article : ' + str(id_declinaison_article),  'alert-success')
-    return redirect('/admin/article/edit?id_article=' + str(id_article))
+    flash(u'declinaison supprimée, id_declinaison_gant : ' + str(id_declinaison_gant),  'alert-success')
+    return redirect('/admin/gant/edit?id_gant=' + str(id_gant))

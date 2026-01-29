@@ -21,7 +21,7 @@ def auth_login_post():
     login = request.form.get('login')
     password = request.form.get('password')
     tuple_select = (login)
-    sql = " SELECT login, password FROM users WHERE login = %s "
+    sql = " SELECT login, password FROM utilisateur WHERE login = %s "
     retour = mycursor.execute(sql, (login))
     user = mycursor.fetchone()
     if user:
@@ -37,7 +37,7 @@ def auth_login_post():
             if user['role'] == 'ROLE_admin':
                 return redirect('/admin/commande/index')
             else:
-                return redirect('/client/article/show')
+                return redirect('/client/gant/show')
     else:
         flash(u'Vérifier votre login et essayer encore.', 'alert-warning')
         return redirect('/login')
@@ -54,7 +54,7 @@ def auth_signup_post():
     login = request.form.get('login')
     password = request.form.get('password')
     tuple_select = (login, email)
-    sql = " SELECT * FROM utilisateurs WHERE login=%s or email=%s  "
+    sql = " SELECT * FROM utilisateur WHERE login=%s or email=%s  "
     retour = mycursor.execute(sql, tuple_select)
     user = mycursor.fetchone()
     if user:
@@ -64,7 +64,7 @@ def auth_signup_post():
     # ajouter un nouveau user
     password = generate_password_hash(password, method='scrypt')
     tuple_insert = (login, email, password, 'ROLE_client')
-    sql = """  INSERT INTO utilisateurs (login, email, password, role) VALUES (%s, %s, %s, %s)  """
+    sql = """  INSERT INTO utilisateur (login, email, password, role) VALUES (%s, %s, %s, %s)  """
     mycursor.execute(sql, tuple_insert)
     get_db().commit()
     sql = """  SELECT last_insert_id() AS last_insert_id;  """
@@ -78,7 +78,7 @@ def auth_signup_post():
     session['login'] = login
     session['role'] = 'ROLE_client'
     session['id_user'] = id_user
-    return redirect('/client/article/show')
+    return redirect('/client/gant/show')
 
 
 @auth_security.route('/logout')
