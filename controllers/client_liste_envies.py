@@ -40,7 +40,7 @@ def client_liste_envies_show():
 def client_historique_add(gant_id, client_id):
     mycursor = get_db().cursor()
     client_id = session['id_user']
-    # rechercher si l'gant pour cet utilisateur est dans l'historique
+    # rechercher si le gant pour cet utilisateur est dans l'historique
     # si oui mettre
     sql ='''   '''
     mycursor.execute(sql, (gant_id, client_id))

@@ -42,7 +42,7 @@ def client_commande_add():
     sql = ''' selection du contenu du panier de l'utilisateur '''
     items_ligne_panier = []
     # if items_ligne_panier is None or len(items_ligne_panier) < 1:
-    #     flash(u'Pas d\'gants dans le ligne_panier', 'alert-warning')
+    #     flash(u'Pas de gants dans le ligne_panier', 'alert-warning')
     #     return redirect('/client/gant/show')
                                            # https://pynative.com/python-mysql-transaction-management-using-commit-rollback/
     #a = datetime.strptime('my date', "%b %d %Y %H:%M")

@@ -75,9 +75,9 @@ def client_panier_vider():
     sql = ''' sélection des lignes de panier'''
     items_panier = []
     for item in items_panier:
-        sql = ''' suppression de la ligne de panier de l'gant pour l'utilisateur connecté'''
+        sql = ''' suppression de la ligne de panier de le gant pour l'utilisateur connecté'''
 
-        sql2=''' mise à jour du stock de l'gant : stock = stock + qté de la ligne pour l'gant'''
+        sql2=''' mise à jour du stock de le gant : stock = stock + qté de la ligne pour le gant'''
         get_db().commit()
     return redirect('/client/gant/show')
 
@@ -91,7 +91,7 @@ def client_panier_delete_line():
     sql = ''' selection de ligne du panier '''
 
     sql = ''' suppression de la ligne du panier '''
-    sql2=''' mise à jour du stock de l'gant : stock = stock + qté de la ligne pour l'gant'''
+    sql2=''' mise à jour du stock de le gant : stock = stock + qté de la ligne pour le gant'''
 
     get_db().commit()
     return redirect('/client/gant/show')

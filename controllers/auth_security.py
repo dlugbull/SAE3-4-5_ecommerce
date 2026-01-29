@@ -21,9 +21,10 @@ def auth_login_post():
     login = request.form.get('login')
     password = request.form.get('password')
     tuple_select = (login)
-    sql = " SELECT login, password FROM utilisateur WHERE login = %s "
+    sql = " SELECT * FROM utilisateur WHERE login = %s "
     retour = mycursor.execute(sql, (login))
     user = mycursor.fetchone()
+    print(generate_password_hash('admin', method='pbkdf2:sha256'), user['password'])
     if user:
         mdp_ok = check_password_hash(user['password'], password)
         if not mdp_ok:
@@ -34,7 +35,7 @@ def auth_login_post():
             session['role'] = user['role']
             session['id_user'] = user['id_utilisateur']
             print(user['login'], user['role'])
-            if user['role'] == 'ROLE_admin':
+            if user['role'] == 'admin':
                 return redirect('/admin/commande/index')
             else:
                 return redirect('/client/gant/show')
@@ -62,7 +63,7 @@ def auth_signup_post():
         return redirect('/signup')
 
     # ajouter un nouveau user
-    password = generate_password_hash(password, method='scrypt')
+    password = generate_password_hash(password, method='pbkdf2:sha256')
     tuple_insert = (login, email, password, 'ROLE_client')
     sql = """  INSERT INTO utilisateur (login, email, password, role) VALUES (%s, %s, %s, %s)  """
     mycursor.execute(sql, tuple_insert)

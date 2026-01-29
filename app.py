@@ -3,7 +3,23 @@
 
 from flask import Flask, request, render_template, redirect, url_for, abort, flash, session, g
 from flask import Blueprint
+import pymysql.cursors
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+def get_db():
+    if 'db' not in g:
+        g.db =  pymysql.connect(
+            host=os.environ.get("localhost"),                # à modifier
+            user=os.environ.get("secret"),               # à modifier
+            password=os.environ.get("login"),        # à modifier
+            database=os.environ.get("bdd_login_sae"),        # à modifier
+            charset='utf8mb4',
+            cursorclass=pymysql.cursors.DictCursor
+        )
+    return g.db
 
 from controllers.auth_security import *
 from controllers.fixtures_load import *
@@ -36,7 +52,7 @@ def close_connection(exception):
 @app.route('/')
 def show_accueil():
     if 'role' in session:
-        if session['role'] == 'ROLE_admin':
+        if session['role'] == 'admin':
             return redirect('/admin/commande/index')
         else:
             return redirect('/client/gant/show')
@@ -56,7 +72,7 @@ def before_request():
             return redirect('/login')
         else:
             print('role',session['role'])
-            if (request.path.startswith('/client') and session['role'] != 'ROLE_client') or (request.path.startswith('/admin') and session['role'] != 'ROLE_admin'):
+            if (request.path.startswith('/client') and session['role'] != 'client') or (request.path.startswith('/admin') and session['role'] != 'admin'):
                 print('pb de route : ', session['role'], request.path.title(), ' => deconnexion')
                 session.pop('login', None)
                 session.pop('role', None)
