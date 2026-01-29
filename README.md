@@ -1,10 +1,10 @@
 # SAE3-4-5_ecommerce
 Projet de groupe d'e-commerce qui a pour objectif :
-- d’acheter des articles,
-- rechercher des articles (filtre) qui peuvent se décliner
-- commenter/noter des articles
+- d’acheter des gants,
+- rechercher des gants (filtre) qui peuvent se décliner
+- commenter/noter des gants
 - définir une(des) adresse(s) pour l’expédition
-- sélectionner des articles dans une liste d’envies et avoir un historique des derniers articles consultés
+- sélectionner des gants dans une liste d’envies et avoir un historique des derniers gants consultés
 
 <br><br>
 Membres :<br>
