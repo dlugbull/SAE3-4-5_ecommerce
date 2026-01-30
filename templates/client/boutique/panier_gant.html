@@ -30,7 +30,7 @@
                                     €
                                 </h3>
                                      {%  if gant.image is not none %}
-                                        <img class="card-img-top rounded mx-auto d-block"  style="width:100px;height:100px"  src="{{ url_for('static', filename = 'images/')}}{{ gant.image }}"  alt="image  de {{ gant.nom }}" >
+                                        <img class="card-img-top rounded mx-auto d-block"  style="width:100px;height:100px"  src="{{ url_for('static', filename = 'images/')}}{{ gant.photo }}"  alt="image  de {{ gant.nom }}" >
                                     {% else %} <img class="card-img-top rounded mx-auto d-block"   style="width:100px;height:100px"   src="{{ url_for('static', filename='images/no_photo.jpeg')}}"  alt="image  de {{ gant.nom }}" >
                                     {% endif %}
                                     <hr>
