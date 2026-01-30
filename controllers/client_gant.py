@@ -37,16 +37,12 @@ def client_gant_show():                                 # remplace client_index
     # utilisation du filtre
     sql3='''
     SELECT id_type_gant AS id
-       , nom_type_gant AS nom
+       , nom_type_gant AS libelle
        FROM type_gant
        ORDER BY nom_type_gant
        '''
     mycursor.execute(sql3)
     types_gant = mycursor.fetchall()
-
-
-    # pour le filtre
-    types_gant = []
 
 
     gants_panier = []
