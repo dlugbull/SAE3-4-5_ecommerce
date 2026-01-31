@@ -44,17 +44,28 @@ def client_gant_show():                                 # remplace client_index
     mycursor.execute(sql3)
     types_gant = mycursor.fetchall()
 
-
-    gants_panier = []
+    sql4='''
+    SELECT gant_id, quantite, date_ajout, prix_gant as prix, nom_gant as nom
+    FROM ligne_panier
+    JOIN gant ON ligne_panier.gant_id = gant.id_gant
+    WHERE utilisateur_id = %s;
+    '''
+    mycursor.execute(sql4, (id_client))
+    gants_panier = mycursor.fetchall()
+    print(gants_panier)
 
     if len(gants_panier) >= 1:
-        sql = ''' calcul du prix total du panier '''
-        prix_total = None
+        sql = ''' SELECT sum(gant.prix_gant * ligne_panier.quantite) AS prix
+         FROM gant
+         JOIN ligne_panier ON ligne_panier.gant_id = gant.id_gant
+         WHERE utilisateur_id = %s'''
+        mycursor.execute(sql, (id_client))
+        prix_total = mycursor.fetchone()["prix"]
     else:
-        prix_total = None
+        prix_total = 0
     return render_template('client/boutique/panier_gant.html'
                            , gants=gants
                            , gants_panier=gants_panier
-                           #, prix_total=prix_total
+                           , prix_total=prix_total
                            , items_filtre=types_gant
                            )
