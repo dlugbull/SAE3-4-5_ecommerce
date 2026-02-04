@@ -9,7 +9,7 @@ Projet de groupe d'e-commerce qui a pour objectif :
 <br><br>
 Membres :<br>
 Damien LUGBULL<br>
-Mansourah MAHAMANE<br>
+Mansourah MAHAMANE j'ai trop le seum sa marche TwT<br>
 Cristiano MARTINS
 
 <h3 align="left">Langages</h3>
