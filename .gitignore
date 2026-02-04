@@ -4,3 +4,4 @@ __pycache__
 .git
 .env
 connexion_db.py
+controllers/__pycache__
