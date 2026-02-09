@@ -6,7 +6,7 @@ from flask import Flask, request, render_template, redirect, flash, session
 from connexion_db import get_db
 
 admin_commande = Blueprint('admin_commande', __name__,
-                        template_folder='templates')
+                           template_folder='templates')
 
 @admin_commande.route('/admin')
 @admin_commande.route('/admin/commande/index')
@@ -18,17 +18,30 @@ def admin_index():
 def admin_commande_show():
     mycursor = get_db().cursor()
     admin_id = session['id_user']
-    sql = '''      '''
-
-    commandes=[]
+    sql = '''SELECT commande.etat_id,
+    utilisateur.login,
+    SUM(ligne_commande.quantite) as nbr_gants,
+    SUM(ligne_commande.prix) as prix_total,
+    commande.date_achat,
+    etat.libelle_etat as libelle,
+    commande.id_commande
+     FROM commande
+     JOIN utilisateur on utilisateur.id_utilisateur = commande.utilisateur_id
+     JOIN ligne_commande on ligne_commande.commande_id = commande.id_commande
+     JOIN etat on etat.id_etat = commande.etat_id
+     GROUP BY commande.id_commande;'''
+    mycursor.execute(sql)
+    commandes=mycursor.fetchall()
 
     gants_commande = None
     commande_adresses = None
     id_commande = request.args.get('id_commande', None)
     print(id_commande)
     if id_commande != None:
-        sql = '''    '''
-        commande_adresses = []
+        sql = '''SELECT * FROM commande
+        WHERE commande.id_commande = %s;'''
+        mycursor.execute(sql, (id_commande))
+        commande_adresses = mycursor.fetchone()
     return render_template('admin/commandes/show.html'
                            , commandes=commandes
                            , gants_commande=gants_commande
@@ -42,7 +55,9 @@ def admin_commande_valider():
     commande_id = request.form.get('id_commande', None)
     if commande_id != None:
         print(commande_id)
-        sql = '''           '''
+        sql = '''UPDATE commande
+        SET commande.etat_id = 2
+        WHERE commande.id_commande = %s;'''
         mycursor.execute(sql, commande_id)
         get_db().commit()
     return redirect('/admin/commande/show')
