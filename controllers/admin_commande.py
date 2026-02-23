@@ -21,7 +21,7 @@ def admin_commande_show():
     sql = '''SELECT commande.etat_id,
     utilisateur.login,
     SUM(ligne_commande.quantite) as nbr_gants,
-    SUM(ligne_commande.prix) as prix_total,
+    SUM(ligne_commande.prix * ligne_commande.quantite) as prix_total,
     commande.date_achat,
     etat.libelle_etat as libelle,
     commande.id_commande
@@ -41,7 +41,16 @@ def admin_commande_show():
         sql = '''SELECT * FROM commande
         WHERE commande.id_commande = %s;'''
         mycursor.execute(sql, (id_commande))
-        commande_adresses = mycursor.fetchone()
+        commande_adresses = mycursor.fetchone() #pas fonctionnel car pas d'ardresses dans sql
+
+        sql = '''SELECT gant.nom_gant as nom, ligne_commande.quantite, ligne_commande.prix, (ligne_commande.quantite * ligne_commande.prix) as prix_ligne
+        FROM ligne_commande
+        JOIN gant ON ligne_commande.gant_id = gant.id_gant
+        WHERE ligne_commande.commande_id = %s;'''
+        mycursor.execute(sql, (id_commande))
+        gants_commande = mycursor.fetchall()
+
+        print(commande_adresses)
     return render_template('admin/commandes/show.html'
                            , commandes=commandes
                            , gants_commande=gants_commande
