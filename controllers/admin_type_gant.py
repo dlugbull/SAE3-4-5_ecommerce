@@ -11,10 +11,9 @@ admin_type_gant = Blueprint('admin_type_gant', __name__,
 @admin_type_gant.route('/admin/type-gant/show')
 def show_type_gant():
     mycursor = get_db().cursor()
-    # sql = '''         '''
-    # mycursor.execute(sql)
-    # types_gant = mycursor.fetchall()
-    types_gant=[]
+    sql = '''SELECT id_type_gant, nom_type_gant AS libelle FROM type_gant'''
+    mycursor.execute(sql)
+    types_gant = mycursor.fetchall()
     return render_template('admin/type_gant/show_type_gant.html', types_gant=types_gant)
 
 @admin_type_gant.route('/admin/type-gant/add', methods=['GET'])
@@ -24,9 +23,9 @@ def add_type_gant():
 @admin_type_gant.route('/admin/type-gant/add', methods=['POST'])
 def valid_add_type_gant():
     libelle = request.form.get('libelle', '')
-    tuple_insert = (libelle,)
+    tuple_insert = (libelle)
     mycursor = get_db().cursor()
-    sql = '''         '''
+    sql = '''INSERT INTO type_gant (nom_type_gant) VALUES (%s);'''
     mycursor.execute(sql, tuple_insert)
     get_db().commit()
     message = u'type ajouté , libellé :'+libelle
@@ -37,6 +36,9 @@ def valid_add_type_gant():
 def delete_type_gant():
     id_type_gant = request.args.get('id_type_gant', '')
     mycursor = get_db().cursor()
+    sql='''DELETE FROM type_gant WHERE id_type_gant=%s;'''
+    mycursor.execute(sql, (id_type_gant))
+    get_db().commit()
 
     flash(u'suppression type gant , id : ' + id_type_gant, 'alert-success')
     return redirect('/admin/type-gant/show')
@@ -45,7 +47,7 @@ def delete_type_gant():
 def edit_type_gant():
     id_type_gant = request.args.get('id_type_gant', '')
     mycursor = get_db().cursor()
-    sql = '''   '''
+    sql = '''SELECT id_type_gant, nom_type_gant AS libelle FROM type_gant WHERE id_type_gant=%s;'''
     mycursor.execute(sql, (id_type_gant,))
     type_gant = mycursor.fetchone()
     return render_template('admin/type_gant/edit_type_gant.html', type_gant=type_gant)
@@ -56,7 +58,9 @@ def valid_edit_type_gant():
     id_type_gant = request.form.get('id_type_gant', '')
     tuple_update = (libelle, id_type_gant)
     mycursor = get_db().cursor()
-    sql = '''   '''
+    sql = '''UPDATE type_gant
+    SET nom_type_gant=%s
+    WHERE id_type_gant=%s;'''
     mycursor.execute(sql, tuple_update)
     get_db().commit()
     flash(u'type gant modifié, id: ' + id_type_gant + " libelle : " + libelle, 'alert-success')

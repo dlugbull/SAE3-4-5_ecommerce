@@ -17,7 +17,8 @@ admin_gant = Blueprint('admin_gant', __name__,
 @admin_gant.route('/admin/gant/show')
 def show_gant():
     mycursor = get_db().cursor()
-    sql = '''  requête admin_gant_1
+    sql = ''' SELECT id_gant, nom_gant AS nom, type_gant_id, prix_gant AS prix, photo AS image, nom_type_gant as libelle, stock
+    FROM gant JOIN type_gant ON gant.type_gant_id = type_gant.id_type_gant;
     '''
     mycursor.execute(sql)
     gants = mycursor.fetchall()
@@ -27,9 +28,11 @@ def show_gant():
 @admin_gant.route('/admin/gant/add', methods=['GET'])
 def add_gant():
     mycursor = get_db().cursor()
-
+    sql = '''SELECT id_type_gant, nom_type_gant AS libelle FROM type_gant'''
+    mycursor.execute(sql)
+    type_gant = mycursor.fetchall()
     return render_template('admin/gant/add_gant.html'
-                           #,types_gant=type_gant,
+                           ,types_gant=type_gant
                            #,couleurs=colors
                            #,tailles=tailles
                             )
@@ -52,9 +55,9 @@ def valid_add_gant():
         print("erreur")
         filename=None
 
-    sql = '''  requête admin_gant_2 '''
+    sql = '''INSERT INTO gant (nom_gant, photo, prix_gant, type_gant_id) VALUES (%s, %s, %s, %s);'''
 
-    tuple_add = (nom, filename, prix, type_gant_id, description)
+    tuple_add = (nom, filename, prix, type_gant_id)#, description)
     print(tuple_add)
     mycursor.execute(sql, tuple_add)
     get_db().commit()
@@ -102,13 +105,14 @@ def edit_gant():
     id_gant=request.args.get('id_gant')
     mycursor = get_db().cursor()
     sql = '''
-    requête admin_gant_6    
+    SELECT photo AS image, id_gant, nom_gant AS nom, prix_gant AS prix, type_gant_id 
+    FROM gant WHERE id_gant = %s;  
     '''
     mycursor.execute(sql, id_gant)
     gant = mycursor.fetchone()
     print(gant)
     sql = '''
-    requête admin_gant_7
+    SELECT id_type_gant, nom_type_gant AS libelle from type_gant;
     '''
     mycursor.execute(sql)
     types_gant = mycursor.fetchall()
@@ -136,7 +140,7 @@ def valid_edit_gant():
     prix = request.form.get('prix', '')
     description = request.form.get('description')
     sql = '''
-       requête admin_gant_8
+       SELECT photo AS image FROM gant WHERE id_gant=%s;
        '''
     mycursor.execute(sql, id_gant)
     image_nom = mycursor.fetchone()
@@ -151,7 +155,9 @@ def valid_edit_gant():
             image.save(os.path.join('static/images/', filename))
             image_nom = filename
 
-    sql = '''  requête admin_gant_9 '''
+    sql = '''UPDATE gant
+       SET nom_gant=%s, photo=%s, prix_gant=%s, type_gant_id=%s, description=%s
+       WHERE id_gant=%s;'''
     mycursor.execute(sql, (nom, image_nom, prix, type_gant_id, description, id_gant))
 
     get_db().commit()
