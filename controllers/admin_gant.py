@@ -105,7 +105,7 @@ def edit_gant():
     id_gant=request.args.get('id_gant')
     mycursor = get_db().cursor()
     sql = '''
-    SELECT photo AS image, id_gant, nom_gant AS nom, prix_gant AS prix, type_gant_id 
+    SELECT photo AS image, id_gant, nom_gant AS nom, prix_gant AS prix, type_gant_id, stock
     FROM gant WHERE id_gant = %s;  
     '''
     mycursor.execute(sql, id_gant)
@@ -139,6 +139,7 @@ def valid_edit_gant():
     type_gant_id = request.form.get('type_gant_id', '')
     prix = request.form.get('prix', '')
     description = request.form.get('description')
+    stock = request.form.get('stock')
     sql = '''
        SELECT photo AS image FROM gant WHERE id_gant=%s;
        '''
@@ -156,9 +157,9 @@ def valid_edit_gant():
             image_nom = filename
 
     sql = '''UPDATE gant
-       SET nom_gant=%s, photo=%s, prix_gant=%s, type_gant_id=%s, description=%s
+       SET nom_gant=%s, photo=%s, prix_gant=%s, type_gant_id=%s, description=%s, stock=%s
        WHERE id_gant=%s;'''
-    mycursor.execute(sql, (nom, image_nom, prix, type_gant_id, description, id_gant))
+    mycursor.execute(sql, (nom, image_nom, prix, type_gant_id, description, stock, id_gant))
 
     get_db().commit()
     if image_nom is None:

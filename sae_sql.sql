@@ -57,6 +57,7 @@ CREATE TABLE gant(
    fournisseur VARCHAR(50),
    marque VARCHAR(50),
    stock INTEGER,
+   description VARCHAR(255),
    type_gant_id INT NOT NULL,
    taille_id INT NOT NULL,
    PRIMARY KEY(id_gant),
@@ -125,41 +126,41 @@ INSERT INTO type_gant VALUES
 -- GANTS (25 gants différents avec stock intégré)
 INSERT INTO gant VALUES
     -- Gants de Vélo (5 modèles)
-    (1, 'Specialized BG Grail', 85, 'Noir/Rouge', 39.99, 'specialized_grail.jpg', 'Sport 2000', 'Specialized', 45, 1, 5),
-    (2, 'Giro DND Cycling', 75, 'Noir/Jaune', 29.99, 'giro_dnd.jpg', 'Sport 2000', 'Giro', 52, 1, 5),
-    (3, 'Specialized Prime-Series', 95, 'Bleu/Noir', 54.99, 'specialized_prime.jpg', 'Sport 2000', 'Specialized', 25, 1, 6),
-    (4, 'Decathlon Triban RC500', 90, 'Noir', 19.99, 'triban_rc500_noir.jpg', 'Decathlon', 'Triban', 60, 1, 5),
-    (5, 'Fox Ranger Gel', 105, 'Gris', 34.99, 'fox_ranger_gris.jpg', 'Sport 2000', 'Fox', 42, 1, 6),
+    (1, 'Specialized BG Grail', 85, 'Noir/Rouge', 39.99, 'specialized_grail.jpg', 'Sport 2000', 'Specialized', 45, "", 1, 5),
+    (2, 'Giro DND Cycling', 75, 'Noir/Jaune', 29.99, 'giro_dnd.jpg', 'Sport 2000', 'Giro', 52, "", 1, 5),
+    (3, 'Specialized Prime-Series', 95, 'Bleu/Noir', 54.99, 'specialized_prime.jpg', 'Sport 2000', 'Specialized', 25, "", 1, 6),
+    (4, 'Decathlon Triban RC500', 90, 'Noir', 19.99, 'triban_rc500_noir.jpg', 'Decathlon', 'Triban', 60, "", 1, 5),
+    (5, 'Fox Ranger Gel', 105, 'Gris', 34.99, 'fox_ranger_gris.jpg', 'Sport 2000', 'Fox', 42, "", 1, 6),
 
     -- Gants de Sport Combat (5 modèles)
-    (6, 'Venum Elite Boxing', 420, 'Blanc/Or', 119.99, 'venum_elite.jpg', 'Combat Sports France', 'Venum', 18, 2, 7),
-    (7, 'Everlast PowerLock', 430, 'Rouge/Noir', 89.99, 'everlast_powerlock.jpg', 'Combat Sports France', 'Everlast', 22, 2, 7),
-    (8, 'Venum Impact MMA', 280, 'Noir/Rouge', 69.99, 'venum_impact.jpg', 'Combat Sports France', 'Venum', 35, 2, 5),
-    (9, 'Everlast Pro Style', 380, 'Rouge', 44.99, 'everlast_prostyle.jpg', 'Combat Sports France', 'Everlast', 40, 2, 5),
-    (10, 'Adidas Speed 50', 400, 'Bleu/Blanc', 79.99, 'adidas_speed_bleu.jpg', 'Combat Sports France', 'Adidas', 30, 2, 7),
+    (6, 'Venum Elite Boxing', 420, 'Blanc/Or', 119.99, 'venum_elite.jpg', 'Combat Sports France', 'Venum', 18, "", 2, 7),
+    (7, 'Everlast PowerLock', 430, 'Rouge/Noir', 89.99, 'everlast_powerlock.jpg', 'Combat Sports France', 'Everlast', 22, "", 2, 7),
+    (8, 'Venum Impact MMA', 280, 'Noir/Rouge', 69.99, 'venum_impact.jpg', 'Combat Sports France', 'Venum', 35, "", 2, 5),
+    (9, 'Everlast Pro Style', 380, 'Rouge', 44.99, 'everlast_prostyle.jpg', 'Combat Sports France', 'Everlast', 40, "", 2, 5),
+    (10, 'Adidas Speed 50', 400, 'Bleu/Blanc', 79.99, 'adidas_speed_bleu.jpg', 'Combat Sports France', 'Adidas', 30, "", 2, 7),
 
     -- Gants d'Hiver (5 modèles)
-    (11, 'The North Face Etip', 120, 'Noir', 49.99, 'tnf_etip.jpg', 'Outdoor Adventure', 'The North Face', 55, 3, 5),
-    (12, 'Columbia Thermarator', 140, 'Noir/Gris', 34.99, 'columbia_therma.jpg', 'Outdoor Adventure', 'Columbia', 65, 3, 5),
-    (13, 'The North Face Montana', 180, 'Noir', 69.99, 'tnf_montana.jpg', 'Outdoor Adventure', 'The North Face', 28, 3, 6),
-    (14, 'Columbia Whirlibird', 160, 'Violet/Noir', 44.99, 'columbia_whirli.jpg', 'Outdoor Adventure', 'Columbia', 35, 3, 5),
-    (15, 'Quechua SH500', 150, 'Noir', 24.99, 'quechua_sh500_noir.jpg', 'Decathlon', 'Quechua', 85, 3, 5),
+    (11, 'The North Face Etip', 120, 'Noir', 49.99, 'tnf_etip.jpg', 'Outdoor Adventure', 'The North Face', 55, "", 3, 5),
+    (12, 'Columbia Thermarator', 140, 'Noir/Gris', 34.99, 'columbia_therma.jpg', 'Outdoor Adventure', 'Columbia', 65, "", 3, 5),
+    (13, 'The North Face Montana', 180, 'Noir', 69.99, 'tnf_montana.jpg', 'Outdoor Adventure', 'The North Face', 28, "", 3, 6),
+    (14, 'Columbia Whirlibird', 160, 'Violet/Noir', 44.99, 'columbia_whirli.jpg', 'Outdoor Adventure', 'Columbia', 35, "", 3, 5),
+    (15, 'Quechua SH500', 150, 'Noir', 24.99, 'quechua_sh500_noir.jpg', 'Decathlon', 'Quechua', 85, "", 3, 5),
 
     -- Gants de Jardinage (4 modèles)
-    (16, 'Rostaing Jardin Expert', 95, 'Vert/Noir', 14.99, 'rostaing_expert.jpg', 'Jardin & Équipement Pro', 'Rostaing', 80, 4, 5),
-    (17, 'Mapa Jardin Pro', 110, 'Vert/Jaune', 12.99, 'mapa_jardin.jpg', 'Jardin & Équipement Pro', 'Mapa', 95, 4, 6),
-    (18, 'Rostaing Rosier Premium', 85, 'Rose/Blanc', 18.99, 'rostaing_rosier.jpg', 'Jardin & Équipement Pro', 'Rostaing', 48, 4, 5),
-    (19, 'Mechanix Garden Utility', 100, 'Vert/Noir', 24.99, 'mechanix_garden.jpg', 'Jardin & Équipement Pro', 'Mechanix', 60, 4, 5),
+    (16, 'Rostaing Jardin Expert', 95, 'Vert/Noir', 14.99, 'rostaing_expert.jpg', 'Jardin & Équipement Pro', 'Rostaing', 80, "", 4, 5),
+    (17, 'Mapa Jardin Pro', 110, 'Vert/Jaune', 12.99, 'mapa_jardin.jpg', 'Jardin & Équipement Pro', 'Mapa', 95, "", 4, 6),
+    (18, 'Rostaing Rosier Premium', 85, 'Rose/Blanc', 18.99, 'rostaing_rosier.jpg', 'Jardin & Équipement Pro', 'Rostaing', 48, "", 4, 5),
+    (19, 'Mechanix Garden Utility', 100, 'Vert/Noir', 24.99, 'mechanix_garden.jpg', 'Jardin & Équipement Pro', 'Mechanix', 60, "", 4, 5),
 
     -- Gants de Ski (3 modèles)
-    (20, 'Rossignol Ski Premium', 220, 'Noir/Jaune', 79.99, 'rossignol_ski.jpg', 'Mountain Gear Europe', 'Rossignol', 25, 5, 6),
-    (21, 'The North Face Apex', 200, 'Noir/Gris', 89.99, 'tnf_apex.jpg', 'Mountain Gear Europe', 'The North Face', 20, 5, 6),
-    (22, 'Rossignol Tempest IMPR', 240, 'Noir/Rouge', 99.99, 'gant_type_impr_rossignol_noir.jpg', 'Mountain Gear Europe', 'Rossignol', 18, 5, 7),
+    (20, 'Rossignol Ski Premium', 220, 'Noir/Jaune', 79.99, 'rossignol_ski.jpg', 'Mountain Gear Europe', 'Rossignol', 25, "", 5, 6),
+    (21, 'The North Face Apex', 200, 'Noir/Gris', 89.99, 'tnf_apex.jpg', 'Mountain Gear Europe', 'The North Face', 20, "", 5, 6),
+    (22, 'Rossignol Tempest IMPR', 240, 'Noir/Rouge', 99.99, 'gant_type_impr_rossignol_noir.jpg', 'Mountain Gear Europe', 'Rossignol', 18, "", 5, 7),
 
     -- Gants de Protection (3 modèles)
-    (23, 'Mechanix Original', 130, 'Noir', 24.99, 'mechanix_original.jpg', 'Sport 2000', 'Mechanix', 70, 6, 5),
-    (24, 'Mechanix M-Pact', 150, 'Noir/Rouge', 34.99, 'mechanix_mpact.jpg', 'Sport 2000', 'Mechanix', 55, 6, 6),
-    (25, 'Milwaukee Cut Level 5', 160, 'Gris/Noir', 29.99, 'milwaukee_cut5_gris.jpg', 'Jardin & Équipement Pro', 'Milwaukee', 50, 6, 6);
+    (23, 'Mechanix Original', 130, 'Noir', 24.99, 'mechanix_original.jpg', 'Sport 2000', 'Mechanix', 70, "", 6, 5),
+    (24, 'Mechanix M-Pact', 150, 'Noir/Rouge', 34.99, 'mechanix_mpact.jpg', 'Sport 2000', 'Mechanix', 55, "", 6, 6),
+    (25, 'Milwaukee Cut Level 5', 160, 'Gris/Noir', 29.99, 'milwaukee_cut5_gris.jpg', 'Jardin & Équipement Pro', 'Milwaukee', 50, "", 6, 6);
 
 -- COMMANDES (utilisateur_id corrigé pour être INTEGER au lieu de VARCHAR)
 INSERT INTO commande VALUES
