@@ -36,16 +36,22 @@ def admin_commande_show():
     gants_commande = None
     commande_adresses = None
     id_commande = request.args.get('id_commande', None)
-    print(id_commande)
+
     if id_commande != None:
         sql = '''SELECT * FROM commande
         WHERE commande.id_commande = %s;'''
         mycursor.execute(sql, (id_commande))
         commande_adresses = mycursor.fetchone() #pas fonctionnel car pas d'ardresses dans sql
 
-        sql = '''SELECT gant.nom_gant as nom, ligne_commande.quantite, ligne_commande.prix, (ligne_commande.quantite * ligne_commande.prix) as prix_ligne
+        sql = '''SELECT gant.nom_gant as nom,
+        ligne_commande.quantite,
+        ligne_commande.prix,
+        (ligne_commande.quantite * ligne_commande.prix) as prix_ligne,
+        commande.etat_id,
+        commande.id_commande AS id
         FROM ligne_commande
         JOIN gant ON ligne_commande.gant_id = gant.id_gant
+        JOIN commande on commande.id_commande = ligne_commande.commande_id
         WHERE ligne_commande.commande_id = %s;'''
         mycursor.execute(sql, (id_commande))
         gants_commande = mycursor.fetchall()

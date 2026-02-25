@@ -11,7 +11,10 @@ admin_type_gant = Blueprint('admin_type_gant', __name__,
 @admin_type_gant.route('/admin/type-gant/show')
 def show_type_gant():
     mycursor = get_db().cursor()
-    sql = '''SELECT id_type_gant, nom_type_gant AS libelle FROM type_gant'''
+    sql = '''SELECT id_type_gant, nom_type_gant AS libelle, COUNT(id_gant) AS nbr_gants
+    FROM type_gant
+    JOIN gant ON gant.type_gant_id = type_gant.id_type_gant
+    GROUP BY id_type_gant;'''
     mycursor.execute(sql)
     types_gant = mycursor.fetchall()
     return render_template('admin/type_gant/show_type_gant.html', types_gant=types_gant)

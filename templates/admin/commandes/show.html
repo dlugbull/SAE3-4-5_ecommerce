@@ -47,7 +47,7 @@
 
             {% if gants_commande[0].etat_id == 1 %}
             <form action="/admin/commande/valider"  style="display: inline-block;"  method="post">
-                  <input type="hidden" name="idCommande" value="{{ gants_commande[0].id }}">
+                  <input type="hidden" name="id_commande" value="{{ gants_commande[0].id }}">
                   <button class="btn btn-primary" > Valider (Expédier) </button>
             </form>
             {% endif %}
