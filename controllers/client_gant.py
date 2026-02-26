@@ -9,12 +9,30 @@ client_gant = Blueprint('client_gant', __name__,
                         template_folder='templates')
 
 @client_gant.route('/client/index')
-@client_gant.route('/client/gant/show')              # remplace /client
-def client_gant_show():                                 # remplace client_index
+@client_gant.route('/client/gant/show')              # remplace /client@client_gant.route('/client/index')
+def client_gant_show():
     mycursor = get_db().cursor()
     id_client = session['id_user']
 
-    sql = '''
+    # Construction dynamique du filtre
+    conditions = ["stock > 0"]
+
+    if session.get('filter_word'):
+        conditions.append(f"nom_gant LIKE %{session['filter_word']}%")
+
+    if session.get('filter_prix_min') and session.get('filter_prix_max'):
+        conditions.append(f"prix_gant BETWEEN {session['filter_prix_min']} AND {session['filter_prix_max']}")
+
+    if session.get('filter_types'):
+        placeholders=[]
+        for type_id in session['filter_types']:
+            placeholders.append(f"type_gant_id = {type_id}")
+        conditions.append(" OR ".join(placeholders))
+
+    where_clause = " AND ".join(conditions)
+    print(where_clause)
+
+    sql = f'''
        SELECT id_gant AS id
        , nom_gant AS nom
        , poids AS poids
@@ -27,7 +45,7 @@ def client_gant_show():                                 # remplace client_index
        , stock AS stock
        , taille_id AS taille
        FROM gant
-       WHERE stock > 0
+       WHERE {where_clause}
        ORDER BY nom_gant
        '''
     mycursor.execute(sql)
@@ -36,7 +54,7 @@ def client_gant_show():                                 # remplace client_index
     condition_and = ""
     # utilisation du filtre
     sql3='''
-    SELECT id_type_gant AS id
+    SELECT id_type_gant
        , nom_type_gant AS libelle
        FROM type_gant
        ORDER BY nom_type_gant
