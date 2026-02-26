@@ -15,7 +15,7 @@ def client_gant_show():                                 # remplace client_index
     id_client = session['id_user']
 
     sql = '''
-       SELECT id_gant AS id
+       SELECT id_gant AS id_gant
        , nom_gant AS nom
        , poids AS poids
        , couleur AS couleur
