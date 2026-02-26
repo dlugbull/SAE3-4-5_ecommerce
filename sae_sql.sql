@@ -59,7 +59,7 @@ CREATE TABLE gant(
    stock INTEGER,
    description VARCHAR(255),
    type_gant_id INT NOT NULL,
-   taille_id INT NOT NULL,
+   taille_id INT,
    PRIMARY KEY(id_gant),
    FOREIGN KEY(type_gant_id) REFERENCES type_gant(id_type_gant),
    FOREIGN KEY(taille_id) REFERENCES taille(id_taille)

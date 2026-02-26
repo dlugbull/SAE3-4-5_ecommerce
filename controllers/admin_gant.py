@@ -75,19 +75,21 @@ def delete_gant():
     id_gant=request.args.get('id_gant')
     mycursor = get_db().cursor()
     sql = ''' requête admin_gant_3 '''
-    mycursor.execute(sql, id_gant)
-    nb_declinaison = mycursor.fetchone()
-    if nb_declinaison['nb_declinaison'] > 0:
-        message= u'il y a des declinaisons dans cet gant : vous ne pouvez pas le supprimer'
-        flash(message, 'alert-warning')
+    # mycursor.execute(sql, id_gant)
+    # # nb_declinaison = mycursor.fetchone()
+    # if nb_declinaison['nb_declinaison'] > 0:
+    #     message= u'il y a des declinaisons dans cet gant : vous ne pouvez pas le supprimer'
+    #     flash(message, 'alert-warning')
+    if False:
+        return
     else:
-        sql = ''' requête admin_gant_4 '''
+        sql = '''SELECT photo AS image FROM gant WHERE id_gant=%s;'''
         mycursor.execute(sql, id_gant)
         gant = mycursor.fetchone()
         print(gant)
         image = gant['image']
 
-        sql = ''' requête admin_gant_5  '''
+        sql = '''DELETE FROM gant WHERE id_gant=%s;'''
         mycursor.execute(sql, id_gant)
         get_db().commit()
         if image != None:

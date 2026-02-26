@@ -9,7 +9,7 @@ client_panier = Blueprint('client_panier', __name__,
                         template_folder='templates')
 
 
-@client_panier.route('/client/panier/add', methods=['POST'])
+""""@client_panier.route('/client/panier/add', methods=['POST'])
 def client_panier_add():
     mycursor = get_db().cursor()
     id_client = session['id_user']
@@ -38,9 +38,34 @@ def client_panier_add():
     #                                , quantite=quantite
     #                                , gant=gant)
 
-# ajout dans le panier d'un gant
+# ajout dans le panier d'un gant"""
 
+@client_panier.route('/client/panier/add', methods=['POST'])
+def client_panier_add():
+    mycursor = get_db().cursor()
+    id_client = session['id_user']
+    id_gant = request.form.get('id_gant')
+    quantite = request.form.get('quantite')
+    """id_taille = request.form.get('id_taille', None)
+    id_taille = 1"""
 
+    sql = "SELECT * FROM ligne_panier WHERE gant_id = %s AND utilisateur_id = %s"
+    mycursor.execute(sql, (id_gant, id_client))
+    gant_panier = mycursor.fetchone()
+
+    mycursor.execute("SELECT * FROM gant WHERE id_gant = %s", (id_gant,))
+    gant = mycursor.fetchone()
+
+    if not (gant_panier is None) and gant_panier['quantite'] >= 1:
+        tuple_update = (quantite, id_client, id_gant)
+        sql = "UPDATE ligne_panier SET quantite = quantite + %s WHERE utilisateur_id = %s AND gant_id = %s"
+        mycursor.execute(sql, tuple_update)
+    else:
+        sql = "INSERT INTO ligne_panier(utilisateur_id, gant_id, quantite, date_ajout) VALUES (%s, %s, %s, current_timestamp)"
+        tuple_insert = (id_client, id_gant, quantite)
+        mycursor.execute(sql, tuple_insert)
+
+    get_db().commit()
     return redirect('/client/gant/show')
 
 @client_panier.route('/client/panier/delete', methods=['POST'])

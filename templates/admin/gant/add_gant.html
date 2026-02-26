@@ -20,9 +20,9 @@
                     <input name="image" type="file" onchange="loadFile(event)"   class="form-control">
                 </label>
 
-                <label for="type_gant_id">Type de l'gant :
+                <label for="type_gant_id">Type du gant :
                     <select name="type_gant_id" required class="form-select">
-                        <option value="">Sélectionner un type d'gant</option>
+                        <option value="">Sélectionner un type de gant</option>
                         {% for type in types_gant %}
                              <option value="{{ type.id_type_gant }}"> {{ type.libelle }}</option>
                         {% endfor %}
