@@ -74,7 +74,8 @@ def client_gant_show():                                 # remplace client_index
                 ligne_panier.quantite,
                 ligne_panier.date_ajout,
                 gant.prix_gant as prix,
-                gant.nom_gant as nom
+                gant.nom_gant as nom,
+                gant.stock as stock
                 FROM ligne_panier
                 JOIN gant
                 ON ligne_panier.gant_id = gant.id_gant
