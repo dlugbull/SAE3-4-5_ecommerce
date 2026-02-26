@@ -131,45 +131,37 @@ def client_panier_filtre():
     filter_prix_max = request.form.get('filter_prix_max', None)
     filter_types = request.form.getlist('filter_types', None)
 
-    if filter_word is not None:
+    if filter_word != None or filter_word == "":
         if len(filter_word) > 1:
-            if all(c.isalpha() or c.isspace() for c in filter_word):
+            if filter_word.isalpha():
                 session['filter_word'] = filter_word
             else:
-                flash('Le nom recherché doit uniquement être composé de lettres', 'alert-warning')
-        elif len(filter_word) == 1:
-            flash('Le nom recherché doit être composé d\'au moins 2 lettres', 'alert-warning')
+                flash("Le mot recherché ne doit etre composé que de lettres !")
         else:
-            session.pop('filter_word', None)
-
-    # Validation des prix
-    if filter_prix_min or filter_prix_max:
-        if filter_prix_min and filter_prix_max:
-            try:
-                prix_min = float(filter_prix_min)
-                prix_max = float(filter_prix_max)
-                if prix_min < prix_max:
-                    session['filter_prix_min'] = prix_min
-                    session['filter_prix_max'] = prix_max
-                else:
-                    flash('Le prix minimum doit être inférieur au prix maximum', 'alert-warning')
-            except ValueError:
-                flash('Les prix doivent être des valeurs numériques', 'alert-warning')
+            if len(filter_word) == 1:
+                flash("le mot recherché doit contenir au moins 2 lettres !")
+            else:
+                session.pop('filter_word', None)
+    if filter_prix_max or filter_prix_min:
+        filter_prix_min = str(filter_prix_min).replace(' ', '').replace(',', '.')
+        filter_prix_max = str(filter_prix_max).replace(' ', '').replace(',', '.')
+        if filter_prix_min.replace('.', '', 1).isdigit() and filter_prix_max.replace('.', '', 1).isdigit():
+            if float(filter_prix_max) > float(filter_prix_min):
+                session['filter_prix_max'] = filter_prix_max
+                session['filter_prix_min'] = filter_prix_min
+            else:
+                flash("le maximum doit être supérieur au minimum")
         else:
-            flash('Veuillez renseigner les deux prix (min et max)', 'alert-warning')
+            flash("min et max doivent être des numériques")
     else:
-        session.pop('filter_prix_min', None)
         session.pop('filter_prix_max', None)
-
-    # Gestion des types de gants - remplace l'ancien bloc
+        session.pop('filter_prix_min', None)
+    filter_types = [t for t in filter_types if t != '']
     if filter_types:
         session['filter_types'] = filter_types
     else:
         session.pop('filter_types', None)
-
-    session.modified = True #force Flask à sauvegarder la session
     return redirect('/client/gant/show')
-
 
 @client_panier.route('/client/panier/filtre/suppr', methods=['POST'])
 def client_panier_filtre_suppr():
@@ -177,7 +169,4 @@ def client_panier_filtre_suppr():
     session.pop('filter_prix_min', None)
     session.pop('filter_prix_max', None)
     session.pop('filter_types', None)
-
-    session.modified = True
-    print("suppr filtre")
     return redirect('/client/gant/show')
