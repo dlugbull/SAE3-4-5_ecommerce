@@ -52,7 +52,7 @@
                         <a href="/client/gant/show" class="btn btn-primary" >Continuer ma commande</a>
                     {% else %}
                     <form action="/client/panier/vider"  style="display: inline-block;"  method="post" >
-                        <button class="btn btn-primary"  > Éffacer tout </button>
+                        <button class="btn btn-primary"  > Effacer tout </button>
                     </form>
                     <form action="/client/commande/valide"  style="display: inline-block;"  method="post" >
                         <button class="btn btn-primary" > Passer ma commande </button>
@@ -61,6 +61,5 @@
                     {% if prix_total %}
                     Total à payer : <strong>{{ "{:,.2f} €".format(prix_total) }}</strong>
                     {% endif %}
-
             {% endif %}
             </div>

@@ -15,8 +15,10 @@ def client_panier_add():
     id_client = session['id_user']
     id_gant = request.form.get('id_gant')
     quantite = request.form.get('quantite')
+
     # ---------
-    #id_declinaison_gant=request.form.get('id_declinaison_gant',None)
+
+    id_declinaison_gant=request.form.get('id_declinaison_gant',None)
     id_declinaison_gant = 1
 
 # ajout dans le panier d'une déclinaison d'un gant (si 1 declinaison : immédiat sinon => vu pour faire un choix
@@ -128,13 +130,54 @@ def client_panier_filtre():
     filter_prix_min = request.form.get('filter_prix_min', None)
     filter_prix_max = request.form.get('filter_prix_max', None)
     filter_types = request.form.getlist('filter_types', None)
-    # test des variables puis
-    # mise en session des variables
+
+    if filter_word is not None:
+        if len(filter_word) > 1:
+            if all(c.isalpha() or c.isspace() for c in filter_word):
+                session['filter_word'] = filter_word
+            else:
+                flash('Le nom recherché doit uniquement être composé de lettres', 'alert-warning')
+        elif len(filter_word) == 1:
+            flash('Le nom recherché doit être composé d\'au moins 2 lettres', 'alert-warning')
+        else:
+            session.pop('filter_word', None)
+
+    # Validation des prix
+    if filter_prix_min or filter_prix_max:
+        if filter_prix_min and filter_prix_max:
+            try:
+                prix_min = float(filter_prix_min)
+                prix_max = float(filter_prix_max)
+                if prix_min < prix_max:
+                    session['filter_prix_min'] = prix_min
+                    session['filter_prix_max'] = prix_max
+                else:
+                    flash('Le prix minimum doit être inférieur au prix maximum', 'alert-warning')
+            except ValueError:
+                flash('Les prix doivent être des valeurs numériques', 'alert-warning')
+        else:
+            flash('Veuillez renseigner les deux prix (min et max)', 'alert-warning')
+    else:
+        session.pop('filter_prix_min', None)
+        session.pop('filter_prix_max', None)
+
+    # Gestion des types de gants - remplace l'ancien bloc
+    if filter_types:
+        session['filter_types'] = filter_types
+    else:
+        session.pop('filter_types', None)
+
+    session.modified = True #force Flask à sauvegarder la session
     return redirect('/client/gant/show')
 
 
 @client_panier.route('/client/panier/filtre/suppr', methods=['POST'])
 def client_panier_filtre_suppr():
-    # suppression  des variables en session
+    session.pop('filter_word', None)
+    session.pop('filter_prix_min', None)
+    session.pop('filter_prix_max', None)
+    session.pop('filter_types', None)
+
+    session.modified = True
     print("suppr filtre")
     return redirect('/client/gant/show')
