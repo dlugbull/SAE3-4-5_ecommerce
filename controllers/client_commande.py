@@ -14,12 +14,20 @@ client_commande = Blueprint('client_commande', __name__,
 def client_commande_valide():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    sql = ''' selection des gants d'un panier 
+    sql = '''SELECT id_gant, nom_gant AS nom, prix_gant AS prix, quantite
+    FROM gant
+    JOIN ligne_panier ON gant.id_gant = ligne_panier.gant_id
+    WHERE ligne_panier.utilisateur_id=%s;
     '''
-    gants_panier = []
+    mycursor.execute(sql, (id_client,))
+    gants_panier = mycursor.fetchall()
     if len(gants_panier) >= 1:
-        sql = ''' calcul du prix total du panier '''
-        prix_total = None
+        sql = '''SELECT SUM(prix_gant) AS prix_total
+        FROM gant
+        JOIN ligne_panier on gant.id_gant=ligne_panier.gant_id
+        WHERE ligne_panier.utilisateur_id=%s'''
+        mycursor.execute(sql, (id_client,))
+        prix_total = mycursor.fetchone()["prix_total"]
     else:
         prix_total = None
     # etape 2 : selection des adresses
@@ -39,23 +47,38 @@ def client_commande_add():
     # choix de(s) (l')adresse(s)
 
     id_client = session['id_user']
-    sql = ''' selection du contenu du panier de l'utilisateur '''
-    items_ligne_panier = []
-    # if items_ligne_panier is None or len(items_ligne_panier) < 1:
-    #     flash(u'Pas de gants dans le ligne_panier', 'alert-warning')
-    #     return redirect('/client/gant/show')
+    sql = '''SELECT *, quantite*prix_gant AS prix
+    FROM ligne_panier
+    JOIN gant ON ligne_panier.gant_id=gant.id_gant
+    WHERE utilisateur_id=%s'''
+    mycursor.execute(sql, (id_client,))
+    items_ligne_panier = mycursor.fetchall()
+    if items_ligne_panier is None or len(items_ligne_panier) < 1:
+        flash(u'Pas de gants dans le ligne_panier', 'alert-warning')
+        return redirect('/client/gant/show')
                                            # https://pynative.com/python-mysql-transaction-management-using-commit-rollback/
-    #a = datetime.strptime('my date', "%b %d %Y %H:%M")
+    a = datetime.now()
 
-    sql = ''' creation de la commande '''
+    sql = '''INSERT INTO commande (date_achat, etat_id, utilisateur_id)
+    VALUES (%s, 1, %s)'''
+    mycursor.execute(sql, (a,id_client))
+    get_db().commit()
 
     sql = '''SELECT last_insert_id() as last_insert_id'''
+    mycursor.execute(sql)
+    id_commande = mycursor.fetchone()['last_insert_id']
     # numéro de la dernière commande
     for item in items_ligne_panier:
-        sql = ''' suppression d'une ligne de panier '''
-        sql = "  ajout d'une ligne de commande'"
-
-    get_db().commit()
+        print(item)
+        sql = '''DELETE FROM ligne_panier
+        WHERE ligne_panier.gant_id=%s AND ligne_panier.utilisateur_id = %s'''
+        mycursor.execute(sql, (item["gant_id"], item["utilisateur_id"]))
+        get_db().commit()
+        sql = '''INSERT INTO ligne_commande (commande_id, gant_id, quantite, prix)
+        VALUES (%s, %s, %s, %s)
+        '''
+        mycursor.execute(sql, (id_commande, item["gant_id"], item["quantite"], item["prix"]))
+        get_db().commit()
     flash(u'Commande ajoutée','alert-success')
     return redirect('/client/gant/show')
 

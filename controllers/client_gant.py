@@ -58,9 +58,9 @@ def client_gant_show():                                 # remplace client_index
     sql += " ORDER BY nom_gant"
     mycursor.execute(sql, tuple(list_param))
     gants = mycursor.fetchall()
-    print("Nombre de gants:", len(gants))  # ← debug
-    print("SQL:", sql)  # ← debug
-    print("Params:", list_param)  # ← debug
+    # print("Nombre de gants:", len(gants))  # ← debug
+    # print("SQL:", sql)  # ← debug
+    # print("Params:", list_param)  # ← debug
 
     # pour le filtre
     sql = '''SELECT type_gant.id_type_gant,
