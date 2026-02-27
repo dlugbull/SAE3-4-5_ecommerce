@@ -97,8 +97,8 @@ def client_commande_show():
         FROM ligne_commande
         JOIN gant ON ligne_commande.gant_id = gant.id_gant
         JOIN commande on commande.id_commande = ligne_commande.commande_id
-        WHERE ligne_commande.commande_id = %s;'''
-        mycursor.execute(sql, (id_commande,))
+        WHERE ligne_commande.commande_id = %s AND commande.utilisateur_id=%s;'''
+        mycursor.execute(sql, (id_commande,id_client))
         gants_commande = mycursor.fetchall()
 
         # partie 2 : selection de l'adresse de livraison et de facturation de la commande selectionnée

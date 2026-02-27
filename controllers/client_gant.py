@@ -27,7 +27,6 @@ def client_gant_show():                                 # remplace client_index
        , stock AS stock
        , taille_id AS taille
        FROM gant
-       WHERE stock > 0
        '''
 
     # utilisation du filtre
