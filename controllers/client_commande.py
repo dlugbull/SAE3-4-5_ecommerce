@@ -22,7 +22,7 @@ def client_commande_valide():
     mycursor.execute(sql, (id_client,))
     gants_panier = mycursor.fetchall()
     if len(gants_panier) >= 1:
-        sql = '''SELECT SUM(prix_gant) AS prix_total
+        sql = '''SELECT SUM(prix_gant*quantite) AS prix_total
         FROM gant
         JOIN ligne_panier on gant.id_gant=ligne_panier.gant_id
         WHERE ligne_panier.utilisateur_id=%s'''
