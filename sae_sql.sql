@@ -52,7 +52,7 @@ CREATE TABLE gant(
    nom_gant VARCHAR(50),
    poids INT,
    couleur VARCHAR(50),
-   prix_gant DECIMAL(19,4),
+   prix_gant DECIMAL(19,2),
    photo VARCHAR(50),
    fournisseur VARCHAR(50),
    marque VARCHAR(50),
@@ -69,7 +69,7 @@ CREATE TABLE ligne_commande(
    commande_id INT,
    gant_id INT,
    quantite INT,
-   prix DECIMAL(19,4),
+   prix DECIMAL(19,2),
    PRIMARY KEY(commande_id, gant_id),
    FOREIGN KEY(commande_id) REFERENCES commande(id_commande),
    FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
