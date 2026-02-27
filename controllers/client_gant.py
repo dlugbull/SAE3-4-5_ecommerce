@@ -28,7 +28,7 @@ def client_gant_show():                                 # remplace client_index
        , taille_id AS taille
         ,gant.stock AS stock
        FROM gant
-       WHERE stock > 0
+       WHERE id_gant IS NOT NULL
        '''
 
     # utilisation du filtre
@@ -58,11 +58,12 @@ def client_gant_show():                                 # remplace client_index
 
 
     sql += " ORDER BY nom_gant"
+    print("SQL:", sql)  # ← debug
     mycursor.execute(sql, tuple(list_param))
     gants = mycursor.fetchall()
-    print("Nombre de gants:", len(gants))  # ← debug
-    print("SQL:", sql)  # ← debug
-    print("Params:", list_param)  # ← debug
+    # print("Nombre de gants:", len(gants))  # ← debug
+
+    # print("Params:", list_param)  # ← debug
 
     # pour le filtre
     sql = '''SELECT type_gant.id_type_gant,

@@ -1,6 +1,6 @@
             <div class="col-7">
             {% if gants_panier | length >= 1 %}
-                <h3>Liste des gants dans mon panie</h3>
+                <h3>Liste des gants dans mon panier</h3>
                 <table class="table table-hover table-responsive">
                     <tr>
                         <th style="width: 300px">Nom</th>
@@ -40,7 +40,7 @@
 
                                 <form action="/client/panier/delete/line"  style="display: inline-block;"  method="post">
 {# #}                               <input type="hidden" name="id_taille" value="{{ item_panier.taille }}">
-                                    <input type="hidden" name="id_gant" value="{{ item_panier.id_gant }}">
+                                    <input type="hidden" name="id_gant" value="{{ item_panier.id_gant}}">
                                     <button class="btn btn-primary" >Supprimer</button>
                                 </form>
                             </td>

@@ -33,8 +33,8 @@ def client_panier_add():
         tuple_insert = (id_client, id_gant, quantite)
         mycursor.execute(sql, tuple_insert)
 
-        sql = "UPDATE gant SET stock = stock - %s WHERE id_gant = %s"
-        mycursor.execute(sql, (quantite, id_gant))
+    sql = "UPDATE gant SET stock = stock - %s WHERE id_gant = %s"
+    mycursor.execute(sql, (quantite, id_gant))
 
     get_db().commit()
     return redirect('/client/gant/show')
