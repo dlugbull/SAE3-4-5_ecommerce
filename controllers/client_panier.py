@@ -23,6 +23,9 @@ def client_panier_add():
 
     mycursor.execute("SELECT * FROM gant WHERE id_gant = %s", (id_gant,))
     gant = mycursor.fetchone()
+    if gant["stock"] <= 0:
+        flash("Ce gant est en rupture de stock", "alert-warning")
+        return redirect('/client/gant/show')
 
     if not (gant_panier is None) and gant_panier['quantite'] >= 1:
         tuple_update = (quantite, id_client, id_gant)

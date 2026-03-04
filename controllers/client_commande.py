@@ -110,7 +110,6 @@ def client_commande_show():
     commande_adresses = None
     id_commande = request.args.get('id_commande', None)
     if id_commande != None:
-        print(id_commande)
         sql = '''SELECT gant.nom_gant as nom,
         ligne_commande.quantite,
         ligne_commande.prix,
@@ -123,6 +122,9 @@ def client_commande_show():
         WHERE ligne_commande.commande_id = %s AND commande.utilisateur_id=%s;'''
         mycursor.execute(sql, (id_commande,id_client))
         gants_commande = mycursor.fetchall()
+
+        if gants_commande==():
+            flash("Cette commande ne vous appartient pas", "alert-warning")
 
         # partie 2 : selection de l'adresse de livraison et de facturation de la commande selectionnée
         sql = ''' selection des adressses '''
