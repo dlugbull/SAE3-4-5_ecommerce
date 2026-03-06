@@ -18,6 +18,7 @@ def add_declinaison_gant():
     tailles=None
     d_taille_uniq=None
     d_couleur_uniq=None
+    mycursor.close()
     return render_template('admin/gant/add_declinaison_gant.html'
                            , gant=gant
                            , couleurs=couleurs
@@ -37,6 +38,7 @@ def valid_add_declinaison_gant():
     couleur = request.form.get('couleur')
     # attention au doublon
     get_db().commit()
+    mycursor.close()
     return redirect('/admin/gant/edit?id_gant=' + id_gant)
 
 
@@ -49,6 +51,7 @@ def edit_declinaison_gant():
     tailles=None
     d_taille_uniq=None
     d_couleur_uniq=None
+    mycursor.close()
     return render_template('admin/gant/edit_declinaison_gant.html'
                            , tailles=tailles
                            , couleurs=couleurs
@@ -69,6 +72,7 @@ def valid_edit_declinaison_gant():
 
     message = u'declinaison_gant modifié , id:' + str(id_declinaison_gant) + '- stock :' + str(stock) + ' - taille_id:' + str(taille_id) + ' - couleur_id:' + str(couleur_id)
     flash(message, 'alert-success')
+    mycursor.close()
     return redirect('/admin/gant/edit?id_gant=' + str(id_gant))
 
 

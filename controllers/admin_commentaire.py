@@ -19,6 +19,7 @@ def admin_gant_details():
     gant = []
     sql = '''   requête admin_type_gant_1_3   '''
     nb_commentaires = []
+    mycursor.close()
     return render_template('admin/gant/show_gant_commentaires.html'
                            , commentaires=commentaires
                            , gant=gant
@@ -34,6 +35,7 @@ def admin_comment_delete():
     sql = '''    requête admin_type_gant_2   '''
     tuple_delete=(id_utilisateur,id_gant,date_publication)
     get_db().commit()
+    mycursor.close()
     return redirect('/admin/gant/commentaires?id_gant='+id_gant)
 
 
@@ -52,6 +54,7 @@ def admin_comment_add():
     commentaire = request.form.get('commentaire', None)
     sql = '''    requête admin_type_gant_3   '''
     get_db().commit()
+    mycursor.close()
     return redirect('/admin/gant/commentaires?id_gant='+id_gant)
 
 
@@ -61,4 +64,5 @@ def admin_comment_valider():
     mycursor = get_db().cursor()
     sql = '''   requête admin_type_gant_4   '''
     get_db().commit()
+    mycursor.close()
     return redirect('/admin/gant/commentaires?id_gant='+id_gant)

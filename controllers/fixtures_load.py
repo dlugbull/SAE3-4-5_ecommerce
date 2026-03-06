@@ -275,4 +275,5 @@ INSERT INTO gant VALUES
     mycursor.execute(sql)
 
     get_db().commit()
+    mycursor.close()
     return redirect('/')

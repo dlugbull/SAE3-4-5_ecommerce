@@ -92,6 +92,7 @@ def client_gant_show():                                 # remplace client_index
         prix_total = mycursor.fetchone()["prix"]
     else:
         prix_total = 0
+    mycursor.close()
     return render_template('client/boutique/panier_gant.html'
                            , gants=gants
                            , gants_panier=gants_panier
