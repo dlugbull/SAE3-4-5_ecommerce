@@ -14,9 +14,7 @@ def client_gant_show():                                 # remplace client_index
     mycursor = get_db().cursor()
     id_client = session['id_user']
 
-    sql = '''
-HEAD
-       SELECT id_gant
+    sql = '''SELECT id_gant
        , nom_gant AS nom
        , poids AS poids
        , couleur AS couleur
@@ -31,21 +29,6 @@ HEAD
        FROM gant
        WHERE id_gant IS NOT NULL
        '''
-          SELECT id_gant
-               , nom_gant AS nom
-               , poids AS poids
-               , couleur AS couleur
-               , prix_gant AS prix
-               , photo AS photo
-               , fournisseur AS fournisseur
-               , marque AS marque
-               , type_gant_id AS type
-               , stock AS stock
-               , taille_id AS taille
-          FROM gant
-          WHERE id_gant IS NOT NULL \
-          '''
-a8886bb4ff23f698cb56dbcca2c9306cf9aaba88
 
     # utilisation du filtre
     list_param = []
