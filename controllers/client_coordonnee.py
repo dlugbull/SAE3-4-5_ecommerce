@@ -14,6 +14,7 @@ def client_coordonnee_show():
     mycursor = get_db().cursor()
     id_client = session['id_user']
     utilisateur=[]
+    mycursor.close()
     return render_template('client/coordonnee/show_coordonnee.html'
                            , utilisateur=utilisateur
                          #  , adresses=adresses
@@ -24,7 +25,7 @@ def client_coordonnee_show():
 def client_coordonnee_edit():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-
+    mycursor.close()
     return render_template('client/coordonnee/edit_coordonnee.html'
                            #,utilisateur=utilisateur
                            )
@@ -40,12 +41,14 @@ def client_coordonnee_edit_valide():
     utilisateur = None
     if utilisateur:
         flash(u'votre cet Email ou ce Login existe déjà pour un autre utilisateur', 'alert-warning')
+        mycursor.close()
         return render_template('client/coordonnee/edit_coordonnee.html'
                                #, user=user
                                )
 
 
     get_db().commit()
+    mycursor.close()
     return redirect('/client/coordonnee/show')
 
 
@@ -54,14 +57,14 @@ def client_coordonnee_delete_adresse():
     mycursor = get_db().cursor()
     id_client = session['id_user']
     id_adresse= request.form.get('id_adresse')
-
+    mycursor.close()
     return redirect('/client/coordonnee/show')
 
 @client_coordonnee.route('/client/coordonnee/add_adresse')
 def client_coordonnee_add_adresse():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-
+    mycursor.close()
     return render_template('client/coordonnee/add_adresse.html'
                            #,utilisateur=utilisateur
                            )
@@ -74,6 +77,7 @@ def client_coordonnee_add_adresse_valide():
     rue = request.form.get('rue')
     code_postal = request.form.get('code_postal')
     ville = request.form.get('ville')
+    mycursor.close()
     return redirect('/client/coordonnee/show')
 
 @client_coordonnee.route('/client/coordonnee/edit_adresse')
@@ -81,7 +85,7 @@ def client_coordonnee_edit_adresse():
     mycursor = get_db().cursor()
     id_client = session['id_user']
     id_adresse = request.args.get('id_adresse')
-
+    mycursor.close()
     return render_template('/client/coordonnee/edit_adresse.html'
                            # ,utilisateur=utilisateur
                            # ,adresse=adresse
@@ -96,5 +100,5 @@ def client_coordonnee_edit_adresse_valide():
     code_postal = request.form.get('code_postal')
     ville = request.form.get('ville')
     id_adresse = request.form.get('id_adresse')
-
+    mycursor.close()
     return redirect('/client/coordonnee/show')

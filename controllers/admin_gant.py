@@ -22,6 +22,7 @@ def show_gant():
     '''
     mycursor.execute(sql)
     gants = mycursor.fetchall()
+    mycursor.close()
     return render_template('admin/gant/show_gant.html', gants=gants)
 
 
@@ -31,6 +32,7 @@ def add_gant():
     sql = '''SELECT id_type_gant, nom_type_gant AS libelle FROM type_gant'''
     mycursor.execute(sql)
     type_gant = mycursor.fetchall()
+    mycursor.close()
     return render_template('admin/gant/add_gant.html'
                            ,types_gant=type_gant
                            #,couleurs=colors
@@ -67,6 +69,7 @@ def valid_add_gant():
     message = u'gant ajouté , nom:' + nom + '- type_gant:' + type_gant_id + ' - prix:' + prix + ' - description:' + description + ' - image:' + str(
         image)
     flash(message, 'alert-success')
+    mycursor.close()
     return redirect('/admin/gant/show')
 
 
@@ -98,7 +101,7 @@ def delete_gant():
         print("un gant supprimé, id :", id_gant)
         message = u'un gant supprimé, id : ' + id_gant
         flash(message, 'alert-success')
-
+    mycursor.close()
     return redirect('/admin/gant/show')
 
 
@@ -124,7 +127,7 @@ def edit_gant():
     # '''
     # mycursor.execute(sql, id_gant)
     # declinaisons_gant = mycursor.fetchall()
-
+    mycursor.close()
     return render_template('admin/gant/edit_gant.html'
                            ,gant=gant
                            ,types_gant=types_gant
@@ -168,6 +171,7 @@ def valid_edit_gant():
         image_nom = ''
     message = u'gant modifié , nom:' + nom + '- type_gant :' + type_gant_id + ' - prix:' + prix  + ' - image:' + image_nom + ' - description: ' + description
     flash(message, 'alert-success')
+    mycursor.close()
     return redirect('/admin/gant/show')
 
 
@@ -181,6 +185,7 @@ def admin_avis(id):
     mycursor = get_db().cursor()
     gant=[]
     commentaires = {}
+    mycursor.close()
     return render_template('admin/gant/show_avis.html'
                            , gant=gant
                            , commentaires=commentaires
@@ -192,5 +197,5 @@ def admin_avis_delete():
     mycursor = get_db().cursor()
     gant_id = request.form.get('idgant', None)
     userId = request.form.get('idUser', None)
-
+    mycursor.close()
     return admin_avis(gant_id)

@@ -49,6 +49,7 @@ def client_gant_details():
     # '''
     # mycursor.execute(sql, (id_client, id_gant))
     # nb_commentaires = mycursor.fetchone()
+    mycursor.close()
     return render_template('client/gant_info/gant_details.html'
                            , gant=gant
                            # , commentaires=commentaires
@@ -65,9 +66,11 @@ def client_comment_add():
     id_gant = request.form.get('id_gant', None)
     if commentaire == '':
         flash(u'Commentaire non prise en compte')
+        mycursor.close()
         return redirect('/client/gant/details?id_gant='+id_gant)
     if commentaire != None and len(commentaire)>0 and len(commentaire) <3 :
-        flash(u'Commentaire avec plus de 2 caractères','alert-warning')              # 
+        flash(u'Commentaire avec plus de 2 caractères','alert-warning')
+        mycursor.close()
         return redirect('/client/gant/details?id_gant='+id_gant)
 
     tuple_insert = (commentaire, id_client, id_gant)
@@ -75,6 +78,7 @@ def client_comment_add():
     sql = '''  '''
     mycursor.execute(sql, tuple_insert)
     get_db().commit()
+    mycursor.close()
     return redirect('/client/gant/details?id_gant='+id_gant)
 
 
@@ -88,6 +92,7 @@ def client_comment_detete():
     tuple_delete=(id_client,id_gant,date_publication)
     mycursor.execute(sql, tuple_delete)
     get_db().commit()
+    mycursor.close()
     return redirect('/client/gant/details?id_gant='+id_gant)
 
 @client_commentaire.route('/client/note/add', methods=['POST'])
@@ -101,6 +106,7 @@ def client_note_add():
     sql = '''   '''
     mycursor.execute(sql, tuple_insert)
     get_db().commit()
+    mycursor.close()
     return redirect('/client/gant/details?id_gant='+id_gant)
 
 @client_commentaire.route('/client/note/edit', methods=['POST'])
@@ -114,6 +120,7 @@ def client_note_edit():
     sql = '''  '''
     mycursor.execute(sql, tuple_update)
     get_db().commit()
+    mycursor.close()
     return redirect('/client/gant/details?id_gant='+id_gant)
 
 @client_commentaire.route('/client/note/delete', methods=['POST'])
@@ -126,4 +133,5 @@ def client_note_delete():
     sql = '''  '''
     mycursor.execute(sql, tuple_delete)
     get_db().commit()
+    mycursor.close()
     return redirect('/client/gant/details?id_gant='+id_gant)

@@ -57,6 +57,7 @@ def admin_commande_show():
         gants_commande = mycursor.fetchall()
 
         print(commande_adresses)
+    mycursor.close()
     return render_template('admin/commandes/show.html'
                            , commandes=commandes
                            , gants_commande=gants_commande
@@ -75,4 +76,5 @@ def admin_commande_valider():
         WHERE commande.id_commande = %s;'''
         mycursor.execute(sql, commande_id)
         get_db().commit()
+    mycursor.close()
     return redirect('/admin/commande/show')

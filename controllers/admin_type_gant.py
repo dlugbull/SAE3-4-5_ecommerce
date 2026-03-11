@@ -17,6 +17,7 @@ def show_type_gant():
     GROUP BY id_type_gant;'''
     mycursor.execute(sql)
     types_gant = mycursor.fetchall()
+    mycursor.close()
     return render_template('admin/type_gant/show_type_gant.html', types_gant=types_gant)
 
 @admin_type_gant.route('/admin/type-gant/add', methods=['GET'])
@@ -33,6 +34,7 @@ def valid_add_type_gant():
     get_db().commit()
     message = u'type ajouté , libellé :'+libelle
     flash(message, 'alert-success')
+    mycursor.close()
     return redirect('/admin/type-gant/show') #url_for('show_type_gant')
 
 @admin_type_gant.route('/admin/type-gant/delete', methods=['GET'])
@@ -44,6 +46,7 @@ def delete_type_gant():
     get_db().commit()
 
     flash(u'suppression type gant , id : ' + id_type_gant, 'alert-success')
+    mycursor.close()
     return redirect('/admin/type-gant/show')
 
 @admin_type_gant.route('/admin/type-gant/edit', methods=['GET'])
@@ -53,6 +56,7 @@ def edit_type_gant():
     sql = '''SELECT id_type_gant, nom_type_gant AS libelle FROM type_gant WHERE id_type_gant=%s;'''
     mycursor.execute(sql, (id_type_gant,))
     type_gant = mycursor.fetchone()
+    mycursor.close()
     return render_template('admin/type_gant/edit_type_gant.html', type_gant=type_gant)
 
 @admin_type_gant.route('/admin/type-gant/edit', methods=['POST'])
@@ -67,6 +71,7 @@ def valid_edit_type_gant():
     mycursor.execute(sql, tuple_update)
     get_db().commit()
     flash(u'type gant modifié, id: ' + id_type_gant + " libelle : " + libelle, 'alert-success')
+    mycursor.close()
     return redirect('/admin/type-gant/show')
 
 

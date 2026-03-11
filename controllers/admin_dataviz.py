@@ -25,7 +25,7 @@ def show_type_gant_stock():
     datas_show=[]
     labels=[]
     values=[]
-
+    mycursor.close()
     return render_template('admin/dataviz/dataviz_etat_1.html'
                            , datas_show=datas_show
                            , labels=labels
@@ -37,7 +37,7 @@ def show_type_gant_stock():
 
 @admin_dataviz.route('/admin/dataviz/etat2')
 def show_dataviz_map():
-    # mycursor = get_db().cursor()
+    mycursor = get_db().cursor()
     # sql = '''    '''
     # mycursor.execute(sql)
     # adresses = mycursor.fetchall()
@@ -55,7 +55,7 @@ def show_dataviz_map():
     #     for element in adresses:
     #         indice = element['nbr_dept'] / maxAddress
     #         element['indice'] = round(indice,2)
-
+    mycursor.close()
     print(adresses)
 
     return render_template('admin/dataviz/dataviz_etat_map.html'

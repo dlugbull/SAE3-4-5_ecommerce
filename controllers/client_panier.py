@@ -23,6 +23,10 @@ def client_panier_add():
 
     mycursor.execute("SELECT * FROM gant WHERE id_gant = %s", (id_gant,))
     gant = mycursor.fetchone()
+    if gant["stock"] <= 0:
+        flash("Ce gant est en rupture de stock", "alert-warning")
+        mycursor.close()
+        return redirect('/client/gant/show')
 
     if not (gant_panier is None) and gant_panier['quantite'] >= 1:
         tuple_update = (quantite, id_client, id_gant)
@@ -37,6 +41,7 @@ def client_panier_add():
     mycursor.execute(sql, (quantite, id_gant))
 
     get_db().commit()
+    mycursor.close()
     return redirect('/client/gant/show')
 
 
@@ -86,6 +91,7 @@ def client_panier_delete():
     mycursor.execute(sql, (id_gant,))
 
     get_db().commit()
+    mycursor.close()
     return redirect('/client/gant/show')
 
 
@@ -107,6 +113,7 @@ def client_panier_vider():
         mycursor.execute(sql2, (client_id,))
 
     get_db().commit()
+    mycursor.close()
     return redirect('/client/gant/show')
 
 
@@ -139,6 +146,7 @@ def client_panier_delete_line():
 
 
     get_db().commit()
+    mycursor.close()
     return redirect('/client/gant/show')
 
 

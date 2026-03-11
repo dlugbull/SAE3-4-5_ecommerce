@@ -14,6 +14,7 @@ def client_liste_envies_add():
     mycursor = get_db().cursor()
     id_client = session['id_user']
     id_gant = request.args.get('id_gant')
+    mycursor.close()
     return redirect('/client/gant/show')
 
 @client_liste_envies.route('/client/envie/delete', methods=['get'])
@@ -21,6 +22,7 @@ def client_liste_envies_delete():
     mycursor = get_db().cursor()
     id_client = session['id_user']
     id_gant = request.args.get('id_gant')
+    mycursor.close()
     return redirect('/client/envies/show')
 
 @client_liste_envies.route('/client/envies/show', methods=['get'])
@@ -29,6 +31,7 @@ def client_liste_envies_show():
     id_client = session['id_user']
     gants_liste_envies = []
     gants_historique = []
+    mycursor.close()
     return render_template('client/liste_envies/liste_envies_show.html'
                            ,gants_liste_envies=gants_liste_envies
                            , gants_historique=gants_historique
@@ -49,6 +52,8 @@ def client_historique_add(gant_id, client_id):
     mycursor.execute(sql, (client_id))
     historiques = mycursor.fetchall()
 
+    mycursor.close()
+
 
 @client_liste_envies.route('/client/envies/up', methods=['get'])
 @client_liste_envies.route('/client/envies/down', methods=['get'])
@@ -58,5 +63,5 @@ def client_liste_envies_gant_move():
     mycursor = get_db().cursor()
     id_client = session['id_user']
     id_gant = request.args.get('id_gant')
-  
+    mycursor.close()
     return redirect('/client/envies/show')

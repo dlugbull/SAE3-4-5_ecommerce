@@ -25,6 +25,7 @@ def auth_login_post():
     retour = mycursor.execute(sql, (login))
     user = mycursor.fetchone()
     print(generate_password_hash('admin', method='pbkdf2:sha256'), user['password'])
+    mycursor.close()
     if user:
         mdp_ok = check_password_hash(user['password'], password)
         if not mdp_ok:
@@ -79,6 +80,7 @@ def auth_signup_post():
     session['login'] = login
     session['role'] = 'ROLE_client'
     session['id_user'] = id_user
+    mycursor.close()
     return redirect('/client/gant/show')
 
 

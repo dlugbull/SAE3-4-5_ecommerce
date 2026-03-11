@@ -31,6 +31,7 @@ def client_commande_valide():
     else:
         prix_total = None
     # etape 2 : selection des adresses
+    mycursor.close()
     return render_template('client/boutique/panier_validation_adresses.html'
                            #, adresses=adresses
                            , gants_panier=gants_panier
@@ -55,6 +56,7 @@ def client_commande_add():
     items_ligne_panier = mycursor.fetchall()
     if items_ligne_panier is None or len(items_ligne_panier) < 1:
         flash(u'Pas de gants dans le ligne_panier', 'alert-warning')
+        mycursor.close()
         return redirect('/client/gant/show')
                                            # https://pynative.com/python-mysql-transaction-management-using-commit-rollback/
     a = datetime.now()
@@ -80,6 +82,7 @@ def client_commande_add():
         mycursor.execute(sql, (id_commande, item["gant_id"], item["quantite"], item["prix"]))
         get_db().commit()
     flash(u'Commande ajoutée','alert-success')
+    mycursor.close()
     return redirect('/client/gant/show')
 
 
@@ -110,7 +113,6 @@ def client_commande_show():
     commande_adresses = None
     id_commande = request.args.get('id_commande', None)
     if id_commande != None:
-        print(id_commande)
         sql = '''SELECT gant.nom_gant as nom,
         ligne_commande.quantite,
         ligne_commande.prix,
@@ -124,9 +126,12 @@ def client_commande_show():
         mycursor.execute(sql, (id_commande,id_client))
         gants_commande = mycursor.fetchall()
 
+        if gants_commande==():
+            flash("Cette commande ne vous appartient pas", "alert-warning")
+
         # partie 2 : selection de l'adresse de livraison et de facturation de la commande selectionnée
         sql = ''' selection des adressses '''
-
+    mycursor.close()
     return render_template('client/commandes/show.html'
                            , commandes=commandes
                            , gants_commande=gants_commande
