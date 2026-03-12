@@ -15,18 +15,18 @@ def client_gant_show():                                 # remplace client_index
     id_client = session['id_user']
 
     sql = '''
-          SELECT id_gant
-               , nom_gant AS nom
-               , poids AS poids
-               , couleur AS couleur
-               , prix_gant AS prix
-               , photo AS photo
-               , fournisseur AS fournisseur
-               , marque AS marque
-               , type_gant_id AS type
-               , stock AS stock
-               , taille_id AS taille
+          SELECT gant.id_gant
+               , gant.nom_gant AS nom
+               , gant.poids AS poids
+               , gant.couleur AS couleur
+               , gant.prix_gant AS prix
+               , gant.photo AS photo
+               , gant.fournisseur AS fournisseur
+               , gant.marque AS marque
+               , gant.type_gant_id AS type
+               , sum(declinaison_gant.stock) AS stock
           FROM gant
+              JOIN declinaison_gant ON gant.id_gant = declinaison_gant.gant_id
           WHERE id_gant IS NOT NULL \
           '''
 
@@ -54,7 +54,8 @@ def client_gant_show():                                 # remplace client_index
             sql += ")"
 
 
-    sql += " ORDER BY nom_gant"
+    sql += '''GROUP BY id_gant 
+        ORDER BY nom_gant'''
     # print("SQL:", sql)
     mycursor.execute(sql, tuple(list_param))
     gants = mycursor.fetchall()
@@ -69,24 +70,28 @@ def client_gant_show():                                 # remplace client_index
     types_gant = mycursor.fetchall()
 
     sql='''SELECT ligne_panier.utilisateur_id,
-                  ligne_panier.gant_id as id_gant,
+                  ligne_panier.declinaison_gant_id as id_gant,
                   ligne_panier.quantite,
                   ligne_panier.date_ajout,
                   gant.prix_gant as prix,
                   gant.nom_gant as nom,
-                  gant.stock as stock
+                  sum(declinaison_gant.stock) AS stock
            FROM ligne_panier
+                    JOIN declinaison_gant
+                        ON ligne_panier.declinaison_gant_id = declinaison_gant.id_declinaison_gant
                     JOIN gant
-                         ON ligne_panier.gant_id = gant.id_gant
-           WHERE ligne_panier.utilisateur_id=%s;'''
+                        ON declinaison_gant.gant_id = gant.id_gant
+           WHERE ligne_panier.utilisateur_id=%s
+           GROUP BY declinaison_gant_id'''
 
     mycursor.execute(sql,(id_client,))
     gants_panier = mycursor.fetchall()
+    print(gants_panier)
 
     if len(gants_panier) >= 1:
-        sql = ''' SELECT sum(gant.prix_gant * ligne_panier.quantite) AS prix
-                  FROM gant
-                           JOIN ligne_panier ON ligne_panier.gant_id = gant.id_gant
+        sql = ''' SELECT sum(declinaison_gant.prix_declinaison * ligne_panier.quantite) AS prix
+                  FROM declinaison_gant
+                           JOIN ligne_panier ON ligne_panier.declinaison_gant_id = declinaison_gant.id_declinaison_gant
                   WHERE utilisateur_id = %s'''
         mycursor.execute(sql, (id_client,))
         prix_total = mycursor.fetchone()["prix"]

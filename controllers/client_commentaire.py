@@ -50,7 +50,7 @@ def client_gant_details():
     # mycursor.execute(sql, (id_client, id_gant))
     # nb_commentaires = mycursor.fetchone()
     mycursor.close()
-    return render_template('client/gant_info/gant_details.html'
+    return render_template('client/gant_info/article_details.html'
                            , gant=gant
                            # , commentaires=commentaires
                            , commandes_gants=commandes_gants

@@ -17,11 +17,20 @@ def client_panier_add():
     quantite = request.form.get('quantite')
 
 
-    sql = "SELECT * FROM ligne_panier WHERE gant_id = %s AND utilisateur_id = %s"
+    sql = """SELECT *
+             FROM ligne_panier
+             JOIN declinaison_gant
+                ON declinaison_gant.id_declinaison_gant = ligne_panier.declinaison_gant_id
+             WHERE gant_id = %s AND utilisateur_id = %s"""
     mycursor.execute(sql, (id_gant, id_client))
     gant_panier = mycursor.fetchone()
 
-    mycursor.execute("SELECT * FROM gant WHERE id_gant = %s", (id_gant,))
+    mycursor.execute("""SELECT *, sum(declinaison_gant.stock) as stock
+                        FROM gant
+                        JOIN declinaison_gant
+                            ON declinaison_gant.gant_id = gant.id_gant
+                        WHERE id_gant = %s
+                        GROUP BY gant.id_gant, gant.nom_gant, gant.poids, gant.couleur, gant.prix_gant, gant.photo, gant.fournisseur, gant.marque, gant.description, gant.type_gant_id, declinaison_gant.id_declinaison_gant, declinaison_gant.stock, declinaison_gant.prix_declinaison, declinaison_gant.image, declinaison_gant.taille_id, declinaison_gant.gant_id """, (id_gant,))
     gant = mycursor.fetchone()
     if gant["stock"] <= 0:
         flash("Ce gant est en rupture de stock", "alert-warning")
@@ -30,14 +39,14 @@ def client_panier_add():
 
     if not (gant_panier is None) and gant_panier['quantite'] >= 1:
         tuple_update = (quantite, id_client, id_gant)
-        sql = "UPDATE ligne_panier SET quantite = quantite + %s WHERE utilisateur_id = %s AND gant_id = %s"
+        sql = "UPDATE ligne_panier SET quantite = quantite + %s WHERE utilisateur_id = %s AND declinaison_gant_id = %s"
         mycursor.execute(sql, tuple_update)
     else:
-        sql = "INSERT INTO ligne_panier(utilisateur_id, gant_id, quantite, date_ajout) VALUES (%s, %s, %s, current_timestamp)"
+        sql = "INSERT INTO ligne_panier(utilisateur_id, declinaison_gant_id, quantite, date_ajout) VALUES (%s, %s, %s, current_timestamp)"
         tuple_insert = (id_client, id_gant, quantite)
         mycursor.execute(sql, tuple_insert)
 
-    sql = "UPDATE gant SET stock = stock - %s WHERE id_gant = %s"
+    sql = "UPDATE declinaison_gant SET stock = stock - %s WHERE id_declinaison_gant = %s"
     mycursor.execute(sql, (quantite, id_gant))
 
     get_db().commit()
@@ -61,7 +70,7 @@ def client_panier_delete():
         SELECT quantite
         FROM ligne_panier
         WHERE utilisateur_id = %s
-          AND gant_id = %s
+          AND declinaison_gant_id = %s
     '''
     mycursor.execute(sql, (id_client, id_gant))
     gant_panier = mycursor.fetchone()
@@ -71,22 +80,22 @@ def client_panier_delete():
             UPDATE ligne_panier
             SET quantite = quantite - 1
             WHERE utilisateur_id = %s
-              AND gant_id = %s
+              AND declinaison_gant_id = %s
         '''
         mycursor.execute(sql, (id_client, id_gant))
     else:
         sql = '''
             DELETE FROM ligne_panier
             WHERE utilisateur_id = %s
-              AND gant_id = %s
+              AND declinaison_gant_id = %s
         '''
         mycursor.execute(sql, (id_client, id_gant))
 
     # mise à jour du stock de l'gant disponible
     sql = '''
-        UPDATE gant
+        UPDATE declinaison_gant
         SET stock = stock + 1
-        WHERE id_gant = %s
+        WHERE id_declinaison_gant = %s
     '''
     mycursor.execute(sql, (id_gant,))
 
@@ -106,8 +115,8 @@ def client_panier_vider():
     items_panier = mycursor.fetchall()
 
     for item in items_panier:
-        sql = '''UPDATE gant SET stock = stock + %s WHERE id_gant = %s'''
-        mycursor.execute(sql, (item['quantite'], item['gant_id']))
+        sql = '''UPDATE declinaison_gant SET stock = stock + %s WHERE id_declinaison_gant = %s'''
+        mycursor.execute(sql, (item['quantite'], item['declinaison_gant_id']))
 
         sql2 = '''DELETE FROM ligne_panier WHERE utilisateur_id = %s'''
         mycursor.execute(sql2, (client_id,))
@@ -125,14 +134,14 @@ def client_panier_delete_line():
 
     # mise à jour du stock avec la quantité du panier
     sql = '''
-        UPDATE gant
+        UPDATE declinaison_gant
         SET stock = stock + (
             SELECT quantite
             FROM ligne_panier
             WHERE utilisateur_id = %s
               AND gant_id = %s
         )
-        WHERE id_gant = %s
+        WHERE id_declinaison_gant = %s
     '''
     mycursor.execute(sql, (id_client, id_gant, id_gant))
 
@@ -140,7 +149,7 @@ def client_panier_delete_line():
     sql2 = '''
         DELETE FROM ligne_panier
         WHERE utilisateur_id = %s
-          AND gant_id = %s
+          AND declinaison_gant_id = %s
     '''
     mycursor.execute(sql2, (id_client, id_gant))
 
