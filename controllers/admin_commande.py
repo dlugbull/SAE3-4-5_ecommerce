@@ -19,17 +19,17 @@ def admin_commande_show():
     mycursor = get_db().cursor()
     admin_id = session['id_user']
     sql = '''SELECT commande.etat_id,
-    utilisateur.login,
-    SUM(ligne_commande.quantite) as nbr_gants,
-    SUM(ligne_commande.prix * ligne_commande.quantite) as prix_total,
-    commande.date_achat,
-    etat.libelle_etat as libelle,
-    commande.id_commande
-     FROM commande
-     JOIN utilisateur on utilisateur.id_utilisateur = commande.utilisateur_id
-     JOIN ligne_commande on ligne_commande.commande_id = commande.id_commande
-     JOIN etat on etat.id_etat = commande.etat_id
-     GROUP BY commande.id_commande;'''
+                    utilisateur.login,
+                    SUM(ligne_commande.quantite) as nbr_gants,
+                    SUM(ligne_commande.prix * ligne_commande.quantite) as prix_total,
+                    commande.date_achat,
+                    etat.libelle_etat as libelle,
+                    commande.id_commande
+             FROM commande
+                      JOIN utilisateur on utilisateur.id_utilisateur = commande.utilisateur_id
+                      JOIN ligne_commande on ligne_commande.commande_id = commande.id_commande
+                      JOIN etat on etat.id_etat = commande.etat_id
+             GROUP BY commande.id_commande;'''
     mycursor.execute(sql)
     commandes=mycursor.fetchall()
 
@@ -38,21 +38,33 @@ def admin_commande_show():
     id_commande = request.args.get('id_commande', None)
 
     if id_commande != None:
-        sql = '''SELECT * FROM commande
-        WHERE commande.id_commande = %s;'''
-        mycursor.execute(sql, (id_commande))
-        commande_adresses = mycursor.fetchone() #pas fonctionnel car pas d'ardresses dans sql
+        sql = '''SELECT a_fact.nom_adresse AS nom_facturation,
+                        a_fact.rue AS rue_facturation,
+                        a_fact.code_postal AS code_postal_facturation,
+                        a_fact.ville AS ville_facturation,
+                        a_livre.nom_adresse AS nom_livraison,
+                        a_livre.rue AS rue_livraison,
+                        a_livre.code_postal AS code_postal_livraison,
+                        a_livre.ville AS ville_livraison,
+                        if(a_livre.id_adresse = a_fact.id_adresse, "adresse_identique", null) AS adresse_identique
+                 FROM commande
+                          JOIN adresse a_fact ON a_fact.id_adresse = commande.adresse_id_fact
+                          JOIN adresse a_livre ON a_livre.id_adresse = commande.adresse_id_livre
+                 WHERE commande.id_commande=%s;'''
+        mycursor.execute(sql, (id_commande,))
+        commande_adresses = mycursor.fetchone()
 
         sql = '''SELECT gant.nom_gant as nom,
-        ligne_commande.quantite,
-        ligne_commande.prix,
-        (ligne_commande.quantite * ligne_commande.prix) as prix_ligne,
-        commande.etat_id,
-        commande.id_commande AS id
-        FROM ligne_commande
-        JOIN gant ON ligne_commande.gant_id = gant.id_gant
-        JOIN commande on commande.id_commande = ligne_commande.commande_id
-        WHERE ligne_commande.commande_id = %s;'''
+                        ligne_commande.quantite,
+                        ligne_commande.prix,
+                        (ligne_commande.quantite * ligne_commande.prix) as prix_ligne,
+                        commande.etat_id,
+                        commande.id_commande AS id
+                 FROM ligne_commande
+                          JOIN declinaison_gant ON ligne_commande.declinaison_gant_id = declinaison_gant.id_declinaison_gant
+                          JOIN gant ON declinaison_gant.gant_id = gant.id_gant
+                          JOIN commande on commande.id_commande = ligne_commande.commande_id
+                 WHERE ligne_commande.commande_id = %s'''
         mycursor.execute(sql, (id_commande))
         gants_commande = mycursor.fetchall()
 
@@ -72,8 +84,8 @@ def admin_commande_valider():
     if commande_id != None:
         print(commande_id)
         sql = '''UPDATE commande
-        SET commande.etat_id = 2
-        WHERE commande.id_commande = %s;'''
+                 SET commande.etat_id = 2
+                 WHERE commande.id_commande = %s;'''
         mycursor.execute(sql, commande_id)
         get_db().commit()
     mycursor.close()

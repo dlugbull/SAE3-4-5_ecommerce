@@ -11,15 +11,33 @@ from flask import request, render_template, redirect, flash
 from connexion_db import get_db
 
 admin_gant = Blueprint('admin_gant', __name__,
-                          template_folder='templates')
+                       template_folder='templates')
 
 
 @admin_gant.route('/admin/gant/show')
 def show_gant():
     mycursor = get_db().cursor()
-    sql = ''' SELECT id_gant, nom_gant AS nom, type_gant_id, prix_gant AS prix, photo AS image, nom_type_gant as libelle, stock
-    FROM gant JOIN type_gant ON gant.type_gant_id = type_gant.id_type_gant;
-    '''
+    sql = ''' SELECT gant.id_gant
+                   , gant.nom_gant AS nom
+                   , gant.poids AS poids
+                   , gant.couleur AS couleur
+                   , gant.prix_gant AS prix
+                   , gant.photo AS image
+                   , gant.fournisseur AS fournisseur
+                   , gant.marque AS marque
+                   , gant.type_gant_id AS type_gant_id
+                   , type_gant.nom_type_gant AS libelle
+                   , sum(declinaison_gant.stock) AS stock
+                   , count(declinaison_gant.id_declinaison_gant) AS nb_declinaisons
+                   , count(commentaire.valider = true) AS nb_commentaires_nouveaux
+                   , min(declinaison_gant.stock) as min_stock
+              FROM gant
+                       JOIN declinaison_gant ON gant.id_gant = declinaison_gant.gant_id
+                       JOIN type_gant ON gant.type_gant_id = type_gant.id_type_gant
+                       LEFT JOIN commentaire ON commentaire.gant_id = gant.id_gant
+              GROUP BY id_gant
+              ORDER BY nom_gant; \
+          '''
     mycursor.execute(sql)
     gants = mycursor.fetchall()
     mycursor.close()
@@ -37,7 +55,7 @@ def add_gant():
                            ,types_gant=type_gant
                            #,couleurs=colors
                            #,tailles=tailles
-                            )
+                           )
 
 
 @admin_gant.route('/admin/gant/add', methods=['POST'])
@@ -110,15 +128,15 @@ def edit_gant():
     id_gant=request.args.get('id_gant')
     mycursor = get_db().cursor()
     sql = '''
-    SELECT photo AS image, id_gant, nom_gant AS nom, prix_gant AS prix, type_gant_id, stock
-    FROM gant WHERE id_gant = %s;  
-    '''
+          SELECT photo AS image, id_gant, nom_gant AS nom, prix_gant AS prix, type_gant_id, stock
+          FROM gant WHERE id_gant = %s; \
+          '''
     mycursor.execute(sql, id_gant)
     gant = mycursor.fetchone()
     print(gant)
     sql = '''
-    SELECT id_type_gant, nom_type_gant AS libelle from type_gant;
-    '''
+          SELECT id_type_gant, nom_type_gant AS libelle from type_gant; \
+          '''
     mycursor.execute(sql)
     types_gant = mycursor.fetchall()
 
@@ -131,7 +149,7 @@ def edit_gant():
     return render_template('admin/gant/edit_gant.html'
                            ,gant=gant
                            ,types_gant=types_gant
-                         #  ,declinaisons_gant=declinaisons_gant
+                           #  ,declinaisons_gant=declinaisons_gant
                            )
 
 
@@ -146,8 +164,8 @@ def valid_edit_gant():
     description = request.form.get('description')
     stock = request.form.get('stock')
     sql = '''
-       SELECT photo AS image FROM gant WHERE id_gant=%s;
-       '''
+          SELECT photo AS image FROM gant WHERE id_gant=%s; \
+          '''
     mycursor.execute(sql, id_gant)
     image_nom = mycursor.fetchone()
     image_nom = image_nom['image']
@@ -162,8 +180,8 @@ def valid_edit_gant():
             image_nom = filename
 
     sql = '''UPDATE gant
-       SET nom_gant=%s, photo=%s, prix_gant=%s, type_gant_id=%s, description=%s, stock=%s
-       WHERE id_gant=%s;'''
+             SET nom_gant=%s, photo=%s, prix_gant=%s, type_gant_id=%s, description=%s, stock=%s
+             WHERE id_gant=%s;'''
     mycursor.execute(sql, (nom, image_nom, prix, type_gant_id, description, stock, id_gant))
 
     get_db().commit()

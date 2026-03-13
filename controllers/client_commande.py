@@ -146,7 +146,6 @@ def client_commande_show():
                  WHERE commande.utilisateur_id=%s AND commande.id_commande=%s;'''
         mycursor.execute(sql, (id_client, id_commande))
         commande_adresses = mycursor.fetchone()
-        print(commande_adresses)
     mycursor.close()
     return render_template('client/commandes/show.html'
                            , commandes=commandes
