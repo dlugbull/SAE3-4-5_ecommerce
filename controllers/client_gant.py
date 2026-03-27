@@ -18,13 +18,13 @@ def client_gant_show():                                 # remplace client_index
           SELECT gant.id_gant
                , gant.nom_gant AS nom
                , gant.poids AS poids
-               , gant.couleur AS couleur
                , gant.prix_gant AS prix
                , gant.photo AS photo
                , gant.fournisseur AS fournisseur
                , gant.marque AS marque
                , gant.type_gant_id AS type
                , sum(declinaison_gant.stock) AS stock
+               , count(declinaison_gant.id_declinaison_gant) AS nb_declinaison
           FROM gant
               JOIN declinaison_gant ON gant.id_gant = declinaison_gant.gant_id
           WHERE id_gant IS NOT NULL \
