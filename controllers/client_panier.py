@@ -30,7 +30,7 @@ def client_panier_add():
                         JOIN declinaison_gant
                             ON declinaison_gant.gant_id = gant.id_gant
                         WHERE id_gant = %s
-                        GROUP BY gant.id_gant, gant.nom_gant, gant.poids, gant.couleur, gant.prix_gant, gant.photo, gant.fournisseur, gant.marque, gant.description, gant.type_gant_id, declinaison_gant.id_declinaison_gant, declinaison_gant.stock, declinaison_gant.prix_declinaison, declinaison_gant.image, declinaison_gant.taille_id, declinaison_gant.gant_id """, (id_gant,))
+                        GROUP BY gant.id_gant, gant.nom_gant, gant.poids, gant.prix_gant, gant.photo, gant.fournisseur, gant.marque, gant.description, gant.type_gant_id, declinaison_gant.id_declinaison_gant, declinaison_gant.stock, declinaison_gant.prix_declinaison, declinaison_gant.image, declinaison_gant.taille_id, declinaison_gant.gant_id """, (id_gant,))
     gant = mycursor.fetchone()
     if gant["stock"] <= 0:
         flash("Ce gant est en rupture de stock", "alert-warning")

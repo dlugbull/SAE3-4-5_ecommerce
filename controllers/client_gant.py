@@ -18,7 +18,7 @@ def client_gant_show():                                 # remplace client_index
           SELECT gant.id_gant
                , gant.nom_gant AS nom
                , gant.poids AS poids
-               , gant.prix_gant AS prix
+               , min(declinaison_gant.prix_declinaison) AS prix
                , gant.photo AS photo
                , gant.fournisseur AS fournisseur
                , gant.marque AS marque

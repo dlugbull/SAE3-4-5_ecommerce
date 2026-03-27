@@ -108,7 +108,7 @@ CREATE TABLE ligne_commande(
    commande_id INT,
    declinaison_gant_id INT,
    quantite INT,
-   prix DECIMAL(19,4),
+   prix DECIMAL(19,2),
    PRIMARY KEY(commande_id, declinaison_gant_id),
    FOREIGN KEY(commande_id) REFERENCES commande(id_commande),
    FOREIGN KEY(declinaison_gant_id) REFERENCES declinaison_gant(id_declinaison_gant)

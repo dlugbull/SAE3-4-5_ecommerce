@@ -20,7 +20,6 @@ def show_gant():
     sql = ''' SELECT gant.id_gant
                    , gant.nom_gant AS nom
                    , gant.poids AS poids
-                   , gant.couleur AS couleur
                    , gant.prix_gant AS prix
                    , gant.photo AS image
                    , gant.fournisseur AS fournisseur
@@ -35,7 +34,7 @@ def show_gant():
                        JOIN declinaison_gant ON gant.id_gant = declinaison_gant.gant_id
                        JOIN type_gant ON gant.type_gant_id = type_gant.id_type_gant
                        LEFT JOIN commentaire ON commentaire.gant_id = gant.id_gant
-              GROUP BY id_gant
+              GROUP BY id_gant, nom_gant
               ORDER BY nom_gant; \
           '''
     mycursor.execute(sql)
