@@ -59,6 +59,7 @@ CREATE TABLE adresse(
 CREATE TABLE couleur(
    id_couleur INT AUTO_INCREMENT,
    libelle_couleur VARCHAR(50),
+   code_couleur VARCHAR(255),
    PRIMARY KEY(id_couleur)
 ) DEFAULT CHARSET UTF8;
 
@@ -205,16 +206,16 @@ INSERT INTO taille(num_taille_fr, taille_us, tour_de_main) VALUES
 -- id_couleur=8 : Blanc
 -- id_couleur=9 : Orange
 -- ============================
-INSERT INTO couleur(libelle_couleur) VALUES
-('Couleur unique'),
-('Noir'),
-('Bleu'),
-('Rouge'),
-('Gris'),
-('Vert'),
-('Jaune'),
-('Blanc'),
-('Orange');
+INSERT INTO couleur(libelle_couleur, code_couleur) VALUES
+('Couleur unique', 'black'),
+('Noir', 'black'),
+('Bleu', 'blue'),
+('Rouge', 'red'),
+('Gris', 'grey'),
+('Vert', 'green'),
+('Jaune', 'yellow'),
+('Blanc', 'white'),
+('Orange','orange');
 
 -- ============================
 -- INSERT TYPES DE GANTS
