@@ -70,7 +70,7 @@ def client_gant_show():                                 # remplace client_index
     types_gant = mycursor.fetchall()
 
     sql='''SELECT ligne_panier.utilisateur_id,
-                  ligne_panier.declinaison_gant_id as id_gant,
+                  ligne_panier.declinaison_gant_id as id_declinaison_gant,
                   ligne_panier.quantite,
                   ligne_panier.date_ajout,
                   gant.prix_gant as prix,

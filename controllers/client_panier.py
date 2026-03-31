@@ -79,7 +79,7 @@ def client_panier_add():
 
 
     sql = "UPDATE declinaison_gant SET stock = stock - %s WHERE id_declinaison_gant = %s"
-    mycursor.execute(sql, (quantite, id_gant))
+    mycursor.execute(sql, (quantite, id_declinaison_gant))
 
     get_db().commit()
     mycursor.close()
@@ -91,7 +91,7 @@ def client_panier_add():
 def client_panier_delete():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    id_gant = request.form.get('id_gant','')
+    id_declinaison_gant = request.form.get('id_declinaison_gant','')
     quantite = 1
 
     # ---------
@@ -104,7 +104,7 @@ def client_panier_delete():
           WHERE utilisateur_id = %s
             AND declinaison_gant_id = %s \
           '''
-    mycursor.execute(sql, (id_client, id_gant))
+    mycursor.execute(sql, (id_client, id_declinaison_gant))
     gant_panier = mycursor.fetchone()
 
     if not(gant_panier is None) and gant_panier['quantite'] > 1:
@@ -114,14 +114,14 @@ def client_panier_delete():
               WHERE utilisateur_id = %s
                 AND declinaison_gant_id = %s \
               '''
-        mycursor.execute(sql, (id_client, id_gant))
+        mycursor.execute(sql, (id_client, id_declinaison_gant))
     else:
         sql = '''
               DELETE FROM ligne_panier
               WHERE utilisateur_id = %s
                 AND declinaison_gant_id = %s \
               '''
-        mycursor.execute(sql, (id_client, id_gant))
+        mycursor.execute(sql, (id_client, id_declinaison_gant))
 
     # mise à jour du stock de l'gant disponible
     sql = '''
@@ -129,7 +129,7 @@ def client_panier_delete():
           SET stock = stock + 1
           WHERE id_declinaison_gant = %s \
           '''
-    mycursor.execute(sql, (id_gant,))
+    mycursor.execute(sql, (id_declinaison_gant,))
 
     get_db().commit()
     mycursor.close()
@@ -162,7 +162,7 @@ def client_panier_vider():
 def client_panier_delete_line():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    id_gant = request.form.get('id_gant')
+    id_declinaison_gant = request.form.get('id_declinaison_gant')
 
     # mise à jour du stock avec la quantité du panier
     sql = '''
@@ -175,7 +175,7 @@ def client_panier_delete_line():
           )
           WHERE id_declinaison_gant = %s \
           '''
-    mycursor.execute(sql, (id_client, id_gant, id_gant))
+    mycursor.execute(sql, (id_client, id_declinaison_gant, id_declinaison_gant))
 
     # suppression de la ligne du panier
     sql2 = '''
@@ -183,7 +183,7 @@ def client_panier_delete_line():
            WHERE utilisateur_id = %s
              AND declinaison_gant_id = %s \
            '''
-    mycursor.execute(sql2, (id_client, id_gant))
+    mycursor.execute(sql2, (id_client, id_declinaison_gant))
 
 
     get_db().commit()
