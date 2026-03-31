@@ -46,7 +46,7 @@ def admin_commande_show():
                         a_livre.rue AS rue_livraison,
                         a_livre.code_postal AS code_postal_livraison,
                         a_livre.ville AS ville_livraison,
-                        if(a_livre.id_adresse = a_fact.id_adresse, "adresse_identique", null) AS adresse_identique
+                        if(a_livre.id_adresse = a_fact.id_adresse, 'adresse_identique', null) AS adresse_identique
                  FROM commande
                           JOIN adresse a_fact ON a_fact.id_adresse = commande.adresse_id_fact
                           JOIN adresse a_livre ON a_livre.id_adresse = commande.adresse_id_livre
@@ -59,9 +59,17 @@ def admin_commande_show():
                         ligne_commande.prix,
                         (ligne_commande.quantite * ligne_commande.prix) as prix_ligne,
                         commande.etat_id,
-                        commande.id_commande AS id
+                        commande.id_commande AS id,
+                        couleur.id_couleur,
+                        couleur.libelle_couleur,
+                        couleur.code_couleur,
+                        taille.id_taille,
+                        concat('fr : ', taille.num_taille_fr, ', us : ', taille.taille_us, ', tour de main : ', taille.tour_de_main) as libelle_taille,
+                        (SELECT count(gant_id) from declinaison_gant where declinaison_gant.gant_id=id_gant) as nb_declinaisons
                  FROM ligne_commande
                           JOIN declinaison_gant ON ligne_commande.declinaison_gant_id = declinaison_gant.id_declinaison_gant
+                          JOIN couleur ON declinaison_gant.couleur_id = couleur.id_couleur
+                          JOIN taille ON declinaison_gant.taille_id = taille.id_taille
                           JOIN gant ON declinaison_gant.gant_id = gant.id_gant
                           JOIN commande on commande.id_commande = ligne_commande.commande_id
                  WHERE ligne_commande.commande_id = %s'''
