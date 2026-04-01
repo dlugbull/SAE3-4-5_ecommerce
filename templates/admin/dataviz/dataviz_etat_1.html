@@ -36,7 +36,7 @@
                   <td>{{ ligne.libelle }}</td>
                   <td>{{ ligne.id_type_gant }}</td>
                    <td><span style="color: red">
-                       {% if ligne.nbr_gants_stock is not none %}  {{ ligne.nbr_gants }} {% else %}
+                       {% if ligne.nbr_gants is not none %}  {{ ligne.nbr_gants }} {% else %}
                        pas d'gant {% endif %}
                    </span></td>
 

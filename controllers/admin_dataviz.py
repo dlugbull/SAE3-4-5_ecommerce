@@ -6,30 +6,31 @@ from flask import Flask, request, render_template, redirect, abort, flash, sessi
 from connexion_db import get_db
 
 admin_dataviz = Blueprint('admin_dataviz', __name__,
-                        template_folder='templates')
+                          template_folder='templates')
 
 @admin_dataviz.route('/admin/dataviz/etat1')
 def show_type_gant_stock():
     mycursor = get_db().cursor()
-    sql = '''
-    
+    sql = '''SELECT type_gant.nom_type_gant as libelle, type_gant.id_type_gant,
+                    count(gant.type_gant_id) as nbr_gants
+             FROM type_gant
+                      JOIN gant ON type_gant.id_type_gant = gant.type_gant_id
+             GROUP BY type_gant.nom_type_gant, type_gant.id_type_gant \
            '''
-    # mycursor.execute(sql)
-    # datas_show = mycursor.fetchall()
-    # labels = [str(row['libelle']) for row in datas_show]
-    # values = [int(row['nbr_gants']) for row in datas_show]
+    mycursor.execute(sql)
+    datas_show = mycursor.fetchall()
+    labels = [str(row['libelle']) for row in datas_show]
+    values = [int(row['nbr_gants']) for row in datas_show]
 
-    # sql = '''
-    #         
-    #        '''
-    datas_show=[]
-    labels=[]
-    values=[]
+    mycursor.execute(sql)
+    types_gants_nb = mycursor.fetchall()
+
     mycursor.close()
     return render_template('admin/dataviz/dataviz_etat_1.html'
                            , datas_show=datas_show
                            , labels=labels
-                           , values=values)
+                           , values=values
+                           , types_gants_nb=types_gants_nb)
 
 
 # sujet 3 : adresses
@@ -60,6 +61,6 @@ def show_dataviz_map():
 
     return render_template('admin/dataviz/dataviz_etat_map.html'
                            , adresses=adresses
-                          )
+                           )
 
 

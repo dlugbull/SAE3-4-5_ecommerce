@@ -6,7 +6,7 @@ from decimal import *
 from connexion_db import get_db
 
 fixtures_load = Blueprint('fixtures_load', __name__,
-                        template_folder='templates')
+                          template_folder='templates')
 
 
 @fixtures_load.route('/base/init')
@@ -32,6 +32,8 @@ def fct_fixtures_load():
     mycursor.execute(sql)
     sql = '''DROP TABLE IF EXISTS commande'''
     mycursor.execute(sql)
+    sql = '''DROP TABLE IF EXISTS couleur'''
+    mycursor.execute(sql)
     sql = '''DROP TABLE IF EXISTS adresse'''
     mycursor.execute(sql)
     sql = '''DROP TABLE IF EXISTS type_gant'''
@@ -45,481 +47,457 @@ def fct_fixtures_load():
 
     # Création de la table utilisateur
     sql = '''
-    CREATE TABLE utilisateur(
-        id_utilisateur INT AUTO_INCREMENT,
-        login VARCHAR(50),
-        email VARCHAR(50),
-        nom_utilisateur VARCHAR(50),
-        password VARCHAR(255),
-        role VARCHAR(50),
-        PRIMARY KEY(id_utilisateur)
-    ) DEFAULT CHARSET=utf8
-    '''
+          CREATE TABLE utilisateur(
+                                      id_utilisateur INT AUTO_INCREMENT,
+                                      login VARCHAR(50),
+                                      email VARCHAR(50),
+                                      nom_utilisateur VARCHAR(50),
+                                      password VARCHAR(255),
+                                      role VARCHAR(50),
+                                      PRIMARY KEY(id_utilisateur)
+          ) DEFAULT CHARSET UTF8; \
+          '''
     mycursor.execute(sql)
 
     # Insertion des utilisateurs
     sql = '''
-    INSERT INTO utilisateur VALUES
-        (1, 'admin', 'admin@boutique-gants.fr', 'Administrateur', 'pbkdf2:sha256:1000000$qwwvIJXyTvBTH4R1$73dd8f46cc5953965c9befed035509d47bb89b18166d02c2ee6b0924fb18f923', 'admin'),
-        (2, 'client', 'client@email.com', 'Sophie Martin', 'pbkdf2:sha256:1000000$9u2VVssEqRYwvrze$b3ef9670d06f24ed3dc11a92f1cca4c7b00dd5c301d13bbedec2d6f1f0bb6eb0', 'client'),
-        (3, 'client2', 'client2@email.com', 'Thomas Dubois', 'pbkdf2:sha256:1000000$Eq13PRiR0mkFGUej$4df2d53f486dc29e78c65a6ea3cc7004c4343bc58cdb8c91c19d43a3f84399fe', 'client');
-
-    '''
+          INSERT INTO utilisateur(login, email, nom_utilisateur, password, role) VALUES
+                                                                                     ('admin', 'admin@example.com', 'Administrateur', 'pbkdf2:sha256:1000000$qwwvIJXyTvBTH4R1$73dd8f46cc5953965c9befed035509d47bb89b18166d02c2ee6b0924fb18f923', 'admin'),
+                                                                                     ('client', 'client@example.com', 'Client Un', 'pbkdf2:sha256:1000000$9u2VVssEqRYwvrze$b3ef9670d06f24ed3dc11a92f1cca4c7b00dd5c301d13bbedec2d6f1f0bb6eb0', 'client'),
+                                                                                     ('client2', 'client2@example.com', 'Client Deux', 'pbkdf2:sha256:1000000$Eq13PRiR0mkFGUej$4df2d53f486dc29e78c65a6ea3cc7004c4343bc58cdb8c91c19d43a3f84399fe', 'client'); \
+          '''
     mycursor.execute(sql)
 
     # Création de la table etat
     sql = '''
-    CREATE TABLE etat(
-        id_etat INT AUTO_INCREMENT,
-        libelle_etat VARCHAR(50),
-        PRIMARY KEY(id_etat)
-    ) DEFAULT CHARSET=utf8
-    '''
+          CREATE TABLE etat(
+                               id_etat INT AUTO_INCREMENT,
+                               libelle_etat VARCHAR(50),
+                               PRIMARY KEY(id_etat)
+          ) DEFAULT CHARSET UTF8; \
+          '''
     mycursor.execute(sql)
 
     # Insertion des états
     sql = '''
-    INSERT INTO etat VALUES
-        (1, 'En attente'),
-        (2, 'Expédiée')
-    '''
+          INSERT INTO etat(libelle_etat) VALUES
+                                             ('En état'),
+                                             ('Expédiée');
+          '''
     mycursor.execute(sql)
 
     # Création de la table taille
     sql = '''
-    CREATE TABLE taille(
-        id_taille INT AUTO_INCREMENT,
-        num_taille_fr VARCHAR(50),
-        taille_us VARCHAR(50),
-        tour_de_main VARCHAR(50),
-        PRIMARY KEY(id_taille)
-    ) DEFAULT CHARSET=utf8
-    '''
+          CREATE TABLE taille(
+                                 id_taille INT AUTO_INCREMENT,
+                                 num_taille_fr VARCHAR(50),
+                                 taille_us VARCHAR(50),
+                                 tour_de_main VARCHAR(50),
+                                 PRIMARY KEY(id_taille)
+          ) DEFAULT CHARSET UTF8; \
+          '''
     mycursor.execute(sql)
 
     # Insertion des tailles
     sql = '''
-    INSERT INTO taille VALUES
-        (1, '6', 'XS', '15-16 cm'),
-        (2, '7', 'XS/S', '16-17 cm'),
-        (3, '8', 'S', '17-18 cm'),
-        (4, '9', 'S/M', '18-19 cm'),
-        (5, '10', 'M', '19-20 cm'),
-        (6, '11', 'M/L', '20-21 cm'),
-        (7, '12', 'L', '21-22 cm'),
-        (8, '13', 'L/XL', '22-23 cm'),
-        (9, '14', 'XL', '23-24 cm'),
-        (10, '15', 'XL/XXL', '24-25 cm')
-    '''
+          INSERT INTO taille(num_taille_fr, taille_us, tour_de_main) VALUES
+                                                                         ('Taille unique', 'One size', 'Ajustable'),
+                                                                         ('7', 'S', '17 cm'),
+                                                                         ('8', 'M', '19 cm'),
+                                                                         ('9', 'L', '21 cm'),
+                                                                         ('10', 'XL', '23 cm');
+          '''
     mycursor.execute(sql)
 
     # Création de la table type_gant
     sql = '''
-    CREATE TABLE type_gant(
-        id_type_gant INT AUTO_INCREMENT,
-        nom_type_gant VARCHAR(255),
-        PRIMARY KEY(id_type_gant)
-    ) DEFAULT CHARSET=utf8
-    '''
+          CREATE TABLE type_gant(
+                                    id_type_gant INT AUTO_INCREMENT,
+                                    nom_type_gant VARCHAR(255),
+                                    PRIMARY KEY(id_type_gant)
+          ) DEFAULT CHARSET UTF8; \
+          '''
     mycursor.execute(sql)
 
     # Insertion des types de gants
     sql = '''
-    INSERT INTO type_gant VALUES
-        (1, 'Gants de Vélo'),
-        (2, 'Gants de Sport Combat'),
-        (3, 'Gants d\\'Hiver'),
-        (4, 'Gants de Jardinage'),
-        (5, 'Gants de Ski'),
-        (6, 'Gants de Protection')
-    '''
+          INSERT INTO type_gant(nom_type_gant) VALUES
+                                                   ('Boxe'),
+                                                   ('Jardinage'),
+                                                   ('Cyclisme'),
+                                                   ('Ski'),
+                                                   ('Travail'),
+                                                   ('Randonnée');
+          '''
     mycursor.execute(sql)
 
     # Création de la table adresse
     sql='''
-    CREATE TABLE adresse(
-        id_adresse INT AUTO_INCREMENT,
-        nom_adresse VARCHAR(50),
-        rue VARCHAR(50),
-        code_postal VARCHAR(50),
-        ville VARCHAR(50),
-        date_utilisation DATE,
-        utilisateur_id INT NOT NULL,
-        PRIMARY KEY(id_adresse),
-        FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur)
-    ) DEFAULT CHARSET=utf8
-    '''
+        CREATE TABLE adresse(
+                                id_adresse INT AUTO_INCREMENT,
+                                nom_adresse VARCHAR(50),
+                                rue VARCHAR(50),
+                                code_postal VARCHAR(50),
+                                ville VARCHAR(50),
+                                date_utilisation DATE,
+                                utilisateur_id INT NOT NULL,
+                                PRIMARY KEY(id_adresse),
+                                FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur)
+        ) DEFAULT CHARSET UTF8; \
+        '''
     mycursor.execute(sql)
 
     # Insertion des adresses
     sql='''
-    INSERT INTO adresse VALUES
-        -- Adresses de Sophie Martin (client)
-        (1, 'Domicile', '12 rue des Lilas', '75015', 'Paris', '2025-01-10', 2),
-        (2, 'Bureau', '45 avenue Montaigne', '75008', 'Paris', '2025-01-15', 2),
-        -- Adresses de Thomas Dubois (client2)
-        (3, 'Maison', '78 boulevard Victor Hugo', '69003', 'Lyon', '2025-01-12', 3),
-        (4, 'Travail', '23 rue de la République', '69002', 'Lyon', '2025-01-18', 3);
-    '''
+        INSERT INTO adresse(nom_adresse, rue, code_postal, ville, date_utilisation, utilisateur_id) VALUES
+                                                                                                        ('Maison',  '1 rue du Centre',        '25000', 'Besançon',    '2024-01-01', 2),
+                                                                                                        ('Travail', '12 avenue Victor Hugo',  '25000', 'Besançon',    '2024-02-01', 2),
+                                                                                                        ('Maison',  '5 rue des Lilas',        '25200', 'Montbéliard', '2024-03-01', 3),
+                                                                                                        ('Parents', '8 rue de la République', '25300', 'Pontarlier',  '2024-03-15', 3); \
+        '''
+    mycursor.execute(sql)
+
+    # Création de la table couleur
+    sql='''
+        CREATE TABLE couleur(
+                                id_couleur INT AUTO_INCREMENT,
+                                libelle_couleur VARCHAR(50),
+                                code_couleur VARCHAR(255),
+                                PRIMARY KEY(id_couleur)
+        ) DEFAULT CHARSET UTF8; \
+        '''
+    mycursor.execute(sql)
+
+    # Insertion dans la table couleur
+    sql='''
+        INSERT INTO couleur(libelle_couleur, code_couleur) VALUES
+                                                               ('Couleur unique', 'black'),
+                                                               ('Noir', 'black'),
+                                                               ('Bleu', 'blue'),
+                                                               ('Rouge', 'red'),
+                                                               ('Gris', 'grey'),
+                                                               ('Vert', 'green'),
+                                                               ('Jaune', 'yellow'),
+                                                               ('Blanc', 'white'),
+                                                               ('Orange','orange');
+        '''
     mycursor.execute(sql)
 
     # Création de la table commande
     sql = '''
-    CREATE TABLE commande(
-        id_commande INT AUTO_INCREMENT,
-        date_achat DATETIME,
-        etat_id INT NOT NULL,
-        utilisateur_id INT NOT NULL,
-        adresse_id_fact INT NOT NULL,
-        adresse_id_livre INT NOT NULL,
-        PRIMARY KEY(id_commande),
-        FOREIGN KEY(etat_id) REFERENCES etat(id_etat),
-        FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
-        FOREIGN KEY(adresse_id_livre) REFERENCES adresse(id_adresse),
-        FOREIGN KEY(adresse_id_fact) REFERENCES adresse(id_adresse)
-    ) DEFAULT CHARSET=utf8
-    '''
+          CREATE TABLE commande(
+                                   id_commande INT AUTO_INCREMENT,
+                                   date_achat DATETIME,
+                                   etat_id INT NOT NULL,
+                                   utilisateur_id INT NOT NULL,
+                                   adresse_id_livre INT NOT NULL,
+                                   adresse_id_fact INT NOT NULL,
+                                   PRIMARY KEY(id_commande),
+                                   FOREIGN KEY(etat_id) REFERENCES etat(id_etat),
+                                   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+                                   FOREIGN KEY(adresse_id_livre) REFERENCES adresse(id_adresse),
+                                   FOREIGN KEY(adresse_id_fact) REFERENCES adresse(id_adresse)
+          ) DEFAULT CHARSET UTF8; \
+          '''
     mycursor.execute(sql)
 
     # Insertion des commandes
     sql = '''
-    INSERT INTO commande VALUES
-        (1, '2025-01-10 09:30:00', 2, 2, 1, 1),
-        (2, '2025-01-12 14:15:00', 2, 3, 3, 3),
-        (3, '2025-01-15 10:45:00', 1, 2, 1, 2),
-        (4, '2025-01-18 16:20:00', 1, 3, 4, 3),
-        (5, '2025-01-20 11:00:00', 2, 2, 2, 2),
-        (6, '2025-01-22 13:30:00', 1, 3, 3, 4),
-        (7, '2025-01-24 15:45:00', 2, 2, 1, 1);
-    '''
+          INSERT INTO commande(date_achat, etat_id, utilisateur_id, adresse_id_livre, adresse_id_fact) VALUES
+                                                                                                           ('2024-04-01 10:00:00', 1, 2, 1, 2),  -- id 1 : client, livraison Maison, fact Travail
+                                                                                                           ('2024-04-05 15:30:00', 2, 3, 3, 3),  -- id 2 : client2, expédiée
+                                                                                                           ('2024-04-20 09:15:00', 1, 2, 1, 2),  -- id 3 : client, en attente
+                                                                                                           ('2024-05-03 14:00:00', 2, 3, 4, 4);  -- id 4 : client2, expédiée \
+          '''
     mycursor.execute(sql)
 
     # Création de la table gant
     sql = '''
-    CREATE TABLE gant(
-        id_gant INT AUTO_INCREMENT,
-        nom_gant VARCHAR(50),
-        poids INT,
-        couleur VARCHAR(50),
-        prix_gant DECIMAL(19,2),
-        photo VARCHAR(50),
-        fournisseur VARCHAR(50),
-        marque VARCHAR(50),
-        description VARCHAR(255),
-        type_gant_id INT NOT NULL,
-        PRIMARY KEY(id_gant),
-        FOREIGN KEY(type_gant_id) REFERENCES type_gant(id_type_gant)
-    ) DEFAULT CHARSET=utf8
-    '''
+          CREATE TABLE gant(
+                               id_gant INT AUTO_INCREMENT,
+                               nom_gant VARCHAR(50),
+                               poids INT,
+                               prix_gant DECIMAL(15,2),
+                               photo VARCHAR(50),
+                               fournisseur VARCHAR(50),
+                               marque VARCHAR(50),
+                               description VARCHAR(255),
+                               type_gant_id INT NOT NULL,
+                               PRIMARY KEY(id_gant),
+                               FOREIGN KEY(type_gant_id) REFERENCES type_gant(id_type_gant)
+          ) DEFAULT CHARSET UTF8; \
+          '''
     mycursor.execute(sql)
 
     # Insertion des gants (25 gants)
     sql = '''
-    INSERT INTO gant VALUES
-        -- Gants de Vélo (5 modèles)
-        (1, 'Specialized BG Grail', 85, 'Noir/Rouge', 39.99, 'specialized_grail.jpg', 'Sport 2000', 'Specialized', 'Gants de vélo haute performance avec rembourrage gel', 1),
-        (2, 'Giro DND Cycling', 75, 'Noir/Jaune', 29.99, 'giro_dnd.jpg', 'Sport 2000', 'Giro', 'Gants de cyclisme respirants et confortables', 1),
-        (3, 'Specialized Prime-Series', 95, 'Bleu/Noir', 54.99, 'specialized_prime.jpg', 'Sport 2000', 'Specialized', 'Gants premium pour cyclisme longue distance', 1),
-        (4, 'Decathlon Triban RC500', 90, 'Noir', 19.99, 'triban_rc500_noir.jpg', 'Decathlon', 'Triban', 'Gants de route légers et ventilés', 1),
-        (5, 'Fox Ranger Gel', 105, 'Gris', 34.99, 'fox_ranger_gris.jpg', 'Sport 2000', 'Fox', 'Gants VTT avec protection et grip renforcé', 1),
-    
-        -- Gants de Sport Combat (5 modèles)
-        (6, 'Venum Elite Boxing', 420, 'Blanc/Or', 119.99, 'venum_elite.jpg', 'Combat Sports France', 'Venum', 'Gants de boxe professionnels en cuir premium', 2),
-        (7, 'Everlast PowerLock', 430, 'Rouge/Noir', 89.99, 'everlast_powerlock.jpg', 'Combat Sports France', 'Everlast', 'Gants d entraînement avec système PowerLock', 2),
-        (8, 'Venum Impact MMA', 280, 'Noir/Rouge', 69.99, 'venum_impact.jpg', 'Combat Sports France', 'Venum', 'Gants MMA polyvalents pour sparring', 2),
-        (9, 'Everlast Pro Style', 380, 'Rouge', 44.99, 'everlast_prostyle.jpg', 'Combat Sports France', 'Everlast', 'Gants de boxe style professionnel', 2),
-        (10, 'Adidas Speed 50', 400, 'Bleu/Blanc', 79.99, 'adidas_speed_bleu.jpg', 'Combat Sports France', 'Adidas', 'Gants de compétition légers et rapides', 2),
-    
-        -- Gants d'Hiver (5 modèles)
-        (11, 'The North Face Etip', 120, 'Noir', 49.99, 'tnf_etip.jpg', 'Outdoor Adventure', 'The North Face', 'Gants tactiles pour écrans avec isolation thermique', 3),
-        (12, 'Columbia Thermarator', 140, 'Noir/Gris', 34.99, 'columbia_therma.jpg', 'Outdoor Adventure', 'Columbia', 'Gants chauds et imperméables pour l hiver', 3),
-        (13, 'The North Face Montana', 180, 'Noir', 69.99, 'tnf_montana.jpg', 'Outdoor Adventure', 'The North Face', 'Gants d hiver premium avec isolation Gore-Tex', 3),
-        (14, 'Columbia Whirlibird', 160, 'Violet/Noir', 44.99, 'columbia_whirli.jpg', 'Outdoor Adventure', 'Columbia', 'Gants polyvalents pour sports d hiver', 3),
-        (15, 'Quechua SH500', 150, 'Noir', 24.99, 'quechua_sh500_noir.jpg', 'Decathlon', 'Quechua', 'Gants de randonnée hivernale chauds', 3),
-    
-        -- Gants de Jardinage (4 modèles)
-        (16, 'Rostaing Jardin Expert', 95, 'Vert/Noir', 14.99, 'rostaing_expert.jpg', 'Jardin & Équipement Pro', 'Rostaing', 'Gants de jardinage résistants aux épines', 4),
-        (17, 'Mapa Jardin Pro', 110, 'Vert/Jaune', 12.99, 'mapa_jardin.jpg', 'Jardin & Équipement Pro', 'Mapa', 'Gants imperméables pour travaux de jardinage', 4),
-        (18, 'Rostaing Rosier Premium', 85, 'Rose/Blanc', 18.99, 'rostaing_rosier.jpg', 'Jardin & Équipement Pro', 'Rostaing', 'Gants spécial rosiers ultra-résistants', 4),
-        (19, 'Mechanix Garden Utility', 100, 'Vert/Noir', 24.99, 'mechanix_garden.jpg', 'Jardin & Équipement Pro', 'Mechanix', 'Gants de jardinage techniques et durables', 4),
-    
-        -- Gants de Ski (3 modèles)
-        (20, 'Rossignol Ski Premium', 220, 'Noir/Jaune', 79.99, 'rossignol_ski.jpg', 'Mountain Gear Europe', 'Rossignol', 'Gants de ski haute performance avec isolation', 5),
-        (21, 'The North Face Apex', 200, 'Noir/Gris', 89.99, 'tnf_apex.jpg', 'Mountain Gear Europe', 'The North Face', 'Gants de ski imperméables et respirants', 5),
-        (22, 'Rossignol Tempest IMPR', 240, 'Noir/Rouge', 99.99, 'gant_type_impr_rossignol_noir.jpg', 'Mountain Gear Europe', 'Rossignol', 'Gants de ski freeride avec protection renforcée', 5),
-    
-        -- Gants de Protection (3 modèles)
-        (23, 'Mechanix Original', 130, 'Noir', 24.99, 'mechanix_original.jpg', 'Sport 2000', 'Mechanix', 'Gants de protection polyvalents et résistants', 6),
-        (24, 'Mechanix M-Pact', 150, 'Noir/Rouge', 34.99, 'mechanix_mpact.jpg', 'Sport 2000', 'Mechanix', 'Gants avec protection des articulations', 6),
-        (25, 'Milwaukee Cut Level 5', 160, 'Gris/Noir', 29.99, 'milwaukee_cut5_gris.jpg', 'Jardin & Équipement Pro', 'Milwaukee', 'Gants anti-coupure niveau 5 certifiés', 6);
-'''
+          INSERT INTO gant(nom_gant, poids, prix_gant, photo, fournisseur, marque, description, type_gant_id) VALUES
+-- Boxe (type 1)
+('Adidas Speed Bleu',   300, 59.99,  'adidas_speed_bleu.jpg',            'Adidas',         'Adidas',    'Gants de boxe rapides et légers',         1),  -- id 1
+('Everlast Powerlock',  320, 79.99,  'everlast_powerlock.jpg',           'Everlast',       'Everlast',  'Gants de boxe Powerlock',                 1),  -- id 2
+('Venum Impact',        330, 89.99,  'venum_impact.jpg',                 'Venum',          'Venum',     'Gants de boxe Impact polyvalents',        1),  -- id 3
+('Everlast Prostyle',   310, 69.99,  'everlast_prostyle.jpg',            'Everlast',       'Everlast',  'Gants de boxe Prostyle entrainement',     1),  -- id 4
+('Venum Elite',         350, 99.99,  'venum_elite.jpg',                  'Venum',          'Venum',     'Gants de boxe Elite compétition',         1),  -- id 5
+-- Jardinage (type 2)
+('Mechanix Garden',     150, 19.99,  'mechanix_garden.jpg',              'Mechanix',       'Mechanix',  'Gants de jardinage résistants',           2),  -- id 6
+('Rostaing Expert',     160, 22.99,  'rostaing_expert.jpg',              'Rostaing',       'Rostaing',  'Gants de jardinage expert',               2),  -- id 7
+('Rostaing Rosier',     150, 17.99,  'rostaing_rosier.jpg',              'Rostaing',       'Rostaing',  'Gants spéciaux rosiers anti-épines',      2),  -- id 8
+('Mapa Jardin',         110,  9.99,  'mapa_jardin.jpg',                  'Mapa',           'Mapa',      'Gants de jardinage classiques',           2),  -- id 9
+-- Cyclisme (type 3)
+('Specialized Prime',   120, 34.99,  'specialized_prime.jpg',            'Specialized',    'Specialized','Gants vélo Prime demi-doigts',           3),  -- id 10
+('Giro DND',            140, 29.99,  'giro_dnd.jpg',                     'Giro',           'Giro',      'Gants vélo DND tout-terrain',             3),  -- id 11
+('Triban RC500 Noir',   130, 24.99,  'triban_rc500_noir.jpg',            'Triban',         'Triban',    'Gants vélo RC500 route',                  3),  -- id 12
+('Specialized Grail',   125, 32.99,  'specialized_grail.jpg',            'Specialized',    'Specialized','Gants vélo Grail longs doigts',          3),  -- id 13
+('Fox Ranger Gris',     150, 29.99,  'fox_ranger_gris.jpg',              'Fox',            'Fox',       'Gants vélo Ranger VTT',                   3),  -- id 14
+-- Ski (type 4)
+('Rossignol Noir',      200, 49.99,  'gant_type_impr_rossignol_noir.jpg','Rossignol',      'Rossignol', 'Gants de ski imprimés Rossignol',         4),  -- id 15
+('Rossignol Ski',       260, 79.99,  'rossignol_ski.jpg',                'Rossignol',      'Rossignol', 'Gants de ski Rossignol haute performance', 4), -- id 16
+-- Travail (type 5)
+('Milwaukee Cut5 Gris', 180, 24.99,  'milwaukee_cut5_gris.jpg',          'Milwaukee',      'Milwaukee', 'Gants anti-coupure niveau 5',             5),  -- id 17
+('Mechanix Mpact',      190, 27.99,  'mechanix_mpact.jpg',               'Mechanix',       'Mechanix',  'Gants de travail Mpact anti-impact',      5),  -- id 18
+('Mechanix Original',   180, 25.99,  'mechanix_original.jpg',            'Mechanix',       'Mechanix',  'Gants de travail Original multi-usage',   5),  -- id 19
+-- Randonnée (type 6)
+('TNF Montana',         250, 69.99,  'tnf_montana.jpg',                  'The North Face', 'TNF',       'Gants chauds Montana grand froid',        6),  -- id 20
+('Columbia Therma',     210, 54.99,  'columbia_therma.jpg',              'Columbia',       'Columbia',  'Gants thermiques Columbia hiver',         6),  -- id 21
+('TNF Apex',            240, 74.99,  'tnf_apex.jpg',                     'The North Face', 'TNF',       'Gants Apex softshell imperméables',       6),  -- id 22
+('Quechua SH500 Noir',  230, 39.99,  'quechua_sh500_noir.jpg',           'Quechua',        'Quechua',   'Gants hiver SH500 imperméables',          6),  -- id 23
+('Columbia Whirli',     220, 49.99,  'columbia_whirli.jpg',              'Columbia',       'Columbia',  'Gants Whirlibird convertibles',           6),  -- id 24
+('TNF Etip',            140, 44.99,  'tnf_etip.jpg',                     'The North Face', 'TNF',       'Gants tactiles Etip connectivité',        6);  -- id 25 \
+          '''
     mycursor.execute(sql)
 
     # Création de la table declinaison_gant
     sql='''
-    CREATE TABLE declinaison_gant(
-        id_declinaison_gant INT AUTO_INCREMENT,
-        stock INT,
-        prix_declinaison DECIMAL(19,2),
-        image VARCHAR(50),
-        taille_id INT NOT NULL,
-        gant_id INT NOT NULL,
-        PRIMARY KEY(id_declinaison_gant),
-        FOREIGN KEY(taille_id) REFERENCES taille(id_taille),
-        FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
-    ) DEFAULT CHARSET=utf8
-    '''
+        CREATE TABLE declinaison_gant(
+                                         id_declinaison_gant INT AUTO_INCREMENT,
+                                         stock INT,
+                                         prix_declinaison DECIMAL(15, 2),
+                                         image VARCHAR(50),
+                                         taille_id INT NOT NULL,
+                                         couleur_id INT NOT NULL,
+                                         gant_id INT NOT NULL,
+                                         PRIMARY KEY(id_declinaison_gant),
+                                         FOREIGN KEY(taille_id) REFERENCES taille(id_taille),
+                                         FOREIGN KEY(couleur_id) REFERENCES couleur(id_couleur),
+                                         FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
+        ) DEFAULT CHARSET UTF8; \
+        '''
     mycursor.execute(sql)
 
     # Insertion des déclinaisons de gants
     sql='''
-    INSERT INTO declinaison_gant VALUES
-        -- Specialized BG Grail (ID gant: 1)
-        (1, 45, 39.99, 'specialized_grail_noir.jpg', 5, 1),
-        (2, 38, 39.99, 'specialized_grail_rouge.jpg', 7, 1),
-        
-        -- Giro DND Cycling (ID gant: 2)
-        (3, 52, 29.99, 'giro_dnd_noir.jpg', 5, 2),
-        (4, 30, 29.99, 'giro_dnd_vert.jpg', 7, 2),
-        
-        -- Specialized Prime-Series (ID gant: 3)
-        (5, 25, 54.99, 'specialized_prime_bleu.jpg', 6, 3),
-        
-        -- Decathlon Triban RC500 (ID gant: 4)
-        (6, 60, 19.99, 'triban_rc500_noir.jpg', 5, 4),
-        
-        -- Fox Ranger Gel (ID gant: 5)
-        (7, 42, 34.99, 'fox_ranger_gris.jpg', 6, 5),
-        
-        -- Venum Elite Boxing (ID gant: 6)
-        (8, 18, 119.99, 'venum_elite_noir.jpg', 7, 6),
-        (9, 15, 119.99, 'venum_elite_rouge.jpg', 9, 6),
-        
-        -- Everlast PowerLock (ID gant: 7)
-        (10, 22, 89.99, 'everlast_power_noir.jpg', 7, 7),
-        
-        -- Venum Impact MMA (ID gant: 8)
-        (11, 35, 69.99, 'venum_impact_noir.jpg', 5, 8),
-        
-        -- Everlast Pro Style (ID gant: 9)
-        (12, 40, 44.99, 'everlast_pro_rouge.jpg', 5, 9),
-        
-        -- Adidas Speed 50 (ID gant: 10)
-        (13, 30, 79.99, 'adidas_speed_bleu.jpg', 7, 10),
-        
-        -- The North Face Etip (ID gant: 11)
-        (14, 55, 49.99, 'tnf_etip_noir.jpg', 5, 11),
-        (15, 42, 49.99, 'tnf_etip_bleu.jpg', 7, 11),
-        
-        -- Columbia Thermarator (ID gant: 12)
-        (16, 65, 34.99, 'columbia_therm_noir.jpg', 5, 12),
-        
-        -- The North Face Montana (ID gant: 13)
-        (17, 28, 69.99, 'tnf_montana_noir.jpg', 6, 13),
-        
-        -- Columbia Whirlibird (ID gant: 14)
-        (18, 35, 44.99, 'columbia_whirl_violet.jpg', 5, 14),
-        
-        -- Quechua SH500 (ID gant: 15)
-        (19, 85, 24.99, 'quechua_sh500_noir.jpg', 5, 15),
-        
-        -- Rostaing Jardin Expert (ID gant: 16)
-        (20, 80, 14.99, 'rostaing_expert_vert.jpg', 5, 16),
-        (21, 75, 14.99, 'rostaing_expert_noir.jpg', 7, 16),
-        
-        -- Mapa Jardin Pro (ID gant: 17)
-        (22, 95, 12.99, 'mapa_jardin_vert.jpg', 6, 17),
-        
-        -- Rostaing Rosier Premium (ID gant: 18)
-        (23, 48, 18.99, 'rostaing_rosier_rose.jpg', 5, 18),
-        
-        -- Mechanix Garden Utility (ID gant: 19)
-        (24, 60, 24.99, 'mechanix_garden_vert.jpg', 5, 19),
-        
-        -- Rossignol Ski Premium (ID gant: 20)
-        (25, 25, 79.99, 'rossignol_ski_noir.jpg', 6, 20),
-        
-        -- The North Face Apex (ID gant: 21)
-        (26, 20, 89.99, 'tnf_apex_blanc.jpg', 6, 21),
-        
-        -- Rossignol Tempest IMPR (ID gant: 22)
-        (27, 18, 99.99, 'rossignol_tempest_rouge.jpg', 7, 22),
-        
-        -- Mechanix Original (ID gant: 23)
-        (28, 70, 24.99, 'mechanix_orig_noir.jpg', 5, 23),
-        
-        -- Mechanix M-Pact (ID gant: 24)
-        (29, 55, 34.99, 'mechanix_mpact_rouge.jpg', 6, 24),
-        
-        -- Milwaukee Cut Level 5 (ID gant: 25)
-        (30, 50, 29.99, 'milwaukee_cut5_gris.jpg', 6, 25);
-
-    '''
+        INSERT INTO declinaison_gant(stock, prix_declinaison, image, taille_id, couleur_id, gant_id) VALUES
+                                                                                                         (15, 62.99, NULL, 2, 3, 1), (20, 62.99, NULL, 3, 3, 1), (18, 64.99, NULL, 4, 3, 1),
+                                                                                                         (10, 67.99, NULL, 5, 3, 1), (12, 59.99, NULL, 2, 2, 1), (16, 59.99, NULL, 3, 2, 1),
+                                                                                                         (14, 61.99, NULL, 4, 2, 1), (8,  64.99, NULL, 5, 2, 1), (20, 79.99, NULL, 2, 2, 2),
+                                                                                                         (25, 79.99, NULL, 3, 2, 2), (22, 81.99, NULL, 4, 2, 2), (12, 84.99, NULL, 5, 2, 2),
+                                                                                                         (18, 82.99, NULL, 2, 4, 2), (20, 82.99, NULL, 3, 4, 2), (15, 84.99, NULL, 4, 4, 2),
+                                                                                                         (8,  87.99, NULL, 5, 4, 2), (14, 89.99, NULL, 2, 2, 3), (18, 89.99, NULL, 3, 2, 3),
+                                                                                                         (16, 91.99, NULL, 4, 2, 3), (12, 92.99, NULL, 2, 3, 3), (16, 92.99, NULL, 3, 3, 3),
+                                                                                                         (10, 94.99, NULL, 4, 3, 3), (16, 69.99, NULL, 2, 2, 4), (20, 69.99, NULL, 3, 2, 4),
+                                                                                                         (18, 71.99, NULL, 4, 2, 4), (10, 74.99, NULL, 5, 2, 4), (14, 72.99, NULL, 2, 3, 4),
+                                                                                                         (18, 72.99, NULL, 3, 3, 4), (15, 74.99, NULL, 4, 3, 4), (8,  77.99, NULL, 5, 3, 4),
+                                                                                                         (10, 99.99, NULL, 2, 2, 5), (15, 99.99, NULL, 3, 2, 5), (12, 101.99, NULL, 4, 2, 5),
+                                                                                                         (6,  104.99, NULL, 5, 2, 5), (8,  102.99, NULL, 2, 4, 5), (12, 102.99, NULL, 3, 4, 5),
+                                                                                                         (10, 104.99, NULL, 4, 4, 5), (5,  107.99, NULL, 5, 4, 5), (35, 19.99, NULL, 1, 6, 6),
+                                                                                                         (30, 22.99, NULL, 1, 3, 6), (40, 22.99, NULL, 1, 6, 7), (50, 17.99, NULL, 1, 1, 8),
+                                                                                                         (60, 9.99, NULL, 1, 6, 9), (55, 14.99, NULL, 1, 7, 9), (18, 37.99, NULL, 2, 3, 10),
+                                                                                                         (22, 37.99, NULL, 3, 3, 10), (15, 39.99, NULL, 4, 3, 10), (16, 34.99, NULL, 2, 2, 10),
+                                                                                                         (20, 34.99, NULL, 3, 2, 10), (12, 36.99, NULL, 4, 2, 10), (20, 29.99, NULL, 2, 2, 11),
+                                                                                                         (24, 29.99, NULL, 3, 2, 11), (18, 31.99, NULL, 4, 2, 11), (15, 29.99, NULL, 2, 5, 11),
+                                                                                                         (20, 29.99, NULL, 3, 5, 11), (14, 31.99, NULL, 4, 5, 11), (25, 24.99, NULL, 2, 2, 12),
+                                                                                                         (30, 24.99, NULL, 3, 2, 12), (22, 26.99, NULL, 4, 2, 12), (12, 32.99, NULL, 2, 2, 13),
+                                                                                                         (16, 32.99, NULL, 3, 2, 13), (14, 34.99, NULL, 4, 2, 13), (10, 35.99, NULL, 2, 3, 13),
+                                                                                                         (14, 35.99, NULL, 3, 3, 13), (12, 37.99, NULL, 4, 3, 13), (18, 29.99, NULL, 2, 5, 14),
+                                                                                                         (22, 29.99, NULL, 3, 5, 14), (16, 31.99, NULL, 4, 5, 14), (15, 34.99, NULL, 2, 9, 14),
+                                                                                                         (18, 34.99, NULL, 3, 9, 14), (12, 36.99, NULL, 4, 9, 14), (12, 49.99, NULL, 2, 2, 15),
+                                                                                                         (16, 49.99, NULL, 3, 2, 15), (14, 51.99, NULL, 4, 2, 15), (8,  54.99, NULL, 5, 2, 15),
+                                                                                                         (10, 52.99, NULL, 2, 3, 15), (14, 52.99, NULL, 3, 3, 15), (12, 54.99, NULL, 4, 3, 15),
+                                                                                                         (6,  57.99, NULL, 5, 3, 15), (10, 79.99, NULL, 2, 2, 16), (14, 79.99, NULL, 3, 2, 16),
+                                                                                                         (12, 81.99, NULL, 4, 2, 16), (6,  84.99, NULL, 5, 2, 16), (8,  82.99, NULL, 2, 4, 16),
+                                                                                                         (12, 82.99, NULL, 3, 4, 16), (10, 84.99, NULL, 4, 4, 16), (5,  87.99, NULL, 5, 4, 16),
+                                                                                                         (20, 24.99, NULL, 2, 5, 17), (25, 24.99, NULL, 3, 5, 17), (22, 26.99, NULL, 4, 5, 17),
+                                                                                                         (15, 29.99, NULL, 5, 5, 17), (18, 29.99, NULL, 2, 9, 17), (22, 29.99, NULL, 3, 9, 17),
+                                                                                                         (20, 31.99, NULL, 4, 9, 17), (12, 34.99, NULL, 5, 9, 17), (18, 27.99, NULL, 2, 2, 18),
+                                                                                                         (22, 27.99, NULL, 3, 2, 18), (20, 29.99, NULL, 4, 2, 18), (14, 32.99, NULL, 5, 2, 18),
+                                                                                                         (16, 27.99, NULL, 2, 5, 18), (20, 27.99, NULL, 3, 5, 18), (18, 29.99, NULL, 4, 5, 18),
+                                                                                                         (10, 32.99, NULL, 5, 5, 18), (25, 25.99, NULL, 2, 2, 19), (30, 25.99, NULL, 3, 2, 19),
+                                                                                                         (28, 27.99, NULL, 4, 2, 19), (18, 30.99, NULL, 5, 2, 19), (12, 69.99, NULL, 2, 2, 20),
+                                                                                                         (16, 69.99, NULL, 3, 2, 20), (14, 71.99, NULL, 4, 2, 20), (8,  74.99, NULL, 5, 2, 20),
+                                                                                                         (10, 72.99, NULL, 2, 3, 20), (14, 72.99, NULL, 3, 3, 20), (12, 74.99, NULL, 4, 3, 20),
+                                                                                                         (6,  77.99, NULL, 5, 3, 20), (14, 54.99, NULL, 2, 2, 21), (18, 54.99, NULL, 3, 2, 21),
+                                                                                                         (16, 56.99, NULL, 4, 2, 21), (10, 59.99, NULL, 5, 2, 21), (12, 57.99, NULL, 2, 4, 21),
+                                                                                                         (16, 57.99, NULL, 3, 4, 21), (14, 59.99, NULL, 4, 4, 21), (8,  62.99, NULL, 5, 4, 21),
+                                                                                                         (10, 74.99, NULL, 2, 2, 22), (14, 74.99, NULL, 3, 2, 22), (12, 76.99, NULL, 4, 2, 22),
+                                                                                                         (6,  79.99, NULL, 5, 2, 22), (8,  74.99, NULL, 2, 5, 22), (12, 74.99, NULL, 3, 5, 22),
+                                                                                                         (10, 76.99, NULL, 4, 5, 22), (5,  79.99, NULL, 5, 5, 22), (20, 39.99, NULL, 2, 2, 23),
+                                                                                                         (25, 39.99, NULL, 3, 2, 23), (22, 41.99, NULL, 4, 2, 23), (15, 44.99, NULL, 5, 2, 23),
+                                                                                                         (12, 49.99, NULL, 2, 2, 24), (16, 49.99, NULL, 3, 2, 24), (14, 51.99, NULL, 4, 2, 24),
+                                                                                                         (8,  54.99, NULL, 5, 2, 24), (10, 52.99, NULL, 2, 3, 24), (14, 52.99, NULL, 3, 3, 24),
+                                                                                                         (12, 54.99, NULL, 4, 3, 24), (6,  57.99, NULL, 5, 3, 24), (14, 44.99, NULL, 2, 2, 25),
+                                                                                                         (18, 44.99, NULL, 3, 2, 25), (16, 46.99, NULL, 4, 2, 25), (10, 49.99, NULL, 5, 2, 25),
+                                                                                                         (12, 44.99, NULL, 2, 5, 25), (16, 44.99, NULL, 3, 5, 25), (14, 46.99, NULL, 4, 5, 25),
+                                                                                                         (8,  49.99, NULL, 5, 5, 25); \
+        '''
     mycursor.execute(sql)
+
 
     # Création de la table ligne_commande
     sql = '''
-    CREATE TABLE ligne_commande(
-        commande_id INT,
-        declinaison_gant_id INT,
-        quantite INT,
-        prix DECIMAL(19,2),
-        PRIMARY KEY(commande_id, declinaison_gant_id),
-        FOREIGN KEY(commande_id) REFERENCES commande(id_commande),
-        FOREIGN KEY(declinaison_gant_id) REFERENCES declinaison_gant(id_declinaison_gant)
-    ) DEFAULT CHARSET=utf8
-    '''
+          CREATE TABLE ligne_commande(
+                                         commande_id INT,
+                                         declinaison_gant_id INT,
+                                         quantite INT,
+                                         prix DECIMAL(19,2),
+                                         PRIMARY KEY(commande_id, declinaison_gant_id),
+                                         FOREIGN KEY(commande_id) REFERENCES commande(id_commande),
+                                         FOREIGN KEY(declinaison_gant_id) REFERENCES declinaison_gant(id_declinaison_gant)
+          ) DEFAULT CHARSET UTF8; \
+          '''
     mycursor.execute(sql)
 
     # Insertion des lignes de commande
     sql = '''
-    INSERT INTO ligne_commande VALUES
-        -- Commande 1 - Sophie Martin (Expédiée) - Vélo
-        (1, 1, 1, 39.99),
-        (1, 3, 2, 29.99),
-        -- Commande 2 - Thomas Dubois (Expédiée) - Jardinage
-        (2, 20, 3, 14.99),
-        (2, 22, 2, 12.99),
-        -- Commande 3 - Sophie Martin (En attente) - Combat + Hiver
-        (3, 8, 1, 119.99),
-        (3, 14, 1, 49.99),
-        -- Commande 4 - Thomas Dubois (En attente) - Ski
-        (4, 26, 1, 89.99),
-        (4, 27, 1, 99.99),
-        -- Commande 5 - Sophie Martin (Expédiée) - Hiver + Jardinage
-        (5, 16, 2, 34.99),
-        (5, 23, 1, 18.99),
-        -- Commande 6 - Thomas Dubois (En attente) - Protection + Vélo
-        (6, 29, 2, 34.99),
-        (6, 7, 1, 34.99),
-        -- Commande 7 - Sophie Martin (Expédiée) - Combat
-        (7, 11, 1, 69.99),
-        (7, 12, 1, 44.99);
-    '''
+          INSERT INTO ligne_commande VALUES
+                                         (1, 2,  2, 59.99),   -- commande 1 : Adidas Speed Bleu M/Bleu, qté 2
+                                         (1, 24, 1, 69.99),   -- commande 1 : Everlast Prostyle M/Noir, qté 1
+                                         (2, 89, 2, 24.99),   -- commande 2 : Milwaukee Cut5 M/Gris, qté 2
+                                         (2, 58, 1, 24.99),   -- commande 2 : Triban RC500 M/Noir, qté 1
+                                         (3, 117,1, 54.99),   -- commande 3 : Columbia Therma M/Noir, qté 1
+                                         (3, 33, 1, 99.99),   -- commande 3 : Venum Elite L/Noir, qté 1
+                                         (4, 113,2, 69.99),   -- commande 4 : TNF Montana M/Bleu, qté 2
+                                         (4, 89, 3, 24.99);   -- commande 4 : Milwaukee Cut5 M/Gris, qté 3 \
+          '''
     mycursor.execute(sql)
 
     # Création de la table ligne_panier
     sql = '''
-    CREATE TABLE ligne_panier(
-        utilisateur_id INT,
-        declinaison_gant_id INT,
-        quantite INT,
-        date_ajout DATE,
-        PRIMARY KEY(utilisateur_id, declinaison_gant_id),
-        FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
-        FOREIGN KEY(declinaison_gant_id) REFERENCES declinaison_gant(id_declinaison_gant)
-    ) DEFAULT CHARSET=utf8
-    '''
+          CREATE TABLE ligne_panier(
+                                       utilisateur_id INT,
+                                       declinaison_gant_id INT,
+                                       quantite INT,
+                                       date_ajout DATE,
+                                       PRIMARY KEY(utilisateur_id, declinaison_gant_id),
+                                       FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+                                       FOREIGN KEY(declinaison_gant_id) REFERENCES declinaison_gant(id_declinaison_gant)
+          ) DEFAULT CHARSET UTF8;
+          '''
     mycursor.execute(sql)
 
     # Insertion des lignes de panier
     sql = '''
-    INSERT INTO ligne_panier VALUES
-        -- Panier Sophie Martin
-        (2, 10, 1, '2025-01-25'),
-        (2, 18, 1, '2025-01-26'),
-        (2, 24, 2, '2025-01-26'),
-        -- Panier Thomas Dubois
-        (3, 2, 1, '2025-01-25'),
-        (3, 13, 1, '2025-01-27'),
-        (3, 28, 1, '2025-01-27');
-    '''
+          INSERT INTO ligne_panier VALUES
+                                       (2, 36,  1, '2024-04-10'),  -- client : Venum Elite M/Rouge
+                                       (2, 125, 1, '2024-04-11'),  -- client : TNF Apex M/Noir
+                                       (3, 46,  2, '2024-04-12'),  -- client2 : Specialized Prime M/Bleu
+                                       (3, 67,  1, '2024-04-14');  -- client2 : Fox Ranger M/Gris \
+          '''
     mycursor.execute(sql)
 
     # Création de la table note
     sql='''
-    CREATE TABLE note(
-        utilisateur_id INT,
-        gant_id INT,
-        note INT,
-        PRIMARY KEY(utilisateur_id, gant_id),
-        FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
-        FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
-    ) DEFAULT CHARSET=utf8
-    '''
+        CREATE TABLE note(
+                             utilisateur_id INT,
+                             gant_id INT,
+                             note INT,
+                             PRIMARY KEY(utilisateur_id, gant_id),
+                             FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+                             FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
+        ) DEFAULT CHARSET UTF8; \
+        '''
     mycursor.execute(sql)
 
     # Insertion des notes
     sql='''
-    INSERT INTO note VALUES
-        (2, 1, 5),
-        (2, 11, 4),
-        (3, 16, 5),
-        (3, 20, 4)
-    '''
+        INSERT INTO note VALUES
+                             (2, 1,  5),   -- client note Adidas Speed Bleu : 5/5
+                             (2, 4,  4),   -- client note Everlast Prostyle : 4/5
+                             (2, 10, 5),   -- client note Specialized Prime : 5/5
+                             (3, 12, 4),   -- client2 note Triban RC500 : 4/5
+                             (3, 17, 5),   -- client2 note Milwaukee Cut5 : 5/5
+                             (3, 21, 3);   -- client2 note Columbia Therma : 3/5 \
+        '''
     mycursor.execute(sql)
 
     # Création de la table commentaire
     sql='''
-    CREATE TABLE commentaire(
-        utilisateur_id INT,
-        gant_id INT,
-        date_publication DATE,
-        commentaire VARCHAR(50),
-        valider BOOLEAN,
-        PRIMARY KEY(utilisateur_id, gant_id, date_publication),
-        FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
-        FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
-    ) DEFAULT CHARSET=utf8
-    '''
+        CREATE TABLE commentaire(
+                                    utilisateur_id INT,
+                                    gant_id INT,
+                                    date_publication DATE,
+                                    commentaire VARCHAR(50),
+                                    valider BOOLEAN,
+                                    PRIMARY KEY(utilisateur_id, gant_id, date_publication),
+                                    FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+                                    FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
+        ) DEFAULT CHARSET UTF8; \
+        '''
     mycursor.execute(sql)
 
     # Insertion des commentaires
     sql='''
-    INSERT INTO commentaire VALUES
-        (2, 1, '2025-01-11', 'Excellents gants, très confortables !', 1),
-        (3, 16, '2025-01-13', 'Parfaits pour le jardinage', 1),
-        (2, 11, '2025-01-16', 'Bien mais un peu chers', 1);
-
-    '''
+        INSERT INTO commentaire VALUES
+                                    (2, 1,  '2024-04-12', 'Très bons gants de boxe',  TRUE),
+                                    (2, 4,  '2024-04-15', 'Bon rapport qualité prix', TRUE),
+                                    (2, 10, '2024-04-18', 'Parfaits pour le vélo',    TRUE),
+                                    (3, 12, '2024-04-20', 'Légers et confortables',   TRUE),
+                                    (3, 17, '2024-04-22', 'Très bonne protection',    FALSE),
+                                    (3, 21, '2024-04-25', 'Corrects mais un peu fins', TRUE); \
+        '''
     mycursor.execute(sql)
 
     # Création de la table historique
     sql='''
-    CREATE TABLE historique(
-        utilisateur_id INT,
-        gant_id INT,
-        date_consultation DATE,
-        PRIMARY KEY(utilisateur_id, gant_id, date_consultation),
-        FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
-        FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
-    ) DEFAULT CHARSET=utf8
-    '''
+        CREATE TABLE historique(
+                                   utilisateur_id INT,
+                                   gant_id INT,
+                                   date_consultation DATE,
+                                   PRIMARY KEY(utilisateur_id, gant_id, date_consultation),
+                                   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+                                   FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
+        ) DEFAULT CHARSET UTF8; \
+        '''
     mycursor.execute(sql)
 
     # Insertion des historiques
     sql='''
-    INSERT INTO historique VALUES
-        (2, 1, '2025-01-09'),
-        (2, 11, '2025-01-14'),
-        (2, 6, '2025-01-15'),
-        (3, 16, '2025-01-11'),
-        (3, 20, '2025-01-17'),
-        (3, 21, '2025-01-17');
-    '''
+        INSERT INTO historique VALUES
+                                   (2, 1,  '2024-04-01'),
+                                   (2, 3,  '2024-04-02'),
+                                   (2, 5,  '2024-04-03'),
+                                   (2, 10, '2024-04-05'),
+                                   (2, 22, '2024-04-06'),
+                                   (3, 12, '2024-04-03'),
+                                   (3, 14, '2024-04-04'),
+                                   (3, 17, '2024-04-05'),
+                                   (3, 20, '2024-04-06'),
+                                   (3, 25, '2024-04-07'); \
+        '''
     mycursor.execute(sql)
 
     # Création de la table liste_envie
     sql='''
-    CREATE TABLE liste_envie(
-        utilisateur_id INT,
-        gant_id INT,
-        date_update DATE,
-        PRIMARY KEY(utilisateur_id, gant_id, date_update),
-        FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
-        FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
-    ) DEFAULT CHARSET=utf8
-    '''
+        CREATE TABLE liste_envie(
+                                    utilisateur_id INT,
+                                    gant_id INT,
+                                    date_update DATE,
+                                    PRIMARY KEY(utilisateur_id, gant_id, date_update),
+                                    FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+                                    FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
+        ) DEFAULT CHARSET UTF8; \
+        '''
     mycursor.execute(sql)
 
     # Insertion des listes d'envies
     sql='''
-    INSERT INTO liste_envie VALUES
-        (2, 22, '2025-01-20'),
-        (2, 24, '2025-01-22'),
-        (3, 3, '2025-01-19'),
-        (3, 13, '2025-01-21');
-    '''
+        INSERT INTO liste_envie VALUES
+                                    (2, 5,  '2024-04-15'),  -- client veut Venum Elite
+                                    (2, 22, '2024-04-16'),  -- client veut TNF Apex
+                                    (2, 16, '2024-04-17'),  -- client veut Rossignol Ski
+                                    (3, 1,  '2024-04-15'),  -- client2 veut Adidas Speed Bleu
+                                    (3, 25, '2024-04-16'),  -- client2 veut TNF Etip
+                                    (3, 10, '2024-04-18');  -- client2 veut Specialized Prime
+        '''
     mycursor.execute(sql)
 
     get_db().commit()
