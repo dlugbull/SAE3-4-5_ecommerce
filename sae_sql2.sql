@@ -195,6 +195,26 @@ INSERT INTO taille(num_taille_fr, taille_us, tour_de_main) VALUES
 ('10', 'XL', '23 cm');
 
 -- ============================
+-- INSERT TYPES DE GANTS
+-- ============================
+INSERT INTO type_gant(nom_type_gant) VALUES
+('Boxe'),
+('Jardinage'),
+('Cyclisme'),
+('Ski'),
+('Travail'),
+('Randonnée');
+
+-- ============================
+-- INSERT ADRESSES
+-- ============================
+INSERT INTO adresse(nom_adresse, rue, code_postal, ville, date_utilisation, utilisateur_id) VALUES
+('Maison',  '1 rue du Centre',        '25000', 'Besançon',    '2024-01-01', 2),
+('Travail', '12 avenue Victor Hugo',  '25000', 'Besançon',    '2024-02-01', 2),
+('Maison',  '5 rue des Lilas',        '25200', 'Montbéliard', '2024-03-01', 3),
+('Parents', '8 rue de la République', '25300', 'Pontarlier',  '2024-03-15', 3);
+
+-- ============================
 -- INSERT COULEURS
 -- id_couleur=1 : Couleur unique (gants sans choix de couleur)
 -- id_couleur=2 : Noir
@@ -218,24 +238,13 @@ INSERT INTO couleur(libelle_couleur, code_couleur) VALUES
 ('Orange','orange');
 
 -- ============================
--- INSERT TYPES DE GANTS
+-- INSERT COMMANDES
 -- ============================
-INSERT INTO type_gant(nom_type_gant) VALUES
-('Boxe'),
-('Jardinage'),
-('Cyclisme'),
-('Ski'),
-('Travail'),
-('Randonnée');
-
--- ============================
--- INSERT ADRESSES
--- ============================
-INSERT INTO adresse(nom_adresse, rue, code_postal, ville, date_utilisation, utilisateur_id) VALUES
-('Maison',  '1 rue du Centre',        '25000', 'Besançon',    '2024-01-01', 2),
-('Travail', '12 avenue Victor Hugo',  '25000', 'Besançon',    '2024-02-01', 2),
-('Maison',  '5 rue des Lilas',        '25200', 'Montbéliard', '2024-03-01', 3),
-('Parents', '8 rue de la République', '25300', 'Pontarlier',  '2024-03-15', 3);
+INSERT INTO commande(date_achat, etat_id, utilisateur_id, adresse_id_livre, adresse_id_fact) VALUES
+('2024-04-01 10:00:00', 1, 2, 1, 2),  -- id 1 : client, livraison Maison, fact Travail
+('2024-04-05 15:30:00', 2, 3, 3, 3),  -- id 2 : client2, expédiée
+('2024-04-20 09:15:00', 1, 2, 1, 2),  -- id 3 : client, en attente
+('2024-05-03 14:00:00', 2, 3, 4, 4);  -- id 4 : client2, expédiée
 
 -- ============================
 -- INSERT GANTS (mêmes photos qu'avant)
@@ -599,14 +608,6 @@ INSERT INTO declinaison_gant(stock, prix_declinaison, image, taille_id, couleur_
 (14, 46.99, NULL, 4, 5, 25),  -- id 150 : L / Gris = 44.99 + 2 = 47€
 (8,  49.99, NULL, 5, 5, 25);  -- id 151 : XL / Gris = 44.99 + 5 = 50€
 
--- ============================
--- INSERT COMMANDES
--- ============================
-INSERT INTO commande(date_achat, etat_id, utilisateur_id, adresse_id_livre, adresse_id_fact) VALUES
-('2024-04-01 10:00:00', 1, 2, 1, 2),  -- id 1 : client, livraison Maison, fact Travail
-('2024-04-05 15:30:00', 2, 3, 3, 3),  -- id 2 : client2, expédiée
-('2024-04-20 09:15:00', 1, 2, 1, 2),  -- id 3 : client, en attente
-('2024-05-03 14:00:00', 2, 3, 4, 4);  -- id 4 : client2, expédiée
 
 -- ============================
 -- INSERT LIGNES DE COMMANDE
