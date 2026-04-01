@@ -31,8 +31,8 @@ def show_gant():
                    , count(commentaire.valider = true) AS nb_commentaires_nouveaux
                    , min(declinaison_gant.stock) as min_stock
               FROM gant
-                       JOIN declinaison_gant ON gant.id_gant = declinaison_gant.gant_id
-                       JOIN type_gant ON gant.type_gant_id = type_gant.id_type_gant
+                       LEFT JOIN declinaison_gant ON gant.id_gant = declinaison_gant.gant_id
+                       LEFT JOIN type_gant ON gant.type_gant_id = type_gant.id_type_gant
                        LEFT JOIN commentaire ON commentaire.gant_id = gant.id_gant
               GROUP BY id_gant, nom_gant
               ORDER BY nom_gant; \
@@ -51,10 +51,7 @@ def add_gant():
     type_gant = mycursor.fetchall()
     mycursor.close()
     return render_template('admin/gant/add_gant.html'
-                           ,types_gant=type_gant
-                           #,couleurs=colors
-                           #,tailles=tailles
-                           )
+                           ,types_gant=type_gant)
 
 
 @admin_gant.route('/admin/gant/add', methods=['POST'])
@@ -94,14 +91,24 @@ def valid_add_gant():
 def delete_gant():
     id_gant=request.args.get('id_gant')
     mycursor = get_db().cursor()
-    sql = ''' requête admin_gant_3 '''
-    # mycursor.execute(sql, id_gant)
-    # # nb_declinaison = mycursor.fetchone()
-    # if nb_declinaison['nb_declinaison'] > 0:
-    #     message= u'il y a des declinaisons dans cet gant : vous ne pouvez pas le supprimer'
-    #     flash(message, 'alert-warning')
-    if False:
-        return
+    sql = '''SELECT count(declinaison_gant.id_declinaison_gant) as nb_declinaison
+             FROM declinaison_gant
+             WHERE gant_id=%s'''
+    mycursor.execute(sql, id_gant)
+    nb_declinaison = mycursor.fetchone()
+
+    sql = '''SELECT count(ligne_commande.declinaison_gant_id) as nb_commande
+             FROM ligne_commande
+                      JOIN declinaison_gant ON ligne_commande.declinaison_gant_id = declinaison_gant.id_declinaison_gant
+             WHERE gant_id=%s'''
+    mycursor.execute(sql, id_gant)
+    nb_commande = mycursor.fetchone()
+
+    if nb_declinaison['nb_declinaison'] > 0:
+        message= u'il y a des declinaisons dans cet gant : vous ne pouvez pas le supprimer'
+        flash(message, 'alert-warning')
+    elif nb_commande['nb_commande']>0:
+        flash(u'Il y a des commandes avec ce gant : vous ne pouvez pas le supprimer', 'alert-warning')
     else:
         sql = '''SELECT photo AS image FROM gant WHERE id_gant=%s;'''
         mycursor.execute(sql, id_gant)
@@ -127,7 +134,7 @@ def edit_gant():
     id_gant=request.args.get('id_gant')
     mycursor = get_db().cursor()
     sql = '''
-          SELECT photo AS image, id_gant, nom_gant AS nom, prix_gant AS prix, type_gant_id, stock
+          SELECT photo AS image, id_gant, nom_gant AS nom, prix_gant AS prix, type_gant_id
           FROM gant WHERE id_gant = %s; \
           '''
     mycursor.execute(sql, id_gant)
@@ -139,16 +146,22 @@ def edit_gant():
     mycursor.execute(sql)
     types_gant = mycursor.fetchall()
 
-    # sql = '''
-    # requête admin_gant_6
-    # '''
-    # mycursor.execute(sql, id_gant)
-    # declinaisons_gant = mycursor.fetchall()
+    sql = '''SELECT couleur.libelle_couleur,
+                    declinaison_gant.stock, declinaison_gant.id_declinaison_gant, declinaison_gant.gant_id,
+                    concat('fr : ', taille.num_taille_fr, ', us : ', taille.taille_us, ', tour de main : ', taille.tour_de_main) as libelle_taille
+    FROM declinaison_gant
+        JOIN couleur ON declinaison_gant.couleur_id = couleur.id_couleur
+        JOIN taille ON declinaison_gant.taille_id = taille.id_taille
+        WHERE gant_id=%s;
+    '''
+    mycursor.execute(sql, id_gant)
+    declinaisons_gant = mycursor.fetchall()
     mycursor.close()
+
     return render_template('admin/gant/edit_gant.html'
                            ,gant=gant
                            ,types_gant=types_gant
-                           #  ,declinaisons_gant=declinaisons_gant
+                           ,declinaisons_gant=declinaisons_gant
                            )
 
 
@@ -179,7 +192,7 @@ def valid_edit_gant():
             image_nom = filename
 
     sql = '''UPDATE gant
-             SET nom_gant=%s, photo=%s, prix_gant=%s, type_gant_id=%s, description=%s, stock=%s
+             SET nom_gant=%s, photo=%s, prix_gant=%s, type_gant_id=%s, description=%s
              WHERE id_gant=%s;'''
     mycursor.execute(sql, (nom, image_nom, prix, type_gant_id, description, stock, id_gant))
 
