@@ -13,13 +13,35 @@ client_coordonnee = Blueprint('client_coordonnee', __name__,
 def client_coordonnee_show():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    utilisateur=[]
+
+    sql = '''
+        SELECT 
+            adresse.id_adresse,
+            adresse.nom_adresse AS nom,
+            adresse.rue,
+            adresse.code_postal,
+            adresse.ville,
+            COUNT(commande.id_commande) AS nbr_commandes
+        FROM adresse
+        LEFT JOIN commande 
+            ON adresse.id_adresse = commande.adresse_id_livre
+        WHERE adresse.utilisateur_id = %s
+        GROUP BY adresse.id_adresse
+    '''
+
+    mycursor.execute(sql, (id_client,))
+    adresses = mycursor.fetchall()
+    nb_adresses = len(adresses)
+
     mycursor.close()
-    return render_template('client/coordonnee/show_coordonnee.html'
-                           , utilisateur=utilisateur
-                         #  , adresses=adresses
-                         #  , nb_adresses=nb_adresses
-                           )
+
+    return render_template(
+        'client/coordonnee/show_coordonnee.html',
+        utilisateur={},
+        adresses=adresses,
+        nb_adresses=nb_adresses
+    )
+
 
 @client_coordonnee.route('/client/coordonnee/edit', methods=['GET'])
 def client_coordonnee_edit():
@@ -52,11 +74,23 @@ def client_coordonnee_edit_valide():
     return redirect('/client/coordonnee/show')
 
 
-@client_coordonnee.route('/client/coordonnee/delete_adresse',methods=['POST'])
+@client_coordonnee.route('/client/coordonnee/delete_adresse', methods=['POST'])
 def client_coordonnee_delete_adresse():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    id_adresse= request.form.get('id_adresse')
+    id_adresse = request.form.get('id_adresse')
+
+    sql = '''SELECT *
+             FROM adresse
+             WHERE id_adresse = %s AND utilisateur_id = %s'''
+    mycursor.execute(sql, (id_adresse, id_client))
+    adresse = mycursor.fetchone()
+
+    if adresse:
+        sql_delete = '''DELETE FROM adresse WHERE id_adresse = %s'''
+        mycursor.execute(sql_delete, (id_adresse,))
+        get_db().commit()
+
     mycursor.close()
     return redirect('/client/coordonnee/show')
 
@@ -64,6 +98,13 @@ def client_coordonnee_delete_adresse():
 def client_coordonnee_add_adresse():
     mycursor = get_db().cursor()
     id_client = session['id_user']
+    sql = '''
+        SELECT adresse.nom_adresse,
+        adresse.rue
+        adresse.code_postal
+        adresse.ville
+        
+    '''
     mycursor.close()
     return render_template('client/coordonnee/add_adresse.html'
                            #,utilisateur=utilisateur
