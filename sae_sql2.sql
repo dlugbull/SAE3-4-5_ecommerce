@@ -137,7 +137,7 @@ CREATE TABLE note(
 CREATE TABLE commentaire(
    utilisateur_id INT,
    gant_id INT,
-   date_publication DATE,
+   date_publication DATETIME,
    commentaire VARCHAR(50),
    valider BOOLEAN,
    PRIMARY KEY(utilisateur_id, gant_id, date_publication),
@@ -659,12 +659,12 @@ INSERT INTO note VALUES
 -- INSERT COMMENTAIRES
 -- ============================
 INSERT INTO commentaire VALUES
-(2, 1,  '2024-04-12', 'Très bons gants de boxe',  TRUE),
-(2, 4,  '2024-04-15', 'Bon rapport qualité prix', TRUE),
-(2, 10, '2024-04-18', 'Parfaits pour le vélo',    TRUE),
-(3, 12, '2024-04-20', 'Légers et confortables',   TRUE),
-(3, 17, '2024-04-22', 'Très bonne protection',    FALSE),
-(3, 21, '2024-04-25', 'Corrects mais un peu fins', TRUE);
+(2, 1,  '2024-04-12 10:00:00', 'Très bons gants de boxe',  TRUE),
+(2, 4,  '2024-04-15 11:00:00', 'Bon rapport qualité prix', TRUE),
+(2, 10, '2024-04-18 12:00:00', 'Parfaits pour le vélo',    TRUE),
+(3, 12, '2024-04-20 09:00:00', 'Légers et confortables',   TRUE),
+(3, 17, '2024-04-22 14:00:00', 'Très bonne protection',    FALSE),
+(3, 21, '2024-04-25 16:00:00', 'Corrects mais un peu fins', TRUE);
 
 -- ============================
 -- INSERT HISTORIQUE
