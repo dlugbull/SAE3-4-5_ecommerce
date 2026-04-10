@@ -13,6 +13,12 @@
 <body>
 {% include('client/_nav_client.html') %}
 <div class="container  container-md">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="alert {{ category }} mt-2">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
 {% block body %}
     <h4 style="color:blue">page Client : templates\admin\layout_client.html</h4>
     <h3 style="color: blue">Bonjour {{ session['login'] }} , votre Rôle : {{ session['role'] }}</h3>

@@ -1,145 +1,131 @@
-#! /usr/bin/python
-# -*- coding:utf-8 -*-
-from flask import Blueprint
-from flask import Flask, request, render_template, redirect, url_for, abort, flash, session, g
-
+from flask import Blueprint, request, render_template, redirect, flash, session
 from connexion_db import get_db
 
-client_coordonnee = Blueprint('client_coordonnee', __name__,
-                        template_folder='templates')
+client_coordonnee = Blueprint('client_coordonnee', __name__, template_folder='templates')
+
+
+def compter_adresses_valides(cursor, user_id):
+    cursor.execute("""
+                   SELECT COUNT(*) as nb
+                   FROM adresse
+                   WHERE utilisateur_id = %s
+                     AND est_valide = TRUE
+                   """, (user_id,))
+    return cursor.fetchone()['nb']
+
+
+def set_favori(cursor, user_id, id_adresse):
+    cursor.execute("""
+                   UPDATE adresse
+                   SET est_favori = FALSE
+                   WHERE utilisateur_id = %s
+                   """, (user_id,))
+
+    cursor.execute("""
+                   UPDATE adresse
+                   SET est_favori = TRUE
+                   WHERE id_adresse = %s
+                   """, (id_adresse,))
 
 
 @client_coordonnee.route('/client/coordonnee/show')
-def client_coordonnee_show():
-    mycursor = get_db().cursor()
-    id_client = session['id_user']
+def show():
+    cursor = get_db().cursor()
+    user_id = session['id_user']
 
-    sql = '''
-        SELECT 
-            adresse.id_adresse,
-            adresse.nom_adresse AS nom,
-            adresse.rue,
-            adresse.code_postal,
-            adresse.ville,
-            COUNT(commande.id_commande) AS nbr_commandes
-        FROM adresse
-        LEFT JOIN commande 
-            ON adresse.id_adresse = commande.adresse_id_livre
-        WHERE adresse.utilisateur_id = %s
-        GROUP BY adresse.id_adresse
-    '''
+    cursor.execute("SELECT * FROM utilisateur WHERE id_utilisateur=%s", (user_id,))
+    utilisateur = cursor.fetchone()
 
-    mycursor.execute(sql, (id_client,))
-    adresses = mycursor.fetchall()
-    nb_adresses = len(adresses)
+    cursor.execute("""
+                   SELECT a.*,
+                          COUNT(c.id_commande) as nbr_commandes
+                   FROM adresse a
+                            LEFT JOIN commande c ON a.id_adresse = c.adresse_id_livre
+                   WHERE a.utilisateur_id = %s
+                   GROUP BY a.id_adresse
+                   ORDER BY a.est_favori DESC, a.id_adresse DESC
+                   """, (user_id,))
 
-    mycursor.close()
+    adresses = cursor.fetchall()
 
-    return render_template(
-        'client/coordonnee/show_coordonnee.html',
-        utilisateur={},
-        adresses=adresses,
-        nb_adresses=nb_adresses
-    )
+    nb_valides = compter_adresses_valides(cursor, user_id)
+    nb_total = len(adresses)
+
+    cursor.close()
+    return render_template("client/coordonnee/show_coordonnee.html",
+                           utilisateur=utilisateur,
+                           adresses=adresses,
+                           nb_adresses=nb_valides,
+                           nb_adresses_tot=nb_total)
 
 
-@client_coordonnee.route('/client/coordonnee/edit', methods=['GET'])
-def client_coordonnee_edit():
-    mycursor = get_db().cursor()
-    id_client = session['id_user']
-    mycursor.close()
-    return render_template('client/coordonnee/edit_coordonnee.html'
-                           #,utilisateur=utilisateur
-                           )
+@client_coordonnee.route('/client/coordonnee/add_adresse', methods=['POST'])
+def add():
+    cursor = get_db().cursor()
+    user_id = session['id_user']
 
-@client_coordonnee.route('/client/coordonnee/edit', methods=['POST'])
-def client_coordonnee_edit_valide():
-    mycursor = get_db().cursor()
-    id_client = session['id_user']
-    nom=request.form.get('nom')
-    login = request.form.get('login')
-    email = request.form.get('email')
+    nom = request.form['nom']
+    rue = request.form['rue']
+    cp = request.form['code_postal']
+    ville = request.form['ville']
 
-    utilisateur = None
-    if utilisateur:
-        flash(u'votre cet Email ou ce Login existe déjà pour un autre utilisateur', 'alert-warning')
-        mycursor.close()
-        return render_template('client/coordonnee/edit_coordonnee.html'
-                               #, user=user
-                               )
+    if not cp.isdigit() or len(cp) != 5:
+        flash("Code postal invalide", "alert-warning")
+        return redirect('/client/coordonnee/show')
 
+    if compter_adresses_valides(cursor, user_id) >= 4:
+        flash("Max 4 adresses atteintes", "alert-warning")
+        return redirect('/client/coordonnee/show')
+
+    cursor.execute("""
+                   INSERT INTO adresse (nom_adresse, rue, code_postal, ville, utilisateur_id)
+                   VALUES (%s, %s, %s, %s, %s)
+                   """, (nom, rue, cp, ville, user_id))
+
+    new_id = cursor.lastrowid
+    set_favori(cursor, user_id, new_id)
 
     get_db().commit()
-    mycursor.close()
+    cursor.close()
+
     return redirect('/client/coordonnee/show')
 
 
 @client_coordonnee.route('/client/coordonnee/delete_adresse', methods=['POST'])
-def client_coordonnee_delete_adresse():
-    mycursor = get_db().cursor()
-    id_client = session['id_user']
-    id_adresse = request.form.get('id_adresse')
+def delete():
+    cursor = get_db().cursor()
+    user_id = session['id_user']
+    id_adresse = request.form['id_adresse']
 
-    sql = '''SELECT *
-             FROM adresse
-             WHERE id_adresse = %s AND utilisateur_id = %s'''
-    mycursor.execute(sql, (id_adresse, id_client))
-    adresse = mycursor.fetchone()
+    cursor.execute("""
+                   SELECT *
+                   FROM adresse
+                   WHERE id_adresse = %s
+                     AND utilisateur_id = %s
+                   """, (id_adresse, user_id))
 
-    if adresse:
-        sql_delete = '''DELETE FROM adresse WHERE id_adresse = %s'''
-        mycursor.execute(sql_delete, (id_adresse,))
-        get_db().commit()
+    if not cursor.fetchone():
+        flash("Erreur sécurité", "alert-danger")
+        return redirect('/client/coordonnee/show')
 
-    mycursor.close()
-    return redirect('/client/coordonnee/show')
+    cursor.execute("""
+                   SELECT COUNT(*) as nb
+                   FROM commande
+                   WHERE adresse_id_livre = %s
+                      OR adresse_id_fact = %s
+                   """, (id_adresse, id_adresse))
 
-@client_coordonnee.route('/client/coordonnee/add_adresse')
-def client_coordonnee_add_adresse():
-    mycursor = get_db().cursor()
-    id_client = session['id_user']
-    sql = '''
-        SELECT adresse.nom_adresse,
-        adresse.rue
-        adresse.code_postal
-        adresse.ville
-        
-    '''
-    mycursor.close()
-    return render_template('client/coordonnee/add_adresse.html'
-                           #,utilisateur=utilisateur
-                           )
+    used = cursor.fetchone()['nb'] > 0
 
-@client_coordonnee.route('/client/coordonnee/add_adresse',methods=['POST'])
-def client_coordonnee_add_adresse_valide():
-    mycursor = get_db().cursor()
-    id_client = session['id_user']
-    nom= request.form.get('nom')
-    rue = request.form.get('rue')
-    code_postal = request.form.get('code_postal')
-    ville = request.form.get('ville')
-    mycursor.close()
-    return redirect('/client/coordonnee/show')
+    if used:
+        cursor.execute("""
+                       UPDATE adresse
+                       SET est_valide = FALSE
+                       WHERE id_adresse = %s
+                       """, (id_adresse,))
+    else:
+        cursor.execute("DELETE FROM adresse WHERE id_adresse=%s", (id_adresse,))
 
-@client_coordonnee.route('/client/coordonnee/edit_adresse')
-def client_coordonnee_edit_adresse():
-    mycursor = get_db().cursor()
-    id_client = session['id_user']
-    id_adresse = request.args.get('id_adresse')
-    mycursor.close()
-    return render_template('/client/coordonnee/edit_adresse.html'
-                           # ,utilisateur=utilisateur
-                           # ,adresse=adresse
-                           )
-
-@client_coordonnee.route('/client/coordonnee/edit_adresse',methods=['POST'])
-def client_coordonnee_edit_adresse_valide():
-    mycursor = get_db().cursor()
-    id_client = session['id_user']
-    nom= request.form.get('nom')
-    rue = request.form.get('rue')
-    code_postal = request.form.get('code_postal')
-    ville = request.form.get('ville')
-    id_adresse = request.form.get('id_adresse')
-    mycursor.close()
+    get_db().commit()
+    cursor.close()
     return redirect('/client/coordonnee/show')

@@ -1,44 +1,415 @@
 {% extends 'admin/layout_admin.html' %}
 
-
 {% block javascripts %}
-{#    attention il faut importer la bibliotheque chart.js avant de définir l'objet chart#}
     {{ super() }}
-   {# <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}" ></script>#}
 {% endblock %}
 
 {% block javascripts_head %}
-{#    attention il faut importer la bibliotheque chart.js avant de définir l'objet chart#}
-{#    <script src="{{ url_for('static', filename='chart.js') }}" ></script>#}
-      <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 {% endblock %}
 
 {% block title %}
-    <title>test carte</title>
+    <title>Visualisation ventes par département</title>
 {% endblock %}
 
 {% block body %}
-    <a href="https://github.com/regisenguehard/carte-france-svg/blob/master/carte-france-svg.html" target="_blank">exemple github carte</a>
-    <br>
-    <a href="https://www.youtube.com/watch?v=UZs8l50gxjU" target="_blank"> video graficart</a>
-    <br>
-    <a href="https://www.amcharts.com/svg-maps/?map=franceDepartments"> github carte svg</a>
-    <br>
+<br>
 
-    <div class="text-center border w-50 m-auto">
-        <h2 class="text-center">Données sur les adresses clients</h2>
-        {% include 'admin/dataviz/franceMap.html' %}
+<h2> Nombre de ventes et chiffre d'affaire par département</h2>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th>Département</th>
+            <th>Nombre de ventes</th>
+            <th>Chiffre d'affaire (€)</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% if stats | length >= 1 %}
+        {% for ligne in stats %}
+        <tr>
+            <td>{{ ligne.dep }}</td>
+
+            <td>
+                <span style="color: blue;">
+                    {% if ligne.nb_ventes is not none %}
+                        {{ ligne.nb_ventes }}
+                    {% else %}
+                        0
+                    {% endif %}
+                </span>
+            </td>
+
+            <td>
+                <span style="color: green;">
+                    {% if ligne.chiffre_affaire is not none %}
+                        {{ "%.2f"|format(ligne.chiffre_affaire) }} €
+                    {% else %}
+                        0 €
+                    {% endif %}
+                </span>
+            </td>
+        </tr>
+        {% endfor %}
+    {% else %}
+        <tr><td colspan="3">Aucune donnée</td></tr>
+    {% endif %}
+    </tbody>
+</table>
+
+<br>
+
+<h2>{% extends 'admin/layout_admin.html' %}
+
+{% block title %}
+    <title>Ventes par département</title>
+{% endblock %}
+
+{% block javascripts_head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid mt-3">
+
+    <h2 class="mb-4">📊 Visualisation — Ventes par département</h2>
+
+    <!-- Navigation dataviz -->
+    <div class="mb-4">
+        <a href="/admin/dataviz/etat1" class="btn btn-outline-secondary">Types de gants</a>
+        <a href="/admin/dataviz/etat2" class="btn btn-primary">Ventes par département</a>
+        <a href="/admin/dataviz/etat3" class="btn btn-outline-secondary">Carte France</a>
     </div>
 
-    <script>
-    {% for element in adresses %}
-        document.getElementById({{ element['dep'] }}).style.fill= "#000000";
-        document.getElementById({{ element['dep'] }}).setAttribute("fill-opacity", {{ element['indice'] }});
-    {% endfor %}
-    </script>
+    <!-- ══════════════════════════════════════════
+         TABLEAU
+    ══════════════════════════════════════════ -->
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <strong>📋 Tableau — Ventes &amp; CA par département</strong>
+                </div>
+                <div class="card-body p-2" style="max-height: 420px; overflow-y: auto;">
+                    <table class="table table-sm table-bordered table-hover mb-0">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Département</th>
+                                <th class="text-right">Nb ventes</th>
+                                <th class="text-right">Chiffre d'affaires (€)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if stats | length >= 1 %}
+                                {% for row in stats %}
+                                <tr>
+                                    <td><strong>{{ row.dep }}</strong></td>
+                                    <td class="text-right">
+                                        <span class="badge badge-primary">{{ row.nb_ventes }}</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <span class="text-success font-weight-bold">
+                                            {{ "%.2f"|format(row.chiffre_affaire) }} €
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                <!-- Ligne totaux -->
+                                <tr class="table-dark font-weight-bold">
+                                    <td>TOTAL</td>
+                                    <td class="text-right">
+                                        {{ stats | sum(attribute='nb_ventes') }}
+                                    </td>
+                                    <td class="text-right">
+                                        {{ "%.2f"|format(stats | sum(attribute='chiffre_affaire')) }} €
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="3" class="text-center text-muted">Aucune donnée</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-{#    /* couleur avec transparence */#}
-{#background-color : rgba(255,255,255,0.5);#}
-{#    https://web-color.aliasdmc.fr/couleur-web-white-avec-transparence.html#}
+        <!-- Résumé statistique rapide -->
+        <div class="col-md-6">
+            <div class="card shadow h-100">
+                <div class="card-header bg-secondary text-white">
+                    <strong>📈 Résumé</strong>
+                </div>
+                <div class="card-body">
+                    {% if stats %}
+                    {% set total_ventes = stats | sum(attribute='nb_ventes') %}
+                    {% set total_ca = stats | sum(attribute='chiffre_affaire') %}
+                    {% set best_ventes = stats | sort(attribute='nb_ventes', reverse=True) | first %}
+                    {% set best_ca     = stats | sort(attribute='chiffre_affaire', reverse=True) | first %}
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Nombre de départements</span>
+                            <span class="badge badge-secondary badge-pill">{{ stats | length }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Total commandes</span>
+                            <span class="badge badge-primary badge-pill">{{ total_ventes }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>CA total</span>
+                            <span class="badge badge-success badge-pill">{{ "%.2f"|format(total_ca) }} €</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>🥇 Dep. le + de commandes</span>
+                            <span class="font-weight-bold">{{ best_ventes.dep }} ({{ best_ventes.nb_ventes }} ventes)</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>🥇 Dep. meilleur CA</span>
+                            <span class="font-weight-bold">{{ best_ca.dep }} ({{ "%.2f"|format(best_ca.chiffre_affaire) }} €)</span>
+                        </li>
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         GRAPHIQUE 1 : Nombre de ventes par département
+    ══════════════════════════════════════════ -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <strong>📦 Nombre de commandes par département</strong>
+                </div>
+                <div class="card-body">
+                    <div style="position: relative; height: 380px;">
+                        <canvas id="chartVentes"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         GRAPHIQUE 2 : CA par département
+    ══════════════════════════════════════════ -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <strong>💶 Chiffre d'affaires par département (€)</strong>
+                </div>
+                <div class="card-body">
+                    <div style="position: relative; height: 380px;">
+                        <canvas id="chartCA"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% block javascripts %}
+{{ super() }}
+<script>
+// ── Palette de couleurs ──────────────────────────────────────
+var COLORS = [
+    "#3e95cd","#8e5ea2","#3cba9f","#e8c3b9","#c45850",
+    "#f4a261","#2a9d8f","#e9c46a","#264653","#6a6ce7",
+    "#55f68f","#d0c309","#c45000","#e76f51","#457b9d"
+];
+
+// ── Données injectées par Jinja ──────────────────────────────
+var labels       = {{ labels | tojson | safe }};
+var valuesVentes = {{ values_ventes | tojson | safe }};
+var valuesCA     = {{ values_ca | tojson | safe }};
+
+// Répéter les couleurs si plus de départements que de couleurs
+function buildColors(n) {
+    var c = [];
+    for (var i = 0; i < n; i++) { c.push(COLORS[i % COLORS.length]); }
+    return c;
+}
+
+// ── Graphique 1 : Nombre de ventes (barres horizontales) ─────
+var ctx1 = document.getElementById("chartVentes").getContext("2d");
+new Chart(ctx1, {
+    type: "horizontalBar",
+    data: {
+        labels: labels,
+        datasets: [{
+            label: "Nombre de commandes",
+            data: valuesVentes,
+            backgroundColor: buildColors(labels.length),
+            borderColor: "rgba(0,0,0,0.15)",
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: { display: false },
+        title: {
+            display: true,
+            text: "Commandes par département",
+            fontSize: 14
+        },
+        scales: {
+            xAxes: [{
+                ticks: { beginAtZero: true, stepSize: 1 },
+                scaleLabel: { display: true, labelString: "Nombre de commandes" }
+            }],
+            yAxes: [{
+                scaleLabel: { display: true, labelString: "Département" }
+            }]
+        },
+        tooltips: {
+            callbacks: {
+                label: function(item) {
+                    return " " + item.value + " commande(s)";
+                }
+            }
+        }
+    }
+});
+
+// ── Graphique 2 : CA (barres verticales) ─────────────────────
+var ctx2 = document.getElementById("chartCA").getContext("2d");
+new Chart(ctx2, {
+    type: "bar",
+    data: {
+        labels: labels,
+        datasets: [{
+            label: "Chiffre d'affaires (€)",
+            data: valuesCA,
+            backgroundColor: buildColors(labels.length),
+            borderColor: "rgba(0,0,0,0.15)",
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: { display: false },
+        title: {
+            display: true,
+            text: "Chiffre d'affaires par département",
+            fontSize: 14
+        },
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true,
+                    callback: function(value) { return value.toFixed(0) + " €"; }
+                },
+                scaleLabel: { display: true, labelString: "CA (€)" }
+            }],
+            xAxes: [{
+                scaleLabel: { display: true, labelString: "Département" }
+            }]
+        },
+        tooltips: {
+            callbacks: {
+                label: function(item) {
+                    return " " + parseFloat(item.value).toFixed(2) + " €";
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
+
+{% endblock %}isualisation de données : Chart.js</h2>
+
+<!-- ===================== GRAPH 1 : VENTES ===================== -->
+<div style="width: 900px; height: 400px; border: 1px solid #0a53be;">
+    <canvas id="chartVentes"></canvas>
+</div>
+
+<script>
+var ctx1 = document.getElementById("chartVentes").getContext("2d");
+
+var chart1 = new Chart(ctx1, {
+    type: "bar",
+    data: {
+        labels: {{ labels | safe }},
+        datasets: [{
+            label: "Nombre de ventes",
+            data: {{ values_ventes | safe }},
+            backgroundColor: [
+                "#3e95cd","#8e5ea2","#3cba9f","#e8c3b9","#c45850",
+                "#faf24c","#6a6ce7","#55f68f","#d0c309","#c45000"
+            ],
+            borderColor: "rgb(75,192,192)"
+        }]
+    },
+    options: {
+        responsive: false
+    }
+});
+</script>
+
+<br><br>
+
+<!-- ===================== GRAPH 2 : CA ===================== -->
+<div style="width: 900px; height: 400px; border: 1px solid green;">
+    <canvas id="chartCA"></canvas>
+</div>
+
+<script>
+var ctx2 = document.getElementById("chartCA").getContext("2d");
+
+var chart2 = new Chart(ctx2, {
+    type: "bar",
+    data: {
+        labels: {{ labels | safe }},
+        datasets: [{
+            label: "Chiffre d'affaire (€)",
+            data: {{ values_ca | safe }},
+            backgroundColor: [
+                "#2ecc71","#27ae60","#1abc9c","#16a085","#3498db",
+                "#2980b9","#9b59b6","#8e44ad","#f1c40f","#f39c12"
+            ]
+        }]
+    },
+    options: {
+        responsive: false
+    }
+});
+</script>
+
+<br><br>
+
+<!-- ===================== PIE CHART ===================== -->
+<h2>📊 Graphique en camembert (ventes)</h2>
+
+<canvas id="pie-chart" width="800" height="450"></canvas>
+
+<script>
+var chart3 = new Chart(document.getElementById("pie-chart"), {
+    type: 'pie',
+    data: {
+        labels: {{ labels | safe }},
+        datasets: [{
+            label: "Répartition des ventes",
+            backgroundColor: [
+                "#3e95cd","#8e5ea2","#3cba9f","#e8c3b9","#c45850",
+                "#faf24c","#6a6ce7","#55f68f","#d0c309","#c45000"
+            ],
+            data: {{ values_ventes | safe }}
+        }]
+    },
+    options: {
+        title: {
+            display: true,
+            text: 'Répartition des ventes par département'
+        }
+    }
+});
+</script>
 
 {% endblock %}
