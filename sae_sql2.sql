@@ -128,18 +128,18 @@ CREATE TABLE ligne_panier(
 CREATE TABLE note(
    utilisateur_id INT,
    gant_id INT,
-   note INT,
+   note NUMERIC(2,1),
    PRIMARY KEY(utilisateur_id, gant_id),
    FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
    FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
 ) DEFAULT CHARSET UTF8;
 
 CREATE TABLE commentaire(
-   utilisateur_id INT,
-   gant_id INT,
-   date_publication DATE,
-   commentaire VARCHAR(50),
-   valider BOOLEAN,
+    utilisateur_id INT,
+    gant_id INT,
+    date_publication DATETIME,
+    commentaire VARCHAR(50),
+    valider BOOLEAN,
    PRIMARY KEY(utilisateur_id, gant_id, date_publication),
    FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
    FOREIGN KEY(gant_id) REFERENCES gant(id_gant)
@@ -648,23 +648,23 @@ INSERT INTO ligne_panier VALUES
 -- INSERT NOTES
 -- ============================
 INSERT INTO note VALUES
-(2, 1,  5),   -- client note Adidas Speed Bleu : 5/5
-(2, 4,  4),   -- client note Everlast Prostyle : 4/5
-(2, 10, 5),   -- client note Specialized Prime : 5/5
-(3, 12, 4),   -- client2 note Triban RC500 : 4/5
-(3, 17, 5),   -- client2 note Milwaukee Cut5 : 5/5
-(3, 21, 3);   -- client2 note Columbia Therma : 3/5
+(2, 1,  5.0),   -- client note Adidas Speed Bleu : 5/5
+(2, 4,  4.5),   -- client note Everlast Prostyle : 4/5
+(2, 10, 5.0),   -- client note Specialized Prime : 5/5
+(3, 12, 4.0),   -- client2 note Triban RC500 : 4/5
+(3, 17, 5.0),   -- client2 note Milwaukee Cut5 : 5/5
+(3, 21, 3.0);   -- client2 note Columbia Therma : 3/5
 
 -- ============================
 -- INSERT COMMENTAIRES
 -- ============================
 INSERT INTO commentaire VALUES
-(2, 1,  '2024-04-12', 'Très bons gants de boxe',  TRUE),
-(2, 4,  '2024-04-15', 'Bon rapport qualité prix', TRUE),
-(2, 10, '2024-04-18', 'Parfaits pour le vélo',    TRUE),
-(3, 12, '2024-04-20', 'Légers et confortables',   TRUE),
-(3, 17, '2024-04-22', 'Très bonne protection',    FALSE),
-(3, 21, '2024-04-25', 'Corrects mais un peu fins', TRUE);
+(2, 1,  '2024-04-12 10:00:00', 'Très bons gants de boxe',  TRUE),
+(2, 4,  '2024-04-15 11:00:00', 'Bon rapport qualité prix', TRUE),
+(2, 10, '2024-04-18 12:00:00', 'Parfaits pour le vélo',    TRUE),
+(3, 12, '2024-04-20 09:00:00', 'Légers et confortables',   TRUE),
+(3, 17, '2024-04-22 14:00:00', 'Très bonne protection',    FALSE),
+(3, 21, '2024-04-25 16:00:00', 'Corrects mais un peu fins', TRUE);
 
 -- ============================
 -- INSERT HISTORIQUE

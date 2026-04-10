@@ -20,26 +20,28 @@
 {% block body %}
 <br>
 
-    <h2> nombre d'gants :
+    <h2> nombre d'gants : </h2>
 {#    <span style="color: red;">{{ cout_total.nbr_gants }}</span></h2>#}
 
 <table class="table">
     <thead class="thead-dark">
         <tr>
-           <th>type de gant</th> <th>(id)</th><th>nombre de gants</th>
+           <th>type de gant</th> <th>(id)</th><th>nombre de gants</th><th>nombre de notes</th><th>note moyenne</th><th>nombre de commentaires</th>
         </tr>
     </thead>
     <tbody>
     {% if types_gants_nb | length >= 1 %}
         {% for ligne in types_gants_nb %}
-           <tr>
+           <tr style="cursor:pointer" onclick="showDetail('{{ ligne.id_type_gant }}', '{{ ligne.libelle }}')">
                   <td>{{ ligne.libelle }}</td>
                   <td>{{ ligne.id_type_gant }}</td>
                    <td><span style="color: red">
                        {% if ligne.nbr_gants is not none %}  {{ ligne.nbr_gants }} {% else %}
                        pas d'gant {% endif %}
                    </span></td>
-
+                  <td>{{ ligne.nbr_notes or 0 }}</td>
+                  <td>{{ ligne.note_moyenne or '—' }}</td>
+                  <td>{{ ligne.nbr_commentaires or 0 }}</td>
            </tr>
         {% endfor %}
     {% else %}
@@ -47,6 +49,13 @@
     {% endif %}
     </tbody>
 </table>
+    <br>
+    <select onchange="if(this.value) showDetail(this.value, this.options[this.selectedIndex].text)">
+        <option value="">-- sélectionner une catégorie --</option>
+        {% for ligne in types_gants_nb %}
+        <option value="{{ ligne.id_type_gant }}">{{ ligne.libelle }}</option>
+        {% endfor %}
+    </select>
     <br>
 {#    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>#}
 
@@ -69,11 +78,11 @@
 	var Chart1 = new Chart( ctx1, {
   		type: "bar",
   		data: {
-  			labels: {{ labels | safe }},
+  			labels: {{ labels_cat | safe }},
   			datasets: [
   				{
-  				label: "Type d'gants (nombre)",
-  				data: {{ values | safe }},
+  				label: "Note moyenne par catégorie",
+  				data: {{ values_notes | safe }},
   				fill: false,
                  backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850",
              "#faf24c"
@@ -98,22 +107,126 @@
 	var Chart2 = new Chart(document.getElementById("pie-chart"), {
     type: 'pie',
     data: {
-      labels: {{ labels | safe }},
+      labels: {{ labels_cat | safe }},
       datasets: [{
-        label: "Type d'gants (nombre)",
+        label: "Nombre de commentaires par catégorie",
          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850",
              "#faf24c"
              , "#6a6ce7","#55f68f","#D0c309","#c45000"],
-        data: {{ values | safe }},
+        data: {{ values_nb_commentaires | safe }},
       }]
     },
     options: {
       title: {
         display: true,
-        text: 'Type gant : nombre'
+        text: 'Nombre de commentaires par catégorie'
       }
      }
     });
+    </script>
+
+    <canvas id="chart-nb-notes" width="800" height="450"></canvas>
+
+    <script>
+    var Chart3 = new Chart(document.getElementById("chart-nb-notes"), {
+    type: 'bar',
+    data: {
+      labels: {{ labels_cat | safe }},
+      datasets: [{
+        label: "Nombre de notes par catégorie",
+         backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850",
+             "#faf24c"
+             , "#6a6ce7","#55f68f","#D0c309","#c45000"],
+        data: {{ values_nb_notes | safe }},
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'Nombre de notes par catégorie'
+      }
+     }
+    });
+    </script>
+
+    <br>
+    <div id="detail-zone" style="display:none">
+        <h2>détail par article : <span id="detail-title"></span></h2>
+
+        <table class="table" id="table-detail">
+            <thead class="thead-dark">
+                <tr>
+                    <th>article</th><th>nombre de notes</th><th>note moyenne</th><th>nombre de commentaires</th>
+                </tr>
+            </thead>
+            <tbody id="tbody-detail"></tbody>
+        </table>
+
+        <div style="width: 900px; height: 500px; border: #0a53be 1px solid;">
+            <canvas id="chart-detail-note-moy"></canvas>
+        </div>
+        graphique note moyenne / article
+        <br>
+
+        <canvas id="chart-detail-comm" width="800" height="450"></canvas>
+        <br>
+
+        <canvas id="chart-detail-notes" width="800" height="450"></canvas>
+    </div>
+
+    <script>
+    const GANTS_PAR_CAT = {{ gants_par_categorie | safe }};
+    const COLORS = ["#3e95cd","#8e5ea2","#3cba9f","#e8c3b9","#c45850","#faf24c","#6a6ce7","#55f68f","#D0c309","#c45000"];
+
+    var chartDetailNoteMoy = null;
+    var chartDetailComm    = null;
+    var chartDetailNotes   = null;
+
+    function showDetail(catId, catLabel) {
+        var gants = GANTS_PAR_CAT[String(catId)] || [];
+
+        document.getElementById('detail-title').textContent = catLabel;
+        document.getElementById('detail-zone').style.display = 'block';
+
+        var tbody = document.getElementById('tbody-detail');
+        tbody.innerHTML = '';
+        gants.forEach(function(g) {
+            var tr = document.createElement('tr');
+            tr.innerHTML = '<td>' + g.nom + '</td>'
+                + '<td>' + g.nbr_notes + '</td>'
+                + '<td><span style="color:red">' + (g.note_moyenne > 0 ? g.note_moyenne : '—') + '</span></td>'
+                + '<td>' + g.nbr_commentaires + '</td>';
+            tbody.appendChild(tr);
+        });
+
+        var labels  = gants.map(function(g){ return g.nom; });
+        var noteMoy = gants.map(function(g){ return g.note_moyenne; });
+        var nbComm  = gants.map(function(g){ return g.nbr_commentaires; });
+        var nbNotes = gants.map(function(g){ return g.nbr_notes; });
+        var colors  = COLORS.slice(0, labels.length);
+
+        if (chartDetailNoteMoy) chartDetailNoteMoy.destroy();
+        if (chartDetailComm)    chartDetailComm.destroy();
+        if (chartDetailNotes)   chartDetailNotes.destroy();
+
+        chartDetailNoteMoy = new Chart(document.getElementById('chart-detail-note-moy').getContext('2d'), {
+            type: 'bar',
+            data: { labels: labels, datasets: [{ label: 'Note moyenne', data: noteMoy, backgroundColor: colors }] },
+            options: { title: { display: true, text: 'Note moyenne / article' } }
+        });
+        chartDetailComm = new Chart(document.getElementById('chart-detail-comm'), {
+            type: 'pie',
+            data: { labels: labels, datasets: [{ label: 'Commentaires', data: nbComm, backgroundColor: colors }] },
+            options: { title: { display: true, text: 'Commentaires / article' } }
+        });
+        chartDetailNotes = new Chart(document.getElementById('chart-detail-notes'), {
+            type: 'bar',
+            data: { labels: labels, datasets: [{ label: 'Nb notes', data: nbNotes, backgroundColor: colors }] },
+            options: { title: { display: true, text: 'Nb notes / article' } }
+        });
+
+        document.getElementById('detail-zone').scrollIntoView({ behavior: 'smooth' });
+    }
     </script>
 
     <a href="https://www.youtube.com/watch?v=TcwYXIIM-fs" target="_blank">dataviz, c'est quoi en 1 mn ? (juste la première minute)</a>

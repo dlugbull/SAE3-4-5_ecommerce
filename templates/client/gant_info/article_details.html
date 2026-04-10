@@ -9,11 +9,11 @@
 <div class="container">
     <div class="text-center card w-auto">
          <h2 class="card-title">
-             <span style="color: #0b2e13">{{ gant.nom }}</span> &nbsp;{{ gant.prix }} €
+             <span style="color: #0b2e13">{{ gant.nom_gant }}</span> &nbsp;{{ gant.prix_gant }} €
          </h2>
         <div class="card-body">
-        {%  if gant.image is not none %}
-            <img class="card-img-top rounded mx-auto d-block"  style="width:100px;height:100px"  src="{{ url_for('static', filename = 'images/')}}{{ gant.image }}"  alt="image  de {{ gant.nom }}" >
+        {%  if gant.photo is not none %}
+            <img class="card-img-top rounded mx-auto d-block"  style="width:100px;height:100px"  src="{{ url_for('static', filename = 'images/')}}{{ gant.photo }}"  alt="image  de {{ gant.nom }}" >
         {% else %} <img class="card-img-top rounded mx-auto d-block"   style="width:100px;height:100px"   src="{{ url_for('static', filename='images/no_photo.jpeg')}}"  alt="image  de {{ gant.nom }}" >
         {% endif %}
 
@@ -34,7 +34,7 @@
         {% if gant.moyenne_notes is not defined or  gant.nb_notes is not defined or  gant.moyenne_notes == None %}
             <strong>Pas de Note</strong>
         {% else %}
-            <strong>Note moyenne de cet gant : {{ gant.moyenne_notes }}</strong>&nbsp;({{ gant.nb_notes }} note(s))
+            <strong>Note moyenne de cet gant : {{ "%.1f"|format(gant.moyenne_notes) }}</strong>&nbsp;({{ gant.nb_notes }} note(s))
         {% endif %}
     </div>
         {% if commandes_gants.nb_commandes_gant is defined and commandes_gants.nb_commandes_gant > 0 %}
@@ -85,9 +85,9 @@
       <div class="col-12">
       {% if nb_commentaires.nb_commentaires_total is not defined or nb_commentaires.nb_commentaires_utilisateur is not defined %}
          <strong>NB commentaire(s) not defined</strong>
-                {% else %}
-            <strong>Nombre de commentaire(s) : {{ nb_commentaires.nb_commentaires_utilisateur }} commentaire(s) / 3 maxi pour un gant acheté </strong><br>
-            <strong>Nombre de commentaire(s) total :  {{nb_commentaires.nb_commentaires_total }}</strong><br>
+      {% else %}
+          <strong>Nombre de commentaire(s) : {{ nb_commentaires.nb_commentaires_utilisateur }} commentaire(s) / 3 maxi pour un gant acheté </strong><br>
+          <strong>Nombre de commentaire(s) total :  {{nb_commentaires.nb_commentaires_total }}</strong><br>
           {% if nb_commentaires.nb_commentaires_utilisateur_valide is not defined or nb_commentaires.nb_commentaires_total_valide is not defined %}
                <strong>NB commentaire(s) valide(s) not defined</strong>
               {% else %}
@@ -98,16 +98,16 @@
       {% if commandes_gants.nb_commandes_gant is defined and commandes_gants.nb_commandes_gant > 0 and
             ((nb_commentaires.nb_commentaires_utilisateur is defined and nb_commentaires.nb_commentaires_utilisateur <3) or nb_commentaires.nb_commentaires_utilisateur is not defined) %}
           <form  action="/client/commentaire/add"   method="post">
-                <div class="col">
+              <div class="col">
                   <label for="input_commentaire" class="form-label">Mettez un commentaire sur cet gant : </label>
                      <textarea name="commentaire" class="form-control" aria-label="Votre commentaire" id="input_commentaire"  placeholder="Votre commentaire"></textarea>
-                </div>
+              </div>
               <input type="hidden" name="action" value="add_commentaire">
               <input type="hidden" name="id_gant" value="{{ gant.id_gant }}">
-                <form  action="/client/comment/add"  style="display: inline-block;"  method="post" >
-                        <button class="btn btn-primary mt-2" > Ajouter un commentaire </button>
-                </form>
-            </form>
+              <form  action="/client/comment/add"  style="display: inline-block;"  method="post" >
+                  <button class="btn btn-primary mt-2" > Ajouter un commentaire </button>
+              </form>
+          </form>
         {% else %}
             <small>(seul les clients qui ont acheté cet gant peuvent le commenter ou nombre maxi de commentaires sur cet gant (5) atteind)</small>
         {% endif %}
