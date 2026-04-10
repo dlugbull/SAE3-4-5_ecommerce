@@ -48,7 +48,7 @@ def client_gant_details():
     JOIN gant g ON g.id_gant = c.gant_id
     WHERE c.gant_id = %s
     AND (c.valider = TRUE OR c.utilisateur_id = %s)
-    ORDER BY c.date_publication DESC
+    ORDER BY c.date_publication DESC, c.utilisateur_id DESC;
     '''
     mycursor.execute(sql, ( id_gant, id_client))
     commentaires = mycursor.fetchall()
@@ -75,14 +75,12 @@ def client_gant_details():
         note=note['note']
 
     sql = '''
-    SELECT  COUNT(CASE WHEN c.utilisateur_id = %s THEN 1 END) AS nb_commentaires_utilisateur ,
-            COUNT(*) AS nb_commentaires_total,
-            COUNT(CASE WHEN c.utilisateur_id = %s AND c.valider = 1 THEN 1 END) AS nb_commentaires_utilisateur_valide,
-            COUNT(CASE WHEN c.valider = 1 THEN 1 END) AS nb_commentaires_total_valide
-    FROM commentaire c
-    WHERE c.gant_id = %s
-    '''
-    mycursor.execute(sql, (id_client, id_client, id_gant))
+    SELECT  (SELECT COUNT(*) FROM commentaire WHERE gant_id = %s AND utilisateur_id = %s)                           AS nb_commentaires_utilisateur, 
+            (SELECT COUNT(*) FROM commentaire WHERE gant_id = %s)                                                   AS nb_commentaires_total, 
+            (SELECT COUNT(*) FROM commentaire WHERE gant_id = %s AND utilisateur_id = %s AND valider = TRUE)        AS nb_commentaires_utilisateur_valide, 
+            (SELECT COUNT(*) FROM commentaire WHERE gant_id = %s AND valider = TRUE)                                AS nb_commentaires_total_valide 
+          '''
+    mycursor.execute(sql, (id_gant, id_client, id_gant, id_gant, id_client, id_gant))
     nb_commentaires = mycursor.fetchone()
 
     mycursor.close()
