@@ -28,14 +28,14 @@ def show_gant():
                    , type_gant.nom_type_gant AS libelle
                    , sum(declinaison_gant.stock) AS stock
                    , count(declinaison_gant.id_declinaison_gant) AS nb_declinaisons
-                   , count(commentaire.valider = true) AS nb_commentaires_nouveaux
+                   , (SELECT COUNT(*) FROM commentaire c WHERE c.gant_id = gant.id_gant AND c.valider = FALSE) AS nb_commentaires_nouveaux
                    , min(declinaison_gant.stock) as min_stock
               FROM gant
                        LEFT JOIN declinaison_gant ON gant.id_gant = declinaison_gant.gant_id
                        LEFT JOIN type_gant ON gant.type_gant_id = type_gant.id_type_gant
                        LEFT JOIN commentaire ON commentaire.gant_id = gant.id_gant
               GROUP BY id_gant, nom_gant
-              ORDER BY nom_gant; \
+              ORDER BY nom_gant;
           '''
     mycursor.execute(sql)
     gants = mycursor.fetchall()
