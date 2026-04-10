@@ -13,37 +13,38 @@ admin_dataviz = Blueprint(
 # ─────────────────────────────────────────────────────────────
 # ETAT 1 : TYPES DE GANTS
 # ─────────────────────────────────────────────────────────────
+from flask import Blueprint
+from flask import Flask, request, render_template, redirect, abort, flash, session
+
+from connexion_db import get_db
+
+admin_dataviz = Blueprint('admin_dataviz', __name__,
+                          template_folder='templates')
+
 @admin_dataviz.route('/admin/dataviz/etat1')
 def show_type_gant_stock():
     mycursor = get_db().cursor()
-
-    sql = '''
-        SELECT type_gant.nom_type_gant AS libelle,
-               type_gant.id_type_gant,
-               COUNT(gant.type_gant_id) AS nbr_gants
-        FROM type_gant
-        LEFT JOIN gant ON type_gant.id_type_gant = gant.type_gant_id
-        GROUP BY type_gant.nom_type_gant, type_gant.id_type_gant
-    '''
+    sql = '''SELECT type_gant.nom_type_gant as libelle, type_gant.id_type_gant,
+                    count(gant.type_gant_id) as nbr_gants
+             FROM type_gant
+                      JOIN gant ON type_gant.id_type_gant = gant.type_gant_id
+             GROUP BY type_gant.nom_type_gant, type_gant.id_type_gant \
+           '''
     mycursor.execute(sql)
     datas_show = mycursor.fetchall()
-
     labels = [str(row['libelle']) for row in datas_show]
     values = [int(row['nbr_gants']) for row in datas_show]
 
+    mycursor.execute(sql)
+    types_gants_nb = mycursor.fetchall()
+
     mycursor.close()
+    return render_template('admin/dataviz/dataviz_etat_1.html'
+                           , datas_show=datas_show
+                           , labels=labels
+                           , values=values
+                           , types_gants_nb=types_gants_nb)
 
-    return render_template(
-        'admin/dataviz/dataviz_etat_1.html',
-        types_gants_nb=datas_show,
-        labels=labels,
-        values=values,
-
-        # éviter erreurs Jinja
-        stats=[],
-        values_ventes=[],
-        values_ca=[]
-    )
 
 
 # ─────────────────────────────────────────────────────────────
