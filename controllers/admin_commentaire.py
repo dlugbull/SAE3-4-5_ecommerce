@@ -23,7 +23,7 @@ def admin_gant_details():
     FROM commentaire c
     JOIN utilisateur u ON u.id_utilisateur = c.utilisateur_id
     WHERE c.gant_id = %s
-    ORDER BY    c.valider ASC, c.date_publication DESC;
+    ORDER BY    c.valider ASC, c.date_publication DESC, c.utilisateur_id DESC;
           '''
     mycursor.execute(sql, (id_gant,))
     commentaires = mycursor.fetchall()
@@ -42,8 +42,8 @@ def admin_gant_details():
     gant = mycursor.fetchone()
 
     sql = '''
-    SELECT COUNT(*)                                         AS nb_commentaires_total,
-           SUM(CASE WHEN valider = 1 THEN 1 ELSE 0 END)     AS nb_commentaires_valider
+    SELECT COUNT(*)                     AS nb_commentaires_total,
+           SUM(IF(valider = 1, 1, 0))   AS nb_commentaires_valider
     FROM commentaire
     WHERE gant_id = %s AND utilisateur_id != 1
           '''
@@ -51,6 +51,7 @@ def admin_gant_details():
     nb_commentaires = mycursor.fetchone()
 
     mycursor.close()
+    print(commentaires)
     return render_template('admin/gant/show_gant_commentaires.html'
                            , commentaires=commentaires
                            , gant=gant
@@ -66,9 +67,7 @@ def admin_comment_delete():
 
     sql = '''
     DELETE FROM commentaire
-    WHERE utilisateur_id = %s
-      AND gant_id = %s
-      AND date_publication = %s
+    WHERE utilisateur_id = %s AND gant_id = %s AND date_publication = %s
     '''
     mycursor.execute(sql, (id_utilisateur, id_gant, date_publication))
 
@@ -92,9 +91,7 @@ def admin_comment_add():
     sql1 = '''
            SELECT COUNT(*) as nb
            FROM commentaire
-           WHERE gant_id = %s
-             AND date_publication = %s
-             AND utilisateur_id = 1 \
+           WHERE gant_id = %s AND date_publication = %s AND utilisateur_id = 1 \
            '''
     mycursor.execute(sql1, (id_gant, date_publication))
     result = mycursor.fetchone()

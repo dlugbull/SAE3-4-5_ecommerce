@@ -16,7 +16,7 @@
                 {% endif %}
         {% else %} Pas de commentaire
        {% endif %}
-       <br>Note : {% if gant.nb_notes is defined and gant.nb_notes >= 0 %} <strong>{{ "%.1f"|format(gant.moyenne_notes) }}</strong> ( {{ gant.nb_notes }} note(s))
+       <br>Note : {% if gant.nb_notes is defined and gant.nb_notes > 0 and gant.moyenne_notes is not none %} <strong>{{ "%.1f"|format(gant.moyenne_notes) }}</strong> ( {{ gant.nb_notes }} note(s))
        {% else %} Pas de note
        {% endif %}
    </div>
@@ -38,7 +38,7 @@
                 {% for commentaire in commentaires %}
                     {% if commentaire.id_utilisateur == 1 %}
                     <tr class="bg-success bg-opacity-25">
-                    {% elif commentaire.valider == true %}
+                    {% elif commentaire.valider %}
                     <tr class="bg-warning bg-opacity-25">
                     {% else %}
                     <tr>
