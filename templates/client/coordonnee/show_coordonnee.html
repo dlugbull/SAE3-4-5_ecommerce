@@ -38,8 +38,11 @@
             <tbody>
                 {% for adresse in adresses %}
                     <tr
-                            {% if adresse.valide is defined and adresse.valide==0 %} style="color: darkorange"{% endif %}
-                            {% if adresse.favori is defined and adresse.favori==1 %} style="color: blue; font-weight: bolder;"{% endif %}
+                        {% if adresse.favori == 1 %}
+                            style="color: blue; font-weight: bolder;"
+                        {% elif adresse.valide == 0 %}
+                            style="color: darkorange;"
+                        {% endif %}
                     >
 
                         <td>{{ adresse.nom }}
@@ -58,7 +61,7 @@
                                 <input type="hidden"  name="id_adresse" value="{{ adresse.id_adresse }}">
                                 <button class="btn btn-primary" > Supprimer </button>
                             </form>
-                            {% endif %}
+                          {% endif %}
                         </td>
                     </tr>
                 {% endfor %}

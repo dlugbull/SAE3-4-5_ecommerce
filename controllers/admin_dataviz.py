@@ -9,7 +9,6 @@ admin_dataviz = Blueprint('admin_dataviz', __name__,
                           template_folder='templates')
 
 @admin_dataviz.route('/admin/dataviz/etat1')
-@admin_dataviz.route('/admin/dataviz/etat1')
 def show_type_gant_stock():
     mycursor = get_db().cursor()
 
@@ -90,28 +89,45 @@ def show_type_gant_stock():
 @admin_dataviz.route('/admin/dataviz/etat2')
 def show_dataviz_map():
     mycursor = get_db().cursor()
-    # sql = '''    '''
-    # mycursor.execute(sql)
-    # adresses = mycursor.fetchall()
 
-    #exemples de tableau "résultat" de la requête
-    adresses =  [{'dep': '25', 'nombre': 1}, {'dep': '83', 'nombre': 1}, {'dep': '90', 'nombre': 3}]
+    sql = """
+        SELECT
+            LEFT(a.code_postal, 2) AS dep,
+            COUNT(DISTINCT c.id_commande) AS nb_ventes,
+            SUM(lc.quantite * lc.prix) AS chiffre_affaire
+        FROM commande c
+        JOIN adresse a ON c.adresse_id_livre = a.id_adresse
+        JOIN ligne_commande lc ON c.id_commande = lc.commande_id
+        GROUP BY dep
+        ORDER BY dep
+    """
 
-    # recherche de la valeur maxi "nombre" dans les départements
-    # maxAddress = 0
-    # for element in adresses:
-    #     if element['nbr_dept'] > maxAddress:
-    #         maxAddress = element['nbr_dept']
-    # calcul d'un coefficient de 0 à 1 pour chaque département
-    # if maxAddress != 0:
-    #     for element in adresses:
-    #         indice = element['nbr_dept'] / maxAddress
-    #         element['indice'] = round(indice,2)
+    mycursor.execute(sql)
+    adresses = mycursor.fetchall()
+
+    for row in adresses:
+        row['nb_ventes'] = int(row['nb_ventes'] or 0)
+        row['chiffre_affaire'] = float(row['chiffre_affaire'] or 0)
+
+    max_ventes = max([r['nb_ventes'] for r in adresses]) if adresses else 1
+    max_ca = max([r['chiffre_affaire'] for r in adresses]) if adresses else 1
+
+    for row in adresses:
+        row['indice_ventes'] = round(row['nb_ventes'] / max_ventes, 2)
+        row['indice_ca'] = round(row['chiffre_affaire'] / max_ca, 2)
+
     mycursor.close()
-    print(adresses)
 
-    return render_template('admin/dataviz/dataviz_etat_map.html'
-                           , adresses=adresses
-                           )
+    return render_template(
+        'admin/dataviz/franceMap.html',
 
+        adresses=adresses,
+        labels=[row['dep'] for row in adresses],
+        values_ventes=[row['nb_ventes'] for row in adresses],
+        values_ca=[row['chiffre_affaire'] for row in adresses],
 
+        # sécurité
+        stats=[],
+        types_gants_nb=[],
+        values=[]
+    )
