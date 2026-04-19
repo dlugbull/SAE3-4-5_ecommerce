@@ -37,13 +37,13 @@
             </thead>
             <tbody>
                 {% for adresse in adresses %}
-                    <tr
-                        {% if adresse.favori == 1 %}
-                            style="color: blue; font-weight: bolder;"
-                        {% elif adresse.valide == 0 %}
-                            style="color: darkorange;"
-                        {% endif %}
-                    >
+                <tr
+                {% if a.favori == 1 %}
+                    style="background-color: lightblue;"
+                {% elif a.valide == 0 %}
+                    style="background-color: yellow;"
+                {% endif %}
+                >
 
                         <td>{{ adresse.nom }}
                             {% if adresse.favori is defined and adresse.favori==1 %}💛{% endif %}

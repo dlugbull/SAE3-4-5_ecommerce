@@ -1,18 +1,5 @@
 #! /usr/bin/python
 # -*- coding:utf-8 -*-
-
-from flask import Blueprint, render_template
-from connexion_db import get_db
-
-admin_dataviz = Blueprint(
-    'admin_dataviz',
-    __name__,
-    template_folder='templates'
-)
-
-# ─────────────────────────────────────────────────────────────
-# ETAT 1 : TYPES DE GANTS
-# ─────────────────────────────────────────────────────────────
 from flask import Blueprint
 from flask import Flask, request, render_template, redirect, abort, flash, session
 
@@ -47,9 +34,8 @@ def show_type_gant_stock():
 
 
 
-# ─────────────────────────────────────────────────────────────
-# ETAT 2 : TABLEAU + GRAPHIQUES
-# ─────────────────────────────────────────────────────────────
+
+
 @admin_dataviz.route('/admin/dataviz/etat2')
 def show_dataviz_adresses():
     mycursor = get_db().cursor()
@@ -61,13 +47,14 @@ def show_dataviz_adresses():
             SUM(lc.quantite * lc.prix) AS chiffre_affaire
         FROM commande c
         JOIN adresse a ON c.adresse_id_livre = a.id_adresse
-        JOIN ligne_commande lc ON c.id_commande = lc.commande_id
+        LEFT JOIN ligne_commande lc ON c.id_commande = lc.commande_id
         GROUP BY dep
         ORDER BY dep
     """
 
     mycursor.execute(sql)
     stats = mycursor.fetchall()
+    print(stats)
 
     for row in stats:
         row['nb_ventes'] = int(row['nb_ventes'] or 0)
@@ -81,20 +68,16 @@ def show_dataviz_adresses():
 
     return render_template(
         'admin/dataviz/dataviz_etat_map.html',
-
         stats=stats,
         labels=labels,
         values_ventes=values_ventes,
         values_ca=values_ca,
-
+        adresses=stats,
         types_gants_nb=[],
         values=[]
     )
 
 
-# ─────────────────────────────────────────────────────────────
-# ETAT 3 : CARTE FRANCE
-# ─────────────────────────────────────────────────────────────
 @admin_dataviz.route('/admin/dataviz/etat3')
 def show_dataviz_map():
     mycursor = get_db().cursor()
@@ -106,7 +89,7 @@ def show_dataviz_map():
             SUM(lc.quantite * lc.prix) AS chiffre_affaire
         FROM commande c
         JOIN adresse a ON c.adresse_id_livre = a.id_adresse
-        JOIN ligne_commande lc ON c.id_commande = lc.commande_id
+        LEFT JOIN ligne_commande lc ON c.id_commande = lc.commande_id
         GROUP BY dep
         ORDER BY dep
     """
