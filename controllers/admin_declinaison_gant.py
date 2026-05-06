@@ -96,8 +96,9 @@ def edit_declinaison_gant():
                     declinaison_gant.stock, declinaison_gant.taille_id,
                     declinaison_gant.couleur_id
              FROM declinaison_gant
-                      JOIN gant ON declinaison_gant.gant_id = gant.id_gant'''
-    mycursor.execute(sql)
+                      JOIN gant ON declinaison_gant.gant_id = gant.id_gant
+          WHERE id_declinaison_gant=%s'''
+    mycursor.execute(sql, id_declinaison_gant)
     declinaison_gant=mycursor.fetchone()
 
     sql = '''SELECT id_couleur, libelle_couleur as libelle
@@ -169,6 +170,7 @@ def valid_edit_declinaison_gant():
                  WHERE id_declinaison_gant=%s'''
         mycursor.execute(sql, (stock, taille_id, couleur_id, id_declinaison_gant))
 
+    get_db().commit()
     message = u'declinaison_gant modifié , id:' + str(id_declinaison_gant) + '- stock :' + str(stock) + ' - taille_id:' + str(taille_id) + ' - couleur_id:' + str(couleur_id)
     flash(message, 'alert-success')
     mycursor.close()

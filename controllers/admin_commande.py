@@ -27,9 +27,10 @@ def admin_commande_show():
                     commande.id_commande
              FROM commande
                       JOIN utilisateur on utilisateur.id_utilisateur = commande.utilisateur_id
-                      JOIN ligne_commande on ligne_commande.commande_id = commande.id_commande
+                      LEFT JOIN ligne_commande on ligne_commande.commande_id = commande.id_commande
                       JOIN etat on etat.id_etat = commande.etat_id
-             GROUP BY commande.id_commande;'''
+             GROUP BY commande.id_commande, commande.etat_id, utilisateur.login,
+         commande.date_achat, etat.libelle_etat;'''
     mycursor.execute(sql)
     commandes=mycursor.fetchall()
 
@@ -73,7 +74,7 @@ def admin_commande_show():
                           JOIN gant ON declinaison_gant.gant_id = gant.id_gant
                           JOIN commande on commande.id_commande = ligne_commande.commande_id
                  WHERE ligne_commande.commande_id = %s'''
-        mycursor.execute(sql, (id_commande))
+        mycursor.execute(sql, (id_commande,))
         gants_commande = mycursor.fetchall()
 
         print(commande_adresses)
